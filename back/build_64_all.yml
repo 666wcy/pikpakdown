@@ -1,0 +1,79 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build 64 all
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    
+    tags:
+      - 'v*.*.*'
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Built app 64 all
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 all
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --mingw64  --assume-yes-for-downloads --follow-imports   --windows-disable-console --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+          7z.exe a -r test.zip "./out/pikpakdown.dist/*"
+
+
+
+      - name: Test tag
+        run: |
+          
+
+          echo ${{ github.ref }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset-bot-linux
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          #asset_path: ${{ github.workspace }}/onedrive_share_${{ env.RELEASE_VERSION }}.zip
+          asset_path: test.zip
+          asset_name: "pikpakdown_${{ github.ref }}_win64_all.zip"
+          #asset_content_type: application/octet-stream
+          asset_content_type: application/zip
+

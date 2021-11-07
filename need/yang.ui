@@ -1,0 +1,2378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1326</width>
+    <height>797</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>PikPakDown</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QWidget" name="main_widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget#main_widget{
+	background-color: rgb(252,252,255);
+border-radius:15px;
+border:4px solid #BEBEBE;
+}
+QWidget{
+	background-color: rgb(252,252,255);
+}
+QWidget!hover{
+	background-color: rgb(252,252,255);
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_8">
+      <item>
+       <widget class="QWidget" name="titlewidget" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QWidget#titlewidget{
+border-bottom:6px ridge #E0E0E0;
+}
+</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="titlelabel">
+           <property name="maximumSize">
+            <size>
+             <width>500</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>17</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>PikPakDown v2.1.1</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="pingtitlelabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>连接情况:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="pinginfo_label">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>检测中</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="tohidepushButton">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+             <pointsize>14</pointsize>
+             <weight>9</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:!hover{
+	background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,  
+                                      stop: 0 rgba(255,85,85,255),
+                                      stop: 0.395 rgba(255,91,91,255),
+                                      stop: 0.505 rgba(255,113,113,255), 
+                                      stop: 0.805 rgba(255,146,146,255), 
+
+                                      stop: 1 rgba(255,162,162,255));
+
+	color: rgb(255, 255, 255);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+}
+QPushButton:hover{
+
+	background-color: rgb(255, 0, 0);
+	color: rgb(255, 255, 255);
+	font: 75 15pt &quot;微软雅黑&quot;;
+border-radius:8px;
+}</string>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushMaxButton">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:!hover{
+	background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,  
+                                      stop: 0 rgba(255,85,85,255),
+                                      stop: 0.395 rgba(255,91,91,255),
+                                      stop: 0.505 rgba(255,113,113,255), 
+                                      stop: 0.805 rgba(255,146,146,255), 
+
+                                      stop: 1 rgba(255,162,162,255));
+
+	color: rgb(255, 255, 255);
+	font: 75 12pt ;
+border-radius:8px;
+}
+QPushButton:hover{
+
+	background-color: rgb(255, 0, 0);
+	color: rgb(255, 255, 255);
+	font: 75 13pt ;
+border-radius:8px;
+}</string>
+           </property>
+           <property name="text">
+            <string>□</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exitapppushButton">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+             <pointsize>14</pointsize>
+             <weight>9</weight>
+             <italic>false</italic>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton:!hover{
+	background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,  
+                                      stop: 0 rgba(255,85,85,255),
+                                      stop: 0.395 rgba(255,91,91,255),
+                                      stop: 0.505 rgba(255,113,113,255), 
+                                      stop: 0.805 rgba(255,146,146,255), 
+
+                                      stop: 1 rgba(255,162,162,255));
+
+	color: rgb(255, 255, 255);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+}
+QPushButton:hover{
+
+	background-color: rgb(255, 0, 0);
+	color: rgb(255, 255, 255);
+	font: 75 15pt &quot;微软雅黑&quot;;
+border-radius:8px;
+}</string>
+           </property>
+           <property name="text">
+            <string>X</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_2" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QTabWidget" name="tabWidget">
+           <property name="styleSheet">
+            <string notr="true">QTabBar::tab{
+padding:5px 15px 5px 5px;
+width:80;
+height:40;
+border-top-color:#369;
+font: 75 10pt &quot;微软雅黑&quot;;
+
+}
+QTabBar::tab::selected{
+color:rgb(223,86,89);
+padding:5px 15px 5px 5px;
+width:80;
+height:40;
+font: 75 10pt &quot;微软雅黑&quot;;
+border-bottom:3px solid rgb(223,86,89);
+}
+
+</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="tab">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <attribute name="title">
+             <string>主页</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QWidget" name="widget_4" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_3">
+                <item>
+                 <widget class="QTreeWidget" name="filetreeWidget">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>400</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>700</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">/*QScrollBar Style*/
+
+/*纵向滚动条*/
+QScrollBar:vertical {
+    background: transparent; /*背景透明*/
+    width: 10px; /*宽度*/
+    margin: 0px 0px 0px 0px; /**/
+    padding-top: 12px; /*距离上面12px*/
+    padding-bottom: 12px; /*距离底部12px*/
+}
+/*横向滚动条*/
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /*高度*/
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px; /*距离左边12px*/
+    padding-right: 12px; /*距离右边12px*/
+}
+
+/*当鼠标放到纵向或者横向滚动条上面时*/
+QScrollBar:vertical:hover,QScrollBar:horizontal:hover {
+    background: rgba(0, 0, 0, 30); /*修改背景透明度 30*/
+    border-radius: 5px; /*圆角*/
+}
+
+/*纵向滚动条上面的滑块*/
+QScrollBar::handle:vertical {
+    background: rgb(131,179,249);
+    width: 10px;
+    border-radius: 5px;
+    border: none;
+}
+/*横向滚动条上面的滑块*/
+QScrollBar::handle:horizontal {
+    background: rgba(0, 0, 0, 50);
+    height: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/*当鼠标放到滚动条滑块上面时改变透明度实现颜色的深浅变化*/
+QScrollBar::handle:vertical:hover,QScrollBar::handle:horizontal:hover {
+    background: #6A6AFF;
+}
+
+/*纵向滚动条下部分块*/
+QScrollBar::add-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条后面部分块*/
+QScrollBar::add-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条上面部分块*/
+QScrollBar::sub-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条左部分块*/
+QScrollBar::sub-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条顶部三角形位置*/
+QScrollBar::sub-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: top;
+}
+/*横向滚动条左侧三角形位置*/
+QScrollBar::sub-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: left;
+}
+
+/*纵向滚动条下面三角形部分*/
+QScrollBar::add-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: bottom;
+}
+/*横向滚动条右边的三角形部分*/
+QScrollBar::add-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: right;
+}
+</string>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string notr="true">1</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>800</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <widget class="QLabel" name="root_label">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>760</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>根目录</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_3" native="true">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_8">
+                   <item row="0" column="3">
+                    <widget class="QPushButton" name="sharegcidButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>导出当前秒链</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QPushButton" name="refreshButton">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="cursor">
+                      <cursorShape>ArrowCursor</cursorShape>
+                     </property>
+                     <property name="mouseTracking">
+                      <bool>false</bool>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>刷新列表</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4">
+                    <widget class="QPushButton" name="uploadfileButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>上传文件</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QPushButton" name="addgcidButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>导入秒链</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="3">
+                    <widget class="QPushButton" name="delete_file_pushButton">
+                     <property name="text">
+                      <string>删除所选</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="QPushButton" name="copy_file_pushButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>复制所选</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QPushButton" name="backButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>上级目录</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QPushButton" name="move_file_pushButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>移动所选</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="5">
+                    <widget class="QPushButton" name="creat_folder_pushButton">
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>新建文件夹</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QPushButton" name="rename_pushButton">
+                     <property name="text">
+                      <string>重命名所选</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QTableWidget" name="tableWidget">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                   <bool>false</bool>
+                  </attribute>
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>false</bool>
+                  </attribute>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_2">
+            <attribute name="title">
+             <string>离线下载</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QWidget" name="widget_5" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QPushButton" name="offlinerefreshButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>刷新列表</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="addmagnetButton">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>添加离线任务</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="offlineWidget"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_7">
+            <attribute name="title">
+             <string>回收站</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QWidget" name="widget_11" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QPushButton" name="refresh_trash_pushButton">
+                  <property name="text">
+                   <string>刷新列表</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="back_trash_pushButton">
+                  <property name="text">
+                   <string>还原选中</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="delete_trahs_pushButton">
+                  <property name="text">
+                   <string>删除选中</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="trash_tableWidget"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_3">
+            <attribute name="title">
+             <string>任务列表</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QTableWidget" name="downloadtableWidget"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_4">
+            <attribute name="title">
+             <string>设置</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QScrollArea" name="scrollArea">
+               <property name="styleSheet">
+                <string notr="true">/*QScrollBar Style*/
+
+/*纵向滚动条*/
+QScrollBar:vertical {
+    background: transparent; /*背景透明*/
+    width: 10px; /*宽度*/
+    margin: 0px 0px 0px 0px; /**/
+    padding-top: 12px; /*距离上面12px*/
+    padding-bottom: 12px; /*距离底部12px*/
+}
+/*横向滚动条*/
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /*高度*/
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px; /*距离左边12px*/
+    padding-right: 12px; /*距离右边12px*/
+}
+
+/*当鼠标放到纵向或者横向滚动条上面时*/
+QScrollBar:vertical:hover,QScrollBar:horizontal:hover {
+    background: rgba(0, 0, 0, 30); /*修改背景透明度 30*/
+    border-radius: 5px; /*圆角*/
+}
+
+/*纵向滚动条上面的滑块*/
+QScrollBar::handle:vertical {
+    background: rgb(131,179,249);
+    width: 10px;
+    border-radius: 5px;
+    border: none;
+}
+/*横向滚动条上面的滑块*/
+QScrollBar::handle:horizontal {
+    background: rgba(0, 0, 0, 50);
+    height: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/*当鼠标放到滚动条滑块上面时改变透明度实现颜色的深浅变化*/
+QScrollBar::handle:vertical:hover,QScrollBar::handle:horizontal:hover {
+    background: #6A6AFF;
+}
+
+/*纵向滚动条下部分块*/
+QScrollBar::add-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条后面部分块*/
+QScrollBar::add-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条上面部分块*/
+QScrollBar::sub-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条左部分块*/
+QScrollBar::sub-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条顶部三角形位置*/
+QScrollBar::sub-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: top;
+}
+/*横向滚动条左侧三角形位置*/
+QScrollBar::sub-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: left;
+}
+
+/*纵向滚动条下面三角形部分*/
+QScrollBar::add-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: bottom;
+}
+/*横向滚动条右边的三角形部分*/
+QScrollBar::add-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: right;
+}
+</string>
+               </property>
+               <property name="widgetResizable">
+                <bool>true</bool>
+               </property>
+               <widget class="QWidget" name="configscrollAreaWidgetContents">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>1220</width>
+                  <height>1019</height>
+                 </rect>
+                </property>
+                <layout class="QVBoxLayout" name="verticalLayout_9">
+                 <item>
+                  <widget class="QWidget" name="widget" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout">
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_2">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> 密码 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> 账号 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="user_lineEdit">
+                      <property name="maximumSize">
+                       <size>
+                        <width>500</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QPushButton" name="checklogin_Button">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>检查登录</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="password_lineEdit">
+                      <property name="maximumSize">
+                       <size>
+                        <width>500</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="echoMode">
+                       <enum>QLineEdit::PasswordEchoOnEdit</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="3">
+                     <widget class="QLabel" name="label_6">
+                      <property name="text">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QPushButton" name="clear_headers_pushButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>清除登录缓存</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" colspan="4">
+                     <widget class="QLabel" name="label_5">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>账号设置</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_2" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_2">
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_9">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>本地下载路径</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QPushButton" name="chooselocalButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>选择路径</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="localdownloadlineEdit">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>不设置则默认在程序目录下载文件夹</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" colspan="3">
+                     <widget class="QLabel" name="label_7">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>本地下载配置</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_3" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_3">
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="Aria2_host">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> Aria2地址 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLabel" name="label_3">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> Aria2密钥 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QLineEdit" name="Aria2_hostlineEdit">
+                      <property name="minimumSize">
+                       <size>
+                        <width>500</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="inputMask">
+                       <string/>
+                      </property>
+                      <property name="placeholderText">
+                       <string notr="true">http://ip</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="4">
+                     <widget class="QPushButton" name="checkaria2_Button">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>检查Aria2连接性</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QLineEdit" name="Aria2_secretlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="echoMode">
+                       <enum>QLineEdit::PasswordEchoOnEdit</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2" colspan="2">
+                     <widget class="QLineEdit" name="Aria2_pathlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>设置为跟Aria2下载路径一致</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="4">
+                     <widget class="QLineEdit" name="Aria2_portlineEdit">
+                      <property name="maximumSize">
+                       <size>
+                        <width>200</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QLabel" name="label_10">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> Aria2下载路径</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="3">
+                     <widget class="QLabel" name="label_4">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> 端口 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0" rowspan="3">
+                     <widget class="QLabel" name="label_8">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="pixmap">
+                       <pixmap resource="res.qrc">:/pic/src/aria2.png</pixmap>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>false</bool>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_6" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_4">
+                    <item row="0" column="0" colspan="3">
+                     <widget class="QLabel" name="label_12">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>外部扩展设置</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QPushButton" name="choosepotButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>选择路径</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="IDMlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_11">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> Potplayer路径 </string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QPushButton" name="chooseidmpushButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>选择路径</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_13">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>45</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string> IDM路径 </string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="Potplayer_pathlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_7" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_6">
+                    <item row="3" column="1">
+                     <widget class="QLineEdit" name="Proxy__admin_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>未设置则留空</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="4">
+                     <widget class="QPushButton" name="check_sock_pushButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>检查代理连接</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2">
+                     <widget class="QLabel" name="label_22">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>密码</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="label_21">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>用户名</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" colspan="6">
+                     <widget class="QLabel" name="label_18">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>代理设置(重启生效)</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="Proxy_ip_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="4">
+                     <widget class="QLineEdit" name="Proxy_pass_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>未设置则留空</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_19">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>代理地址</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QComboBox" name="Proxy_type_comboBox">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">QComboBox {
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 1px 2px 1px 2px; 
+    min-width: 9em;   
+}
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+QComboBox::down-arrow {
+    image: url(:/pic/src/三角.png);
+width: 20px;
+}</string>
+                      </property>
+                      <property name="currentText">
+                       <string>None</string>
+                      </property>
+                      <item>
+                       <property name="text">
+                        <string>None</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>http</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>socks4</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>socks5</string>
+                       </property>
+                      </item>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_20">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>代理类型</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QLabel" name="label_23">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>端口</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="4">
+                     <widget class="QLineEdit" name="Proxy_port_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_8" native="true">
+                   <property name="styleSheet">
+                    <string notr="true">.QWidget{
+border:3px ridge #E0E0E0;
+border-radius:15px;
+}
+</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_5">
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="label_15">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>用户名</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="4">
+                     <widget class="QLineEdit" name="webdav_passlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="echoMode">
+                       <enum>QLineEdit::Password</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="7">
+                     <widget class="QPushButton" name="change_webdav_pushButton">
+                      <property name="styleSheet">
+                       <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                      </property>
+                      <property name="text">
+                       <string>开启Webdav</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1" colspan="7">
+                     <widget class="QLabel" name="label_14">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Webdav</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="3">
+                     <widget class="QLabel" name="label_16">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>密码</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <widget class="QLineEdit" name="webdav_adminlineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="5">
+                     <widget class="QLabel" name="label_17">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>端口</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="6">
+                     <widget class="QLineEdit" name="webdav_portlineEdit">
+                      <property name="maximumSize">
+                       <size>
+                        <width>200</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_9" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_7">
+                    <item row="1" column="2">
+                     <widget class="QLineEdit" name="nginx_url_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>不设置请留空，示例：https://go.weinb.top/api</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_24">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>API反代地址</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <widget class="QLineEdit" name="usernginx_url_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>不设置请留空，示例：https://go.weinb.top/user</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_26">
+                      <property name="font">
+                       <font>
+                        <pointsize>13</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>User反代地址</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" colspan="4">
+                     <widget class="QLabel" name="label_25">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>自定义反代(重启生效)</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_10" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QPushButton" name="saveconfig_Button">
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:10px;
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>保存配置</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_5">
+            <attribute name="title">
+             <string>输出台</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QTextBrowser" name="outprint_textBrowser">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">/*QScrollBar Style*/
+
+/*纵向滚动条*/
+QScrollBar:vertical {
+    background: transparent; /*背景透明*/
+    width: 10px; /*宽度*/
+    margin: 0px 0px 0px 0px; /**/
+    padding-top: 12px; /*距离上面12px*/
+    padding-bottom: 12px; /*距离底部12px*/
+}
+/*横向滚动条*/
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /*高度*/
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px; /*距离左边12px*/
+    padding-right: 12px; /*距离右边12px*/
+}
+
+/*当鼠标放到纵向或者横向滚动条上面时*/
+QScrollBar:vertical:hover,QScrollBar:horizontal:hover {
+    background: rgba(0, 0, 0, 30); /*修改背景透明度 30*/
+    border-radius: 5px; /*圆角*/
+}
+
+/*纵向滚动条上面的滑块*/
+QScrollBar::handle:vertical {
+    background: rgb(131,179,249);
+    width: 10px;
+    border-radius: 5px;
+    border: none;
+}
+/*横向滚动条上面的滑块*/
+QScrollBar::handle:horizontal {
+    background: rgba(0, 0, 0, 50);
+    height: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/*当鼠标放到滚动条滑块上面时改变透明度实现颜色的深浅变化*/
+QScrollBar::handle:vertical:hover,QScrollBar::handle:horizontal:hover {
+    background: #6A6AFF;
+}
+
+/*纵向滚动条下部分块*/
+QScrollBar::add-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条后面部分块*/
+QScrollBar::add-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条上面部分块*/
+QScrollBar::sub-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条左部分块*/
+QScrollBar::sub-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条顶部三角形位置*/
+QScrollBar::sub-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: top;
+}
+/*横向滚动条左侧三角形位置*/
+QScrollBar::sub-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: left;
+}
+
+/*纵向滚动条下面三角形部分*/
+QScrollBar::add-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: bottom;
+}
+/*横向滚动条右边的三角形部分*/
+QScrollBar::add-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: right;
+}
+</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_6">
+            <attribute name="title">
+             <string>关于</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QTextBrowser" name="textBrowser">
+               <property name="styleSheet">
+                <string notr="true">/*QScrollBar Style*/
+
+/*纵向滚动条*/
+QScrollBar:vertical {
+    background: transparent; /*背景透明*/
+    width: 10px; /*宽度*/
+    margin: 0px 0px 0px 0px; /**/
+    padding-top: 12px; /*距离上面12px*/
+    padding-bottom: 12px; /*距离底部12px*/
+}
+/*横向滚动条*/
+QScrollBar:horizontal {
+    background: transparent;
+    height: 10px; /*高度*/
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px; /*距离左边12px*/
+    padding-right: 12px; /*距离右边12px*/
+}
+
+/*当鼠标放到纵向或者横向滚动条上面时*/
+QScrollBar:vertical:hover,QScrollBar:horizontal:hover {
+    background: rgba(0, 0, 0, 30); /*修改背景透明度 30*/
+    border-radius: 5px; /*圆角*/
+}
+
+/*纵向滚动条上面的滑块*/
+QScrollBar::handle:vertical {
+    background: rgb(131,179,249);
+    width: 10px;
+    border-radius: 5px;
+    border: none;
+}
+/*横向滚动条上面的滑块*/
+QScrollBar::handle:horizontal {
+    background: rgba(0, 0, 0, 50);
+    height: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+/*当鼠标放到滚动条滑块上面时改变透明度实现颜色的深浅变化*/
+QScrollBar::handle:vertical:hover,QScrollBar::handle:horizontal:hover {
+    background: #6A6AFF;
+}
+
+/*纵向滚动条下部分块*/
+QScrollBar::add-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条后面部分块*/
+QScrollBar::add-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条上面部分块*/
+QScrollBar::sub-page:vertical {
+    width: 10px;
+    background: transparent;
+}
+/*横向滚动条左部分块*/
+QScrollBar::sub-page:horizontal {
+    height: 10px;
+    background: transparent;
+}
+/*纵向滚动条顶部三角形位置*/
+QScrollBar::sub-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: top;
+}
+/*横向滚动条左侧三角形位置*/
+QScrollBar::sub-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: left;
+}
+
+/*纵向滚动条下面三角形部分*/
+QScrollBar::add-line:vertical {
+    height: 12px;
+    width: 10px;
+    background: transparent;
+    subcontrol-position: bottom;
+}
+/*横向滚动条右边的三角形部分*/
+QScrollBar::add-line:horizontal {
+    height: 10px;
+    width: 12px;
+    background: transparent;
+    subcontrol-position: right;
+}
+</string>
+               </property>
+               <property name="html">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;# 软件介绍&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;Pikpakdown是基于Python编写的Pikapk的第三方工具(Win)，所有信息来源均来自对官方app接口的调用，不对用户信息、文件进行保存，目前尚未整理开源，介意请勿使用。欢迎加入[Pikpak官方群组](https://t.me/pikpak_userservice).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;# 更新记录&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;## v2.1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:自定义反代(api接口、user接口)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:清除登录缓存&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:输出台显示:推送日志、错误捕获&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:崩溃错误日志保存(程序目录log.txt)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:云盘文件操作:剪切、复制、删除(支持多选)、新建文件夹、重命名，支持右键菜单&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:离线下载界面文件图标加载&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:离线下载界面悬浮显示预览图&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增:删除离线任务&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:点击文件树根目录卡死&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:我的文件列表显示已删除的回收站文件(感谢@LHQ666888反馈)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:悬停显示预览封面的偶发性卡死&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:根目录刷新时目录树不展开&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化:设置页滑动条样式&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化:端口数字限制&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;## v2.0&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：UI更改&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：文件夹目录树、与tablewidget同步操作&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：内置mpv播放器、双击播放&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：连接延迟查看，标题栏显示与服务器连接延迟&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：自定义代理，支持socks5，socks4，http&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：鼠标悬停显示预览封面图&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：加载等待动画&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：主页刷新列表、获取文件icon、返回上级目录、文件夹进入、刷新离线下载、检查登录线程化&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：配置修改时实时自动保存&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：未设置路径情况下提交任务弹出提示&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：设置页滚动&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复：取消选择路径时闪退&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;## v1.1.3&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：任务线程化，进度90%&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;优化：table宽度自适应&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复：文件夹显示不全&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复：复制单文件下载链接失败&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;## v1.1.2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:webdav第二次打开才能正确验证的Bug&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:内部多选下载卡死&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;修复:软件及webdav文件夹文件显示不全&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增：名称、大小、时间排序&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;## v1.1&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;支持文件夹内文件夹、文件下载，保持路径(内部下载、aria2、IDM)，迅雷不支持保持文件夹结构&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;新增只读型webdav，支持rclone、raidrive、AE&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;鼠标悬停显示文件全名&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;# 软件介绍&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;主要功能:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 软件自带内部下载&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 推送迅雷&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 推送IDM&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 推送Potplayer&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 推送Aria2&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 多选文件推送(多选文件中不支持文件夹)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 单个文件夹整体推送，保持文件夹的目录结构进行推送下载&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] 只读型webdav生成&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'SimSun'; font-size:16pt;&quot;&gt;- [X] Pikpak秒传链接生成、导入&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QPushButton" name="visitmeButton">
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>访问作者博客</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="visitpikpakButton">
+                 <property name="styleSheet">
+                  <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+                 </property>
+                 <property name="text">
+                  <string>加入官方群</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>user_lineEdit</tabstop>
+  <tabstop>password_lineEdit</tabstop>
+  <tabstop>localdownloadlineEdit</tabstop>
+  <tabstop>Aria2_hostlineEdit</tabstop>
+  <tabstop>Aria2_portlineEdit</tabstop>
+  <tabstop>Aria2_secretlineEdit</tabstop>
+  <tabstop>Aria2_pathlineEdit</tabstop>
+  <tabstop>Potplayer_pathlineEdit</tabstop>
+  <tabstop>IDMlineEdit</tabstop>
+  <tabstop>webdav_adminlineEdit</tabstop>
+  <tabstop>webdav_passlineEdit</tabstop>
+  <tabstop>webdav_portlineEdit</tabstop>
+  <tabstop>Proxy_ip_lineEdit</tabstop>
+  <tabstop>Proxy_port_lineEdit</tabstop>
+  <tabstop>Proxy__admin_lineEdit</tabstop>
+  <tabstop>Proxy_pass_lineEdit</tabstop>
+  <tabstop>pushMaxButton</tabstop>
+  <tabstop>checklogin_Button</tabstop>
+  <tabstop>tohidepushButton</tabstop>
+  <tabstop>clear_headers_pushButton</tabstop>
+  <tabstop>chooselocalButton</tabstop>
+  <tabstop>exitapppushButton</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>checkaria2_Button</tabstop>
+  <tabstop>refreshButton</tabstop>
+  <tabstop>backButton</tabstop>
+  <tabstop>filetreeWidget</tabstop>
+  <tabstop>addgcidButton</tabstop>
+  <tabstop>choosepotButton</tabstop>
+  <tabstop>chooseidmpushButton</tabstop>
+  <tabstop>sharegcidButton</tabstop>
+  <tabstop>tableWidget</tabstop>
+  <tabstop>change_webdav_pushButton</tabstop>
+  <tabstop>uploadfileButton</tabstop>
+  <tabstop>offlinerefreshButton</tabstop>
+  <tabstop>offlineWidget</tabstop>
+  <tabstop>check_sock_pushButton</tabstop>
+  <tabstop>addmagnetButton</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>Proxy_type_comboBox</tabstop>
+  <tabstop>downloadtableWidget</tabstop>
+  <tabstop>visitmeButton</tabstop>
+  <tabstop>visitpikpakButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
+ <connections/>
+</ui>

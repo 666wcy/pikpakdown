@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="WsgiDAV/{{ version }}">
+  <title>WsgiDAV - Index of {{ display_path }} </title>
+  <link rel="shortcut icon" href="{{ htdocs }}/favicon.ico">
+  <link rel="stylesheet" href="{{ htdocs }}/style.css" />
+  <script defer src="{{ htdocs }}/script.js"></script>
+  <style type="text/css"> A {behavior: url(#default#AnchorClick);} </style>
+</head>
+
+<body onload="onLoad()">
+
+  <h1>
+    {%- if config.icon %}
+    <img class="logo" alt="WsgiDAV" title="WsgiDAV" src="{{ htdocs }}/logo.png">
+    {% endif -%}
+    Index of {{ display_path }}
+  </h1>
+
+  {% if config.davmount or config.ms_mount %}
+  <p class="links">
+    {%- if config.davmount %}
+      <a title="Open this folder in a registered WebDAV client." href="{{ url }}?davmount">Mount</a>
+    {% endif -%}
+    {%- if config.ms_mount %}
+      {% if config.davmount %} &#8211; {% endif %}
+      <a title="Open as Web Folder (requires Microsoft Internet Explorer 7 or older!)"
+          href="" folder="{{ url }}">Open as Web Folder</a>
+    {% endif %}
+  </p>
+  {% endif %}
+
+  {%- if user_name and config.show_user %}
+  <p class="auth-user">
+    Authenticated user: "{{user_name}}", realm: "{{realm}}", access: {{access}}.
+    {%- if is_authenticated and config.show_logout %}
+      <a title="Logout current user" href="{{ url }}?logout" target="_blank">Logout</a>
+    {% endif -%}
+    {%- if user_roles %}
+      , roles: {{ user_roles }}
+    {% endif -%}
+  </p>
+  {% endif -%}
+
+  <hr>
+
+  <table class="dir-listing" onclick="return onClickTable(event)">
+
+    <colgroup>
+      <col>
+      <col>
+      <col class="right">
+      <col class="right">
+    </colgroup>
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Size</th>
+        <th>Last modified</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {%- if parent_url %}
+      <tr class="directory">
+          <td>
+            <a href="{{ parent_url }}">..</a>
+          </td>
+        <td>Directory</td>
+        <td>-</td>
+        <td></td>
+      </tr>
+      {% endif -%}
+
+      {% for row in rows %}
+      <tr class="{{ row.tr_class }}">
+        <td>
+          <a class="{{ row.a_class }}" href="{{row.href}}" {% if row.ofe_prefix %} data-ofe="{{row.ofe_prefix}}" {% endif %} >
+              {{row.display_name}}
+          </a>
+        </td>
+        <td>{{ row.display_type }}</td>
+        <td>{{ row.str_size }}</td>
+        <td>{{ row.str_modified }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  {% if trailer %}
+  <p class="trailer">{{ trailer }}</p>
+  {% endif %}
+
+  <object id="winFirefoxPlugin" type="application/x-sharepoint"
+      width="0" height="0" style="visibility: hidden;"></object>
+
+</body>
+</html>

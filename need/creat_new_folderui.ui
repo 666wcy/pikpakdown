@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>New_folder_Dialog</class>
+ <widget class="QDialog" name="New_folder_Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>621</width>
+    <height>154</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#widget {
+    background-color: white;
+border:1px solid red;
+    border-radius: 10px;
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+	color: rgb(131,179,249);
+font: '新宋体';
+font-weight:bold;
+padding-top:8px;
+padding-bottom:8px;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>新建文件夹</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="foder_name_lineEdit">
+          <property name="placeholderText">
+           <string>输入文件夹昵称</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="creat_folderButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+            </property>
+            <property name="text">
+             <string>提交请求</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="closeButton">
+            <property name="styleSheet">
+             <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+            </property>
+            <property name="text">
+             <string>关闭窗口</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

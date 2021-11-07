@@ -1,0 +1,22 @@
+<RCC>
+  <qresource prefix="pic">
+    <file>src/还原.png</file>
+    <file>src/loading.gif</file>
+    <file>src/重命名.png</file>
+    <file>src/剪切.png</file>
+    <file>src/pikpak.png</file>
+    <file>src/三角.png</file>
+    <file>src/文件夹.png</file>
+    <file>src/首页.png</file>
+    <file>src/开始.png</file>
+    <file>src/暂停.png</file>
+    <file>src/loading.gif</file>
+    <file>src/删除.png</file>
+    <file>src/复制.png</file>
+    <file>src/aria2.png</file>
+    <file>src/potplayer.png</file>
+    <file>src/下载.png</file>
+    <file>src/IDM.jpg</file>
+    <file>src/Thunder11-0.png</file>
+  </qresource>
+</RCC>

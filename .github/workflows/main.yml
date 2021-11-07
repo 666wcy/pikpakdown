@@ -1,0 +1,490 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build app
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    
+    tags:
+      - 'v*.*.*'
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build_app_32:
+    name: Built app 32
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x86'
+
+
+      - name: Built app 32
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone  --assume-yes-for-downloads --show-progress --show-memory --nofollow-imports --windows-disable-console --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --include-data-dir=copy=""  --plugin-enable=pyqt5 --output-dir=out pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win32.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win32.zip"
+
+  build_app_32_all:
+    name: Built app 32 all
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x86'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 32 all
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone  --assume-yes-for-downloads --follow-imports   --windows-disable-console --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win32_all.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win32_all.zip"
+
+  build_app_32_all_onefile:
+      name: Built app 32 all onefile
+      # The type of runner that the job will run on
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v2
+
+
+        - name: Set up Python 3.8
+          uses: actions/setup-python@v2
+          with:
+            # Semantic version range syntax or exact version of a Python version
+            python-version: '3.8'
+            # Optional - x64 or x86 architecture, defaults to x64
+            architecture: 'x86'
+        # You can test your matrix by printing the current Python version
+
+                   
+
+        - name: Built app 32 all onefile
+          run:  |
+
+            python -c "import sys; print(sys.version)"
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install nuitka
+
+            
+
+            python -m nuitka --onefile --assume-yes-for-downloads --follow-imports  --windows-disable-console --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""  --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+            7z.exe a -r "pikpakdown ${{ github.ref }}_win32_all_onefile.zip" "./out/pikpakdown.dist/*"
+
+
+
+        - name: Release
+          uses: softprops/action-gh-release@v1
+          if: startsWith(github.ref, 'refs/tags/')
+          with:
+            files: "pikpakdown ${{ github.ref }}_win32_all_onefile.zip"
+
+
+  build_app_32_all_onefile_test:
+    name: Built app 32 all test
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x86'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 32 all test
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone   --assume-yes-for-downloads --follow-imports   --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win32_all_onefile_test.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win32_all_onefile_test.zip"
+
+
+  build_app_32_onefile:
+    name: Built app 32 onefile
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x86'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 32 onefile
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --onefile --assume-yes-for-downloads --windows-disable-console --nofollow-imports  --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5   --include-data-dir=copy=""  --output-dir=out  pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win32_onefile.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win32_onefile.zip"
+
+
+  build_app_32_test:
+    name: Built app 32 test
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x86'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 32 test
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --assume-yes-for-downloads --nofollow-imports  --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --include-data-dir=copy=""  --plugin-enable=pyqt5 --output-dir=out pikpakdown.py
+
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win32_test.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win32_test.zip"
+
+  build_app_64:
+    name: Built app 64
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --mingw64 --assume-yes-for-downloads --nofollow-imports --windows-disable-console --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --include-data-dir=copy=""  --plugin-enable=pyqt5 --output-dir=out pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64.zip"
+
+  build_app_64_all:
+    name: Built app 64 all
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 all
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --mingw64  --assume-yes-for-downloads --follow-imports   --windows-disable-console --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64_all.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64_all.zip"
+
+
+  build_app_64_all_onefile:
+    name: Built app 64 all onefile
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 all onefile
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --onefile --mingw64 --assume-yes-for-downloads --follow-imports  --windows-disable-console --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""  --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64_all_onefile.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64_all_onefile.zip"
+
+
+  build_app_64_all_test:
+    name: Built app 64 all test
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 all test
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --mingw64  --assume-yes-for-downloads --follow-imports   --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64_all_test.zip" "./out/pikpakdown.dist/*"
+
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64_all_test.zip"
+
+
+  build_app_64_onefile:
+    name: Built app 64 onefile
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 onefile
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --onefile --mingw64 --assume-yes-for-downloads --windows-disable-console --nofollow-imports  --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5   --include-data-dir=copy=""  --output-dir=out  pikpakdown.py
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64_onefile.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64_onefile.zip"
+
+
+  build_app_64_test:
+    name: Built app 64 test
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.8'
+          # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+      # You can test your matrix by printing the current Python version
+
+                 
+
+      - name: Built app 64 test
+        run:  |
+
+          python -c "import sys; print(sys.version)"
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka
+
+          
+
+          python -m nuitka --standalone --mingw64 --assume-yes-for-downloads --nofollow-imports  --windows-icon-from-ico=favicon.ico --follow-import-to=need --follow-import-to=PyQt5 --plugin-enable=qt-plugins --plugin-enable=numpy --include-data-dir=copy=""  --plugin-enable=pyqt5 --output-dir=out pikpakdown.py
+
+
+          7z.exe a -r "pikpakdown ${{ github.ref }}_win64_test.zip" "./out/pikpakdown.dist/*"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "pikpakdown ${{ github.ref }}_win64_test.zip"
+
