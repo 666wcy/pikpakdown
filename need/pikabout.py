@@ -650,3 +650,45 @@ def back_tash(file_id):
         delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data)
 
     return delete_files_result.json()
+
+
+def get_quate_info():
+    login_headers = get_headers()
+
+    get_quate_info_url = f"{pikpak_api_url}/drive/v1/about"
+
+    get_quate_info_result = requests.get(url=get_quate_info_url, headers=login_headers)
+
+    if "error" in get_quate_info_result.json():
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+        print(f"INFO ({new_time}):登录过期，正在重新登录")
+        login()
+        login_headers = get_headers()
+        get_quate_info_result = requests.get(url=get_quate_info_url, headers=login_headers)
+
+    return get_quate_info_result.json()
+
+def get_my_vip():
+    login_headers = get_headers()
+
+
+
+    me_url =  f"{pikpak_api_url}/drive/v1/privilege/vip"
+    me_result = requests.get(url=me_url, headers=login_headers)
+    if "error" in me_result.json():
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+        print(f"INFO ({new_time}):登录过期，正在重新登录")
+        login()
+        login_headers = get_headers()
+
+
+
+        me_result = requests.get(url=me_url, headers=login_headers)
+
+
+    return me_result.json()
+
+
+

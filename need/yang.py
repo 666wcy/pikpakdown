@@ -209,7 +209,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.filetreeWidget.sizePolicy().hasHeightForWidth())
         self.filetreeWidget.setSizePolicy(sizePolicy)
         self.filetreeWidget.setMinimumSize(QtCore.QSize(400, 0))
-        self.filetreeWidget.setMaximumSize(QtCore.QSize(700, 16777215))
+        self.filetreeWidget.setMaximumSize(QtCore.QSize(450, 16777215))
         self.filetreeWidget.setStyleSheet("/*QScrollBar Style*/\n"
 "\n"
 "/*纵向滚动条*/\n"
@@ -308,6 +308,50 @@ class Ui_Form(object):
         self.filetreeWidget.setObjectName("filetreeWidget")
         self.filetreeWidget.headerItem().setText(0, "1")
         self.verticalLayout_3.addWidget(self.filetreeWidget)
+        self.widget_12 = QtWidgets.QWidget(self.widget_4)
+        self.widget_12.setMinimumSize(QtCore.QSize(0, 0))
+        self.widget_12.setMaximumSize(QtCore.QSize(450, 16777215))
+        self.widget_12.setStyleSheet(".QWidget {\n"
+"border:1px solid #B9B9FF;\n"
+"border-radius:4px;\n"
+"}")
+        self.widget_12.setObjectName("widget_12")
+        self.gridLayout_9 = QtWidgets.QGridLayout(self.widget_12)
+        self.gridLayout_9.setObjectName("gridLayout_9")
+        self.quota_label = QtWidgets.QLabel(self.widget_12)
+        self.quota_label.setMinimumSize(QtCore.QSize(200, 0))
+        self.quota_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.quota_label.setFont(font)
+        self.quota_label.setObjectName("quota_label")
+        self.gridLayout_9.addWidget(self.quota_label, 0, 0, 1, 1)
+        self.quate_progressBar = QtWidgets.QProgressBar(self.widget_12)
+        self.quate_progressBar.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.quate_progressBar.setFont(font)
+        self.quate_progressBar.setStyleSheet("QProgressBar::chunk {   \n"
+" background-color:rgb(58, 154, 255);\n"
+"border-radius:4px;\n"
+"}\n"
+"QProgressBar {   \n"
+"border:1px solid #B9B9FF;\n"
+"      background:white;\n"
+"      text-align:center;   /*文本的位置*/\n"
+"      color: black;  /*文本颜色*/\n"
+"border-radius:10px;\n"
+"}")
+        self.quate_progressBar.setProperty("value", 0)
+        self.quate_progressBar.setObjectName("quate_progressBar")
+        self.gridLayout_9.addWidget(self.quate_progressBar, 0, 1, 1, 1)
+        self.vip_time_label = QtWidgets.QLabel(self.widget_12)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.vip_time_label.setFont(font)
+        self.vip_time_label.setObjectName("vip_time_label")
+        self.gridLayout_9.addWidget(self.vip_time_label, 2, 0, 1, 2)
+        self.verticalLayout_3.addWidget(self.widget_12)
         self.horizontalLayout_3.addWidget(self.widget_4)
         self.widget = QtWidgets.QWidget(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
@@ -1545,6 +1589,8 @@ class Ui_Form(object):
         self.tohidepushButton.setText(_translate("Form", "-"))
         self.pushMaxButton.setText(_translate("Form", "□"))
         self.exitapppushButton.setText(_translate("Form", "X"))
+        self.quota_label.setText(_translate("Form", "容量使用:"))
+        self.vip_time_label.setText(_translate("Form", "会员到期时间:"))
         self.root_label.setText(_translate("Form", "根目录"))
         self.sharegcidButton.setText(_translate("Form", "导出当前秒链"))
         self.refreshButton.setText(_translate("Form", "刷新列表"))

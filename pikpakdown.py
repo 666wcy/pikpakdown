@@ -59,7 +59,8 @@ import time
 import re
 from PyQt5.QtWidgets import QMessageBox
 from need.pikabout import check_login, get_list, get_download_url,back_tash, \
-    get_offline_list, magnet_upload, gcid_hash_file,delete_task,get_trash_list,delete_tash, \
+    get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,\
+    delete_task,get_trash_list,delete_tash,get_my_vip, \
     get_headers, login, pikpak_add_hash, get_folder_all_file,creat_folder,copy_files,move_files,delete_files,rename_file
 
 from need.plugins import thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker
@@ -1810,6 +1811,26 @@ class Delete_task_Worker(QThread):
             (type, value, traceback) = sys.exc_info()
             sys.excepthook(type, value, traceback)
 
+
+#刷新容量进程
+class Get_quate_task_Worker(QThread):
+    valueChanged = pyqtSignal(dict)  # 值变化信号
+
+    def __init__(self):
+        super(Get_quate_task_Worker, self).__init__()
+
+
+    def run(self):
+        try:
+            result = get_quate_info()
+            vip_info = get_my_vip()
+            trans_dict = {"quate":result,"user":vip_info}
+            self.valueChanged.emit(trans_dict)  # 发送信号
+        except:
+
+            (type, value, traceback) = sys.exc_info()
+            sys.excepthook(type, value, traceback)
+
 #圆形进度条
 class PercentProgressBar(QWidget):
     MinValue = 0
@@ -2057,8 +2078,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.setupUi(self)
 
-        '''sys.stdout = EmittingStr(textWritten=self.outputWritten)
-        sys.stderr = EmittingStr(textWritten=self.outputWritten)'''
+        sys.stdout = EmittingStr(textWritten=self.outputWritten)
+        sys.stderr = EmittingStr(textWritten=self.outputWritten)
 
         # dialog相关
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
@@ -2097,6 +2118,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.paste_id_list = []
 
         self.download_list = []
+
+        self.my_info = True
 
         #悬浮图片
         self.Mouse_maintable_Worker = None
@@ -2441,8 +2464,10 @@ class MyPyQT_Form(QDialog, Ui_Form):
     def start_get_thetime(self, timeamp):
         timeamp = str(timeamp)
         time1 = timeamp.split("T")[0]
-        time2 = str(timeamp.split("T")[1]).split(".")[0]
-
+        if "." in timeamp:
+            time2 = str(timeamp.split("T")[1]).split(".")[0]
+        else:
+            time2 = str(timeamp.split("T")[1]).split("+")[0]
         return f"{time1} {time2}"
 
     #添加检查网络延迟进程
@@ -3747,10 +3772,27 @@ class MyPyQT_Form(QDialog, Ui_Form):
         if wait_screen.isVisible():
             wait_screen.close()
 
+    def get_my_quate_back(self,result):
+
+
+        quate_text = f"容量使用:{hum_convert(int(result['quate']['quota']['usage']))}/{hum_convert(int(result['quate']['quota']['limit']))}"
+        self.quota_label.setText(quate_text)
+
+
+        self.quate_progressBar.setValue(int(int(result['quate']['quota']['usage'])/int(result['quate']['quota']['limit'])*100))
+        vip_text = f"会员到期时间:{self.start_get_thetime(str(result['user']['data']['expire']))}"
+
+        self.vip_time_label.setText(vip_text)
+
+
     # 刷新主页当前目录，进程
     def new_main_folder_call(self):
         self.show_loading()
-
+        if self.my_info:
+            self.Get_quate_task_Worker = Get_quate_task_Worker()
+            self.Get_quate_task_Worker.valueChanged.connect(self.get_my_quate_back)
+            self.Get_quate_task_Worker.start()
+            self.my_info=False
         now_path = self.root_label.text()
         for a in self.all_folder_tree_list:
             if now_path == f"{a['path']}/{a['name']}":
@@ -3760,7 +3802,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
             folder_id = ""
 
         self.clear_table()
-        #### 创建下载线程
+        #### 创建主页刷新线程
         self.refreshThread = refreshThread(folder_id=folder_id)
         self.refreshThread.refresh_proess_signal.connect(self.new_main_folder_back)
         self.refreshThread.start()
