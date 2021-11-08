@@ -131,7 +131,7 @@ jobs:
 
 
   build_app_32_all_onefile_test:
-    name: Built app 32 all test
+    name: Built app 32 onefile test
     # The type of runner that the job will run on
     runs-on: windows-latest
     steps:
@@ -159,7 +159,7 @@ jobs:
 
           
 
-          python -m nuitka --standalone   --assume-yes-for-downloads --follow-imports   --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy32=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
+          python -m nuitka --onefile   --assume-yes-for-downloads --follow-imports   --windows-icon-from-ico=favicon.ico --plugin-enable=qt-plugins --plugin-enable=numpy --plugin-enable=pyqt5  --include-data-dir=allcopy32=""   --nofollow-import-to=wsgidav --output-dir=out pikpakdown.py
 
           7z.exe a -r "pikpakdown ${{ github.ref }}_win32_all_onefile_test.zip" "./out/pikpakdown.dist/*"
 
