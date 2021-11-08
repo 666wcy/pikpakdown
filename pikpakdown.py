@@ -2,8 +2,12 @@
 
 import json
 import os
+import socket
+import socks
 app_config = {}
 icon_content = {}
+proxies = {'http': None, 'https': None}
+
 
 def set_config():
     with open("config.json", "w") as jsonFile:
@@ -49,6 +53,29 @@ def read_config():
 
 
 read_config()
+
+if app_config['Proxy_type']=="socks5":
+    socks.set_default_proxy(socks.SOCKS5, app_config['Proxy_ip'],
+                            int(app_config['Proxy_port']),
+                            username=app_config['Proxy_admin'],
+                            password=app_config['Proxy_pass'])
+    socket.socket = socks.socksocket
+
+elif app_config['Proxy_type']=="socks4":
+    socks.set_default_proxy(socks.SOCKS4, app_config['Proxy_ip'],
+                            int(app_config['Proxy_port']),
+                            username=app_config['Proxy_admin'],
+                            password=app_config['Proxy_pass'])
+    socket.socket = socks.socksocket
+
+
+elif app_config['Proxy_type']=="http":
+    socks.set_default_proxy(socks.HTTP, app_config['Proxy_ip'],
+                            int(app_config['Proxy_port']),
+                            username=app_config['Proxy_admin'],
+                            password=app_config['Proxy_pass'])
+    socket.socket = socks.socksocket
+
 from need.hashui import Ui_Addhash
 from need.yang import Ui_Form
 from need.magnetui import Ui_MagnetDialog
@@ -92,8 +119,7 @@ import requests
 from urllib.parse import urlparse
 from io import BytesIO
 from subprocess import Popen
-import socket
-import socks
+
 
 import cgitb
 
@@ -307,27 +333,7 @@ border:none;   /*无边框*/
 
 
 
-if app_config['Proxy_type']=="socks5":
-    socks.set_default_proxy(socks.SOCKS5, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
 
-elif app_config['Proxy_type']=="socks4":
-    socks.set_default_proxy(socks.SOCKS4, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
-
-
-elif app_config['Proxy_type']=="http":
-    socks.set_default_proxy(socks.HTTP, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
 
 
 
@@ -576,7 +582,7 @@ class refreshThread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url).content
+                result = requests.get(icon_url, proxies=proxies, timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
@@ -643,7 +649,7 @@ class downloadThread(QThread):
 
     def run(self):
         try:
-            r = requests.get(self.url, stream=True)
+            r = requests.get(self.url, stream=True, proxies=proxies, timeout=5)
             length = float(r.headers['Content-length'])
             f = open(self.file_path, 'wb')
             count = 0
@@ -790,7 +796,7 @@ class uploadThread(QThread):
                 "objProvider": {"provider": "UPLOAD_TYPE_UNKNOWN"}}
             if self.folder_id != "":
                 upload_url_data["parent_id"] = self.folder_id
-            upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data)
+            upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data, proxies=proxies, timeout=5)
 
             if "error" in upload_result.json():
 
@@ -800,7 +806,7 @@ class uploadThread(QThread):
                 print(f"Info ({new_time}):登录过期，正在重新登录")
                 login()
                 login_headers = get_headers()
-                upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data)
+                upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data, proxies=proxies, timeout=5)
 
             if 'resumable' in upload_result.json():
                 auth = StsAuth(access_key_id=upload_result.json()['resumable']['params']['access_key_id'],
@@ -1262,7 +1268,7 @@ class Add_download_Worker(QThread):
 
             else:
                 the_url = down_url
-                the_filesize = requests.get(the_url, stream=True).headers['Content-Length']
+                the_filesize = requests.get(the_url, stream=True, proxies=proxies, timeout=5).headers['Content-Length']
                 self.valueChanged.emit([down_name, down_url, file_size, the_filesize, ""])
         except:
 
@@ -1451,7 +1457,7 @@ class Mouse_maintable_Worker(QThread):
 
     def run(self):
         try:
-            response = requests.get(self.img_url)  # 将这个图片保存在内存
+            response = requests.get(self.img_url, proxies=proxies, timeout=5)  # 将这个图片保存在内存
 
             # 得到这个图片的base64编码
             ls_f = base64.b64encode(BytesIO(response.content).read())
@@ -1510,14 +1516,16 @@ class Check_proxy_Worker(QThread):
 
 
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                proxy_proxies = proxies
 
                 print(f"Info ({new_time}):未启用代理")
             elif self.Proxy_admin != "":
-                s.proxies = {'https': f"{self.Proxy_type}://{self.Proxy_admin}:{self.Proxy_pass}@{self.Proxy_ip}:{self.Proxy_port}"}
+                proxy_proxies = {'https': f"{self.Proxy_type}://{self.Proxy_admin}:{self.Proxy_pass}@{self.Proxy_ip}:{self.Proxy_port}"}
             else:
-                s.proxies = {'https': f"{self.Proxy_type}://{self.Proxy_ip}:{self.Proxy_port}"}
+                proxy_proxies = {'https': f"{self.Proxy_type}://{self.Proxy_ip}:{self.Proxy_port}"}
             try:
-
+                print(s.proxies)
+                requests.get(url="https://www.baidu.com",proxies=proxy_proxies,timeout=5)
 
                 self.valueChanged.emit(True)  # 发送信号
             except Exception as e:
@@ -1596,7 +1604,7 @@ class offline_Thread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url).content
+                result = requests.get(icon_url, proxies=proxies, timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
@@ -1632,7 +1640,7 @@ class trash_Thread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url).content
+                result = requests.get(icon_url, proxies=proxies, timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
@@ -4054,11 +4062,11 @@ class MyPyQT_Form(QDialog, Ui_Form):
         if wait_screen.isVisible():
             wait_screen.close()
         if check_result:
-            info = f"链接成功"
+            info = f"连接成功"
             self.save_config()
             NotificationWindow.success('PikPakDown', info)
         else:
-            info =f"链接成功"
+            info =f"连接失败"
             NotificationWindow.error('PikPakDown', info)
 
     #检查代理，线程
