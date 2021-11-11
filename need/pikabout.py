@@ -251,6 +251,8 @@ def get_offline_list():
 def magnet_upload(file_url):
     if "\n" in file_url:
         file_list = str(file_url).split("\n")
+        file_num = len(file_list)
+        num = 0
         for a in file_list:
             login_headers = get_headers()
             torrent_url = f"{pikpak_api_url}/drive/v1/files"
@@ -272,6 +274,10 @@ def magnet_upload(file_url):
                 login_headers = get_headers()
                 torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data, proxies=proxies, timeout=5)
 
+            num = num+1
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"INFO ({new_time}):添加离线任务:{num}/{file_num}-<a href=\"{a}\" onclick=\"return false\">磁力链接</a>")
 
     else:
 
@@ -295,7 +301,9 @@ def magnet_upload(file_url):
             login_headers = get_headers()
             torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data, proxies=proxies, timeout=5)
 
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
+        print(f"INFO ({new_time}):添加离线任务:<a href=\"{file_url}\" onclick=\"return false\">磁力链接</a>")
 
 
 def gcid_hash_file(filepath):

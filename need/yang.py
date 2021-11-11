@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1326, 797)
+        Form.resize(1373, 797)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -669,7 +669,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.configscrollAreaWidgetContents = QtWidgets.QWidget()
-        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1220, 1019))
+        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1267, 1019))
         self.configscrollAreaWidgetContents.setObjectName("configscrollAreaWidgetContents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.configscrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1583,7 +1583,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "PikPakDown"))
-        self.titlelabel.setText(_translate("Form", "PikPakDown v2.1.1"))
+        self.titlelabel.setText(_translate("Form", "PikPakDown v2.1"))
         self.pingtitlelabel.setText(_translate("Form", "连接情况:"))
         self.pinginfo_label.setText(_translate("Form", "检测中"))
         self.tohidepushButton.setText(_translate("Form", "-"))

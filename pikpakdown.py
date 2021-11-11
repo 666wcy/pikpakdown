@@ -332,12 +332,6 @@ border:none;   /*无边框*/
 
 
 
-
-
-
-
-
-
 def hum_convert(value):
     value = float(value)
     if value == 0:
@@ -850,6 +844,7 @@ class uploadThread(QThread):
 
 # 添加磁力子弹窗
 class MyMagnet_Form(QDialog, Ui_MagnetDialog):
+    _signal = QtCore.pyqtSignal(str)
     def __init__(self, parent=None):
 
         super(MyMagnet_Form, self).__init__(parent)
@@ -928,15 +923,9 @@ class MyMagnet_Form(QDialog, Ui_MagnetDialog):
         if magnet_url == "":
             QMessageBox.information(self, "提示", "输入框为空")
             return
+        self._signal.emit(magnet_url)
 
-        t1 = threading.Thread(target=magnet_upload, args=(magnet_url,))
-        t1.start()
-        self.magnettextEdit.clear()
 
-        t1 = threading.Thread(target=my_pyqt_form.start_get_offline_status)
-        t1.start()
-
-        QMessageBox.information(self, "提示", "添加任务成功")
         self.close()
 
 
@@ -1430,6 +1419,13 @@ class Wait_Window(QWidget):
         vbox = QVBoxLayout()
         vbox.addWidget(label)
         vbox.setAlignment(Qt.AlignCenter)
+        text_label = QLabel()
+        text_label.setText("双击动画取消加载")
+        text_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
+
+        text_label.setStyleSheet("QLabel{border:1px solid gray;border-radius:8px;}")
+
+        vbox.addWidget(text_label)
         self.setLayout(vbox)
 
         gif = QMovie(':/pic/src/loading.gif')
@@ -1457,7 +1453,7 @@ class Mouse_maintable_Worker(QThread):
 
     def run(self):
         try:
-            response = requests.get(self.img_url, proxies=proxies, timeout=5)  # 将这个图片保存在内存
+            response = requests.get(self.img_url, proxies=proxies)  # 将这个图片保存在内存
 
             # 得到这个图片的base64编码
             ls_f = base64.b64encode(BytesIO(response.content).read())
@@ -1470,9 +1466,7 @@ class Mouse_maintable_Worker(QThread):
             self.valueChanged.emit([self.row, self.column, img_html])
         except:
 
-            (type, value, traceback) = sys.exc_info()
-            sys.excepthook(type, value, traceback)
-
+            None
 
 
 # Mpv播放器
@@ -1586,8 +1580,6 @@ class Check_aria2_Worker(QThread):
 
             (type, value, traceback) = sys.exc_info()
             sys.excepthook(type, value, traceback)
-
-
 
 
 # 离线列表刷新调用
@@ -1820,6 +1812,25 @@ class Delete_task_Worker(QThread):
             sys.excepthook(type, value, traceback)
 
 
+#添加离线任务进程
+class Add_magnet_Worker(QThread):
+
+
+    def __init__(self,magnet_text):
+        super(Add_magnet_Worker, self).__init__()
+
+        self.magnet_text = magnet_text
+
+
+    def run(self):
+        try:
+            magnet_upload(file_url=self.magnet_text)
+
+        except:
+
+            (type, value, traceback) = sys.exc_info()
+            sys.excepthook(type, value, traceback)
+
 #刷新容量进程
 class Get_quate_task_Worker(QThread):
     valueChanged = pyqtSignal(dict)  # 值变化信号
@@ -1938,7 +1949,7 @@ class PercentProgressBar(QWidget):
         # 绘制当前进度圆弧
         pen.setColor(self.BorderColor)
         painter.setPen(pen)
-        painter.drawArc(rect, 0, -arcLength * 16)
+        painter.drawArc(rect, 0, int(-arcLength * 16))
 
         # 绘制进度圆弧前面的小圆
         if self.ShowSmallCircle:
@@ -2168,8 +2179,19 @@ class MyPyQT_Form(QDialog, Ui_Form):
             f.close()
         cursor = self.outprint_textBrowser.textCursor()
         cursor.movePosition(QTextCursor.End)
-        cursor.insertText(text)
+
+
+        text = str(text).replace(
+            "INFO", f"<br><font color=\"#01B468\">INFO</font>"
+        ).replace(
+            "Info",f"<br><font color=\"#01B468\">INFO</font>").replace(
+            "Error",f"<br><font color=\"#FF2D2D\">Error</font>"
+        )
+        #cursor.insertText(text)
+        cursor.insertHtml(text)
         self.outprint_textBrowser.setTextCursor(cursor)
+
+
         self.outprint_textBrowser.ensureCursorVisible()
 
 
@@ -2650,9 +2672,12 @@ class MyPyQT_Form(QDialog, Ui_Form):
             it_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
 
 
-
-            img_url = QTableWidgetItem(a["reference_resource"]["thumbnail_link"])  # 创建表格项---文本项目
-            img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            if a["reference_resource"]["thumbnail_link"]!="":
+                img_url = QTableWidgetItem(a["reference_resource"]["thumbnail_link"])  # 创建表格项---文本项目
+                img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            else:
+                img_url = QTableWidgetItem("")  # 创建表格项---文本项目
+                img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
 
             self.offlineWidget.insertRow(row_cnt)
 
@@ -2692,9 +2717,10 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     #离线页面table鼠标悬停,调用线程
     def choose_offlineWidget_call(self, row, column):
-
-        img_url = self.offlineWidget.item(row,6).text()
-
+        try:
+            img_url = self.offlineWidget.item(row,6).text()
+        except:
+            return
 
         if img_url not in self.check_mouse_offtable_list:
             if img_url!=""  and column==0 :
@@ -2729,12 +2755,25 @@ class MyPyQT_Form(QDialog, Ui_Form):
         QDesktopServices.openUrl(QUrl("https://t.me/pikpak_userservice"))
 
 
+    def add_magnet_back(self,result):
+        #self.start_get_offline_status_call()
+        self.Add_magnet_Worker = Add_magnet_Worker(result)
+
+        self.Add_magnet_Worker.start()
+
+
+
+
+
+
+
 
 
     # 添加新磁力弹框
     def add_new_magnnet(self):
         self.newDialog = MyMagnet_Form()
         self.newDialog.show()
+        self.newDialog._signal.connect(self.add_magnet_back)
 
     # 下载管理界面
     def download_page(self):
@@ -3701,9 +3740,6 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.download_list.append(self.uploadThread)
 
 
-
-
-
     # 刷新主页当前目录,信号
     def new_main_folder_back(self, file_list):
 
@@ -4270,8 +4306,8 @@ if __name__ == '__main__':
     my_pyqt_form = MyPyQT_Form()
 
     wait_screen = Wait_Window()
-    my_magnet_form = MyMagnet_Form()
-    my_hash_form = MyHash_Form()
+
+
 
 
 
