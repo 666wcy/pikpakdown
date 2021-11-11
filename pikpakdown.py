@@ -9,6 +9,7 @@ icon_content = {}
 proxies = {'http': None, 'https': None}
 
 
+
 def set_config():
     with open("config.json", "w") as jsonFile:
         json.dump(app_config, jsonFile, indent=4, ensure_ascii=False)
