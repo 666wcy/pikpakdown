@@ -5,7 +5,7 @@ import json
 from PyQt5.QtCore import QThread,pyqtSignal
 import time
 import aria2p
-
+import pythoncom
 #推送aria2单任务
 def add_down(url, path, file_name):
 
@@ -66,6 +66,7 @@ def check_aria2(Aria2_host,Aria2_port,Aria2_secret):
 
 #迅雷推送线程
 def thread_Thunder(file_id):
+    pythoncom.CoInitialize()
     thunder = client.Dispatch('ThunderAgent.Agent64.1')
 
     if type(file_id)==list:

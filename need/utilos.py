@@ -48,7 +48,8 @@ class UrlIO(RawIOBase):
                 if self.last_pos >= self.size:
                     self.last_pos = (self.size-1)
                 hdrs.update({"Range":"bytes=%d-%d" % (self.offset, self.last_pos)})
-            self.req = self.session.get(self.url, params=self.params, headers=hdrs, cookies=self.cookies, stream=True, timeout=50)
+            proxies = {'http': None, 'https': None}
+            self.req = self.session.get(self.url, params=self.params, headers=hdrs, cookies=self.cookies, stream=True,proxies=proxies, timeout=50)
         if n == -1:
             _b = self.req.content
         else:

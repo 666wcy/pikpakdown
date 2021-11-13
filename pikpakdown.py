@@ -9,7 +9,6 @@ icon_content = {}
 proxies = {'http': None, 'https': None}
 
 
-
 def set_config():
     with open("config.json", "w") as jsonFile:
         json.dump(app_config, jsonFile, indent=4, ensure_ascii=False)
@@ -128,36 +127,43 @@ import cgitb
 
 normal_button_style = '''
 QPushButton:!hover{
-	background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,  
-                                      stop: 0 rgba(131,179,249,255),
-                                      stop: 0.495 rgba(131,179,249,255),
-                                      stop: 0.505 rgba(131,179,249,255), 
-                                      stop: 0.805 rgba(92,208,245,255), 
-
-                                      stop: 1 rgba(77,218,244,255));
-
-	color: rgb(255, 255, 255);
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
 	font: 75 14pt "微软雅黑";
+border-radius:8px;
+	padding:5px 10px 5px 10px;
 }
+
 QPushButton:hover{
-	background-color: rgb(131,179,249);
-	color: rgb(255, 255, 255);
-	font: 75 15pt "微软雅黑";
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
+border-radius:8px;
+
 }
 '''
 
 running_button_style = '''
 QPushButton:!hover{
-	background-color: red;
-
-	color: rgb(255, 255, 255);
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
 	font: 75 14pt "微软雅黑";
+border-radius:8px;
+	padding:5px 10px 5px 10px;
 }
+
 QPushButton:hover{
-	background-color: rgb(131,179,249);
-	color: rgb(255, 255, 255);
-	font: 75 15pt "微软雅黑";
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
+border-radius:8px;
+
 }
+
 '''
 
 # 列表样式
@@ -4148,7 +4154,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
             self.change_webdav_pushButton.setText("开启Webdav")
             self.change_webdav_pushButton.setStyleSheet(normal_button_style)
             if self._thread.isRunning():
-                self._thread.quit()
+                self._thread.exit()
 
     # 选择下载路径
     def start_choose_local_downloadpath(self):
