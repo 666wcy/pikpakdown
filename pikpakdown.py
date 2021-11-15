@@ -2,8 +2,7 @@
 
 import json
 import os
-import socket
-import socks
+
 app_config = {}
 icon_content = {}
 proxies = {'http': None, 'https': None}
@@ -54,7 +53,7 @@ def read_config():
 
 read_config()
 
-if app_config['Proxy_type']=="socks5":
+'''if app_config['Proxy_type']=="socks5":
     socks.set_default_proxy(socks.SOCKS5, app_config['Proxy_ip'],
                             int(app_config['Proxy_port']),
                             username=app_config['Proxy_admin'],
@@ -74,7 +73,17 @@ elif app_config['Proxy_type']=="http":
                             int(app_config['Proxy_port']),
                             username=app_config['Proxy_admin'],
                             password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
+    socket.socket = socks.socksocket'''
+
+if app_config['Proxy_type'] == "None":
+
+    proxies = proxies
+
+elif app_config['Proxy_admin'] != "":
+    proxies = {
+        'https': f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+else:
+    proxies = {'https': f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
 
 from need.hashui import Ui_Addhash
 from need.yang import Ui_Form
@@ -105,12 +114,14 @@ import need.res_rc
 from PyQt5.QtCore import  QEvent, QObject
 from oss2 import StsAuth, Bucket
 import oss2
+import aria2p
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap, QImage,  QPainterPath,QTextCursor
 from functools import reduce  # 导入排序模块
 from PyQt5.QtCore import pyqtProperty, QSize, Qt, QRectF, QTimer
 from PyQt5.QtGui import QColor, QPainter, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QSlider
+from PyQt5.QtWebEngineWidgets import *
 
 import threading
 from ping3 import ping
@@ -333,7 +344,7 @@ border:none;   /*无边框*/
      
       text-align:center;   /*文本的位置*/
       color: black;  /*文本颜色*/
-      padding:10px 0px 10px 0px;
+
 }
 '''
 
@@ -610,92 +621,83 @@ class refreshThread(QThread):
 class downloadThread(QThread):
     download_proess_signal = pyqtSignal(list)  # 创建信号
 
-    def __init__(self, url, filesize, file_name, buffer, row, down_path):
+    def __init__(self, url, filesize, file_name, buffer,  down_path):
         super(downloadThread, self).__init__()
         if app_config['Download_path'] != "":
-            self.file_path = f"{app_config['Download_path']}/{down_path}{file_name}"
-            parent_path = os.path.dirname(self.file_path)
-            if not os.path.exists(parent_path):
-                os.makedirs(parent_path)
-        else:
-            self.file_path = f"下载/{down_path}{file_name}"
-            parent_path = os.path.dirname(self.file_path)
-            if not os.path.exists(parent_path):
-                os.makedirs(parent_path)
+            self.file_path = f"{app_config['Download_path']}/{down_path}"
 
+            if not os.path.exists(self.file_path):
+                os.makedirs(self.file_path)
+        else:
+            self.file_path = f"下载/{down_path}"
+            parent_path = os.path.dirname(self.file_path)
+            if not os.path.exists(self.file_path):
+                os.makedirs(self.file_path)
+        self.file_name = file_name
         self.url = url
         self.filesize = filesize
 
         self.buffer = buffer
-        self.row = row
+
         self.download_list = []
 
 
-        self._isPause = False
-        self._isRemove = False
-        self._value = 0
-        self.cond = QWaitCondition()
-        self.mutex = QMutex()
+        self.currdownload = None
 
-    def pause(self):
-        self._isPause = True
+        self.aria2 = aria2p.API(
+            aria2p.Client(
+                host="http://127.0.0.1",
+                port=29385,
+                secret="pikpakdown"
+            )
+        )
 
-    def resume(self):
-        self._isPause = False
-        self.cond.wakeAll()
-
-    def remove(self):
-        self._isRemove = True
-        self.cond.wakeAll()
-
-    def run(self):
         try:
-            r = requests.get(self.url, stream=True, proxies=proxies, timeout=5)
-            length = float(r.headers['Content-length'])
-            f = open(self.file_path, 'wb')
-            count = 0
-            count_tmp = 0
-            time1 = time.time()
-            for chunk in r.iter_content(chunk_size=512):
-                self.mutex.lock()
-                if self._isPause:
-                    self.cond.wait(self.mutex)
-                if self._isRemove:
-                    self.download_proess_signal.emit([0, self.row, '0M/S', "任务删除"])  # 发送信号
-
-                    break
-
-                if not chunk: break
-                f.write(chunk)  # 写入文件
-                count += len(chunk)  # 累加长度
-                # 计算时间 两秒打印一次
-                if time.time() - time1 > 0.5:
-                    p = count / length * 100
-                    speed = (count - count_tmp) / 1024 / 1024 / 0.5
-                    count_tmp = count
-
-                    time1 = time.time()
-
-                    self.download_proess_signal.emit([int(p), self.row, '%.2fM/S' % speed, "下载中"])  # 发送信号
-
-                self.mutex.unlock()
-            f.close()
-
-            if self._isRemove:
-                os.remove(self.file_path)
-
-            else:
-                self.download_proess_signal.emit([100, self.row, '%.2fM/S' % speed, "下载完成"])  # 发送信号
-            self.exit(0)  # 关闭线程
-
-
+            sta = self.aria2.get_stats()
 
         except Exception as e:
 
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):本地aria2未启动,即将启动")
 
+            pid = os.getpid()
+            Popen(
+                ["Aria2/aria2c.exe", '--enable-rpc=true', f'--stop-with-process={pid}', '--conf-path=Aria2/aria2.conf',
+                 "--rpc-listen-port=29385", '--rpc-secret=pikpakdown'])
+            try:
+                sta = self.aria2.get_stats()
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"INFO ({new_time}):本地Aria2启动成功")
+
+            except Exception as e:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):连接本地Aria2失败:{e}")
+
+
+                return
+
+
+
+
+
+    def run(self):
+
+        try:
+            currdownload = self.aria2.add_uris([self.url], options={"dir": self.file_path, "out": self.file_name})
+            self.currdownload = currdownload
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            print(f"Error ({new_time}):下载出错{e}")
+            print(f"Info ({new_time}):内部下载添加任务：{self.file_name} 路径:{self.file_path}")
+        except Exception as e:
+
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):添加下载任务失败:{self.file_name}:{e}")
+
+            return None
+
+
+
+
 
 
 # 上传调用
@@ -1251,9 +1253,7 @@ class Add_download_Worker(QThread):
                 for name, url, size, path in zip(name_list, url_list, size_list, path_list):
 
 
-                    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-                    print(f"Info ({new_time}):内部下载添加任务：{name} 路径:{path}")
                     down_name = f"{name}"
                     the_filesize = size
                     file_size = size
@@ -2097,6 +2097,9 @@ class PercentProgressBar(QWidget):
     def sizeHint(self) -> QSize:
         return QSize(50, 50)
 
+
+
+
 # 主窗口
 class MyPyQT_Form(QDialog, Ui_Form):
     def __init__(self):
@@ -2136,6 +2139,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.about_page()
         self.check_networl_call()
         self.the_trash_page()
+
         markdown_text = self.textBrowser.toPlainText()
         self.textBrowser.setMarkdown(markdown_text)
 
@@ -2169,11 +2173,10 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.tohidepushButton.clicked.connect(self.showMinimized)
         self.pushMaxButton.clicked.connect(self.start_max_min)
         # 窗口淡化动画
-        self.animation = QPropertyAnimation(self, b'windowOpacity')
-        self.animation.setDuration(1000)  # 持续时间1秒
-        self.doShow()
+
 
         self.my_print()
+        self.show_download_html()
 
        ###
 
@@ -2289,6 +2292,20 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.animation.setStartValue(1)
         self.animation.setEndValue(0)
         self.animation.start()
+
+
+    def show_download_html(self):
+
+
+        self.browser = QWebEngineView()
+        # 加载外部的web界面
+        self.browser.load(QUrl('file:///index.html#!/settings/rpc/set/http/127.0.0.1/29385/jsonrpc/cGlrcGFrZG93bg=='))
+        self.verticalLayout_13.addWidget(self.browser)
+
+
+
+
+
 
     #回收站鼠标悬停,信号
     def choose_trash_tableWidget_back(self, result):
@@ -2770,12 +2787,6 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
 
 
-
-
-
-
-
-
     # 添加新磁力弹框
     def add_new_magnnet(self):
         self.newDialog = MyMagnet_Form()
@@ -2791,12 +2802,12 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.downloadtableWidget.customContextMenuRequested.connect(self.download_Menu)  ####右键菜单
         self.downloadtableWidget.setLayout(conLayout)
 
-        titles = ['任务名称', '大小', "状态", "速度", '进度']
+        titles = ['任务名称', '大小', "状态", "速度", '进度',"文件地址"]
         # self.table = QTableWidget(4,3,self)  #创建4行3列的表格
         # self.tableWidget.setRowCount(9)  # 设置行数--不包括标题列
-        self.downloadtableWidget.setColumnCount(5)  # 设置列数
+        self.downloadtableWidget.setColumnCount(6)  # 设置列数
         self.downloadtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
-        # self.downloadtableWidget.hideColumn(3)  # 隐藏指定列
+        self.downloadtableWidget.hideColumn(5)  # 隐藏指定列
         #
         self.downloadtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
 
@@ -2804,53 +2815,22 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.downloadtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(1, 120)  # 设置某列的宽度
+        self.downloadtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
         self.downloadtableWidget.setColumnWidth(2, 90)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(2, 130)  # 设置某列的宽度
+        self.downloadtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(2, 100)  # 设置某列的宽度
+        self.downloadtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
 
     # 获取信号向进度条添加下载任务
     def add_download_to_pro(self, info_list):
         down_name, down_url, file_size, the_filesize, down_path = info_list
 
-        row_cnt = self.downloadtableWidget.rowCount()
-        self.downloadtableWidget.insertRow(row_cnt)
 
-        # 添加下载名称
-        it_name = QtWidgets.QTableWidgetItem(str(down_name))
-        it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
-
-        # 添加下载文件大小
-        it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
-        it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
-
-        # 添加下载状态
-        it_stasus = QtWidgets.QTableWidgetItem("即将下载")
-        it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
-        # 添加速度
-
-        it_speed = QtWidgets.QTableWidgetItem("0kb")
-        it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
-        # 添加下载进度条
-
-
-        progressBar = QtWidgets.QProgressBar(self.downloadtableWidget)
-        progressBar.setStyleSheet(QProgressBar_StyleSheet)
-        progressBar.setProperty("value", 0)
-        # self.progressBar.setObjectName("progressBar")
-        self.downloadtableWidget.setCellWidget(row_cnt, 4, progressBar)
 
         #### 创建下载线程
-        self.downloadThread = downloadThread(url=down_url, filesize=the_filesize, file_name=down_name, buffer=10240,
-                                             row=row_cnt, down_path=down_path)
-        self.downloadThread.download_proess_signal.connect(self.set_progressbar_value)
+        self.downloadThread = downloadThread(url=down_url, filesize=the_filesize, file_name=down_name, buffer=10240,down_path=down_path)
         self.downloadThread.start()
         self.download_list.append(self.downloadThread)
 
@@ -2859,8 +2839,11 @@ class MyPyQT_Form(QDialog, Ui_Form):
     def download_Menu(self, pos):
         # rint( pos)
         row_num = -1
+        row_list = []
         for i in self.downloadtableWidget.selectionModel().selection().indexes():
-            row_num = i.row()
+            row_list.append(i.row())
+
+        row_list = list(dict.fromkeys(row_list))
 
 
 
@@ -2873,22 +2856,32 @@ class MyPyQT_Form(QDialog, Ui_Form):
         item1 = down_menu.addAction(QIcon(":/pic/src/开始.png"), u"开始")
         item2 = down_menu.addAction(QIcon(":/pic/src/暂停.png"), u"暂停")
         item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
+        item4 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
         action = down_menu.exec_(self.downloadtableWidget.mapToGlobal(pos))
 
         if action == item1:
+            for a in row_list:
 
-
-            self.download_list[int(row_num)].resume()
+                self.download_list[int(a)].resume()
 
         elif action == item2:
+            for a in row_list:
 
-
-            self.download_list[int(row_num)].pause()
+                self.download_list[int(a)].pause()
 
         elif action == item3:
+            for a in row_list:
 
+                self.download_list[int(a)].remove()
 
-            self.download_list[int(row_num)].remove()
+        elif action == item4:
+
+            row_num = int(row_list[0])
+
+            download_path = self.downloadtableWidget.item(row_num, 5).text()
+            if download_path != "":
+
+                os.startfile(download_path)
 
     # 更新下载进度
     def set_progressbar_value(self, result):
@@ -2898,18 +2891,35 @@ class MyPyQT_Form(QDialog, Ui_Form):
         row = result[1]
         speed = result[2]
         status = result[3]
-        if value == -1:
+        if len(result)==5:
+            download_part = result[4]
+            if value == -1:
 
-            self.downloadtableWidget.item(int(row), 1).setText("任务已删除")
+                self.downloadtableWidget.item(int(row), 1).setText("任务已删除")
+            else:
+
+                self.downloadtableWidget.cellWidget(int(row), 4).setValue(int(value))
+
+                self.downloadtableWidget.item(int(row), 3).setText(str(speed))
+                self.downloadtableWidget.item(int(row), 2).setText(status)
+                self.downloadtableWidget.item(int(row), 1).setText(download_part)
+            if value == 100:
+                name = self.downloadtableWidget.item(int(row), 0).text()
+                NotificationWindow.success('提示', f'{name} 任务完成')
         else:
+            if value == -1:
 
-            self.downloadtableWidget.cellWidget(int(row), 4).setValue(int(value))
+                self.downloadtableWidget.item(int(row), 1).setText("任务已删除")
+            else:
 
-            self.downloadtableWidget.item(int(row), 3).setText(speed)
-            self.downloadtableWidget.item(int(row), 2).setText(status)
-        if value == 100:
-            name = self.downloadtableWidget.item(int(row), 0).text()
-            NotificationWindow.success('提示', f'{name} 任务完成')
+                self.downloadtableWidget.cellWidget(int(row), 4).setValue(int(value))
+
+                self.downloadtableWidget.item(int(row), 3).setText(str(speed))
+                self.downloadtableWidget.item(int(row), 2).setText(status)
+
+            if value == 100:
+                name = self.downloadtableWidget.item(int(row), 0).text()
+                NotificationWindow.success('提示', f'{name} 任务完成')
 
     # 主页右键菜单项
     def generateMenu(self, pos):

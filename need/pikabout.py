@@ -9,6 +9,18 @@ with open("config.json", "r") as jsonFile:
     data = json.load(jsonFile)
     jsonFile.close()
 proxies = {'http': None, 'https': None}
+app_config = data
+if app_config['Proxy_type'] == "None":
+
+    proxies = proxies
+
+elif app_config['Proxy_admin'] != "":
+    proxies = {
+        'https': f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+else:
+    proxies = {'https': f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+
+
 the_config = data
 if the_config['Nginx_url'] == "":
         pikpak_api_url = "https://api-drive.mypikpak.com"

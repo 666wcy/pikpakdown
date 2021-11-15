@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
 from io import RawIOBase
 import requests
+import json
+
+with open("config.json", "r") as jsonFile:
+    data = json.load(jsonFile)
+    jsonFile.close()
+proxies = {'http': None, 'https': None}
+app_config = data
+if app_config['Proxy_type'] == "None":
+
+    proxies = proxies
+
+elif app_config['Proxy_admin'] != "":
+    proxies = {
+        'https': f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+else:
+    proxies = {'https': f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
 
 # file io wrapper for requests module
 class RequestsIO(RawIOBase):
@@ -48,7 +64,7 @@ class UrlIO(RawIOBase):
                 if self.last_pos >= self.size:
                     self.last_pos = (self.size-1)
                 hdrs.update({"Range":"bytes=%d-%d" % (self.offset, self.last_pos)})
-            proxies = {'http': None, 'https': None}
+
             self.req = self.session.get(self.url, params=self.params, headers=hdrs, cookies=self.cookies, stream=True,proxies=proxies, timeout=50)
         if n == -1:
             _b = self.req.content

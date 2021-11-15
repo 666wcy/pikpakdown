@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1373</width>
-    <height>797</height>
+    <width>1351</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -290,6 +290,12 @@ border-bottom:3px solid rgb(223,86,89);
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>450</width>
+                 <height>16777215</height>
+                </size>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
@@ -839,11 +845,23 @@ border-radius:8px;
            </widget>
            <widget class="QWidget" name="tab_3">
             <attribute name="title">
-             <string>任务列表</string>
+             <string>上传列表</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
               <widget class="QTableWidget" name="downloadtableWidget"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_8">
+            <attribute name="title">
+             <string>下载列表</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <item>
+              <widget class="QWidget" name="down_widget" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_13"/>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -959,7 +977,7 @@ QScrollBar::add-line:horizontal {
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>1267</width>
+                  <width>1245</width>
                   <height>1019</height>
                  </rect>
                 </property>
