@@ -121,7 +121,7 @@ from functools import reduce  # 导入排序模块
 from PyQt5.QtCore import pyqtProperty, QSize, Qt, QRectF, QTimer
 from PyQt5.QtGui import QColor, QPainter, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QSlider
-from PyQt5.QtWebEngineWidgets import *
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 import threading
 from ping3 import ping
@@ -130,7 +130,7 @@ import requests
 from urllib.parse import urlparse
 from io import BytesIO
 from subprocess import Popen
-
+import subprocess
 
 import cgitb
 
@@ -661,9 +661,12 @@ class downloadThread(QThread):
             print(f"Error ({new_time}):本地aria2未启动,即将启动")
 
             pid = os.getpid()
-            Popen(
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags = subprocess.CREATE_NEW_CONSOLE |subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            subprocess.Popen(
                 ["Aria2/aria2c.exe", '--enable-rpc=true', f'--stop-with-process={pid}', '--conf-path=Aria2/aria2.conf',
-                 "--rpc-listen-port=29385", '--rpc-secret=pikpakdown'])
+                 "--rpc-listen-port=29385", '--rpc-secret=pikpakdown'], startupinfo=startupinfo)
             try:
                 sta = self.aria2.get_stats()
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -2299,6 +2302,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.browser = QWebEngineView()
         # 加载外部的web界面
+        self.browser.page().profile().setHttpAcceptLanguage("zh-CN,zh;q=0.9,en;q=0.8")
         self.browser.load(QUrl('file:///index.html#!/settings/rpc/set/http/127.0.0.1/29385/jsonrpc/cGlrcGFrZG93bg=='))
         self.verticalLayout_13.addWidget(self.browser)
 
@@ -3257,7 +3261,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
 
         # 设置表头颜色
-        self.tableWidget.setStyleSheet(HeaderView_style)
+        #self.tableWidget.setStyleSheet(HeaderView_style)
 
         self.tableWidget.horizontalHeader().sectionClicked.connect(self.sort_by_item)
 
