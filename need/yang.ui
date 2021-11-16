@@ -976,7 +976,7 @@ QScrollBar::add-line:horizontal {
                 <property name="geometry">
                  <rect>
                   <x>0</x>
-                  <y>0</y>
+                  <y>-509</y>
                   <width>1245</width>
                   <height>1019</height>
                  </rect>
@@ -1747,6 +1747,11 @@ width: 20px;
                       <item>
                        <property name="text">
                         <string>None</string>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text">
+                        <string>系统代理</string>
                        </property>
                       </item>
                       <item>

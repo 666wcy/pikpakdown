@@ -5,7 +5,7 @@ import os
 
 app_config = {}
 icon_content = {}
-proxies = {'http': None, 'https': None}
+
 
 
 def set_config():
@@ -53,37 +53,37 @@ def read_config():
 
 read_config()
 
-'''if app_config['Proxy_type']=="socks5":
-    socks.set_default_proxy(socks.SOCKS5, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
 
-elif app_config['Proxy_type']=="socks4":
-    socks.set_default_proxy(socks.SOCKS4, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket
-
-
-elif app_config['Proxy_type']=="http":
-    socks.set_default_proxy(socks.HTTP, app_config['Proxy_ip'],
-                            int(app_config['Proxy_port']),
-                            username=app_config['Proxy_admin'],
-                            password=app_config['Proxy_pass'])
-    socket.socket = socks.socksocket'''
 
 if app_config['Proxy_type'] == "None":
 
-    proxies = proxies
+    os.environ['no_proxy'] = '*'
 
-elif app_config['Proxy_admin'] != "":
-    proxies = {
-        'https': f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+elif app_config['Proxy_type'] == "系统代理":
+
+    import urllib.request
+
+    try:
+        proxy=urllib.request.getproxies()
+        os.environ['HTTP_PROXY'] = str(proxy['http'])
+
+        os.environ['HTTPS_PROXY'] = str(proxy['http'])
+    except:
+        print("获取系统代理失败")
+        os.environ['no_proxy'] = '*'
 else:
-    proxies = {'https': f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"}
+    if app_config['Proxy_admin'] != "":
+        os.environ[
+            'HTTP_PROXY'] = f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"
+        os.environ[
+            'HTTPS_PROXY'] = f"{app_config['Proxy_type']}://{app_config['Proxy_admin']}:{app_config['Proxy_pass']}@{app_config['Proxy_ip']}:{app_config['Proxy_port']}"
+
+    else:
+        os.environ[
+            'HTTP_PROXY'] = f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"
+        os.environ[
+            'HTTPS_PROXY'] = f"{app_config['Proxy_type']}://{app_config['Proxy_ip']}:{app_config['Proxy_port']}"
+
 
 from need.hashui import Ui_Addhash
 from need.yang import Ui_Form
@@ -594,7 +594,7 @@ class refreshThread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url, proxies=proxies, timeout=5).content
+                result = requests.get(icon_url,  timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
@@ -700,9 +700,6 @@ class downloadThread(QThread):
 
 
 
-
-
-
 # 上传调用
 class uploadThread(QThread):
     upload_proess_signal = pyqtSignal(list)  # 创建信号
@@ -764,9 +761,9 @@ class uploadThread(QThread):
                 self.old_time = time.time()
                 self.old_part = float(consumed_bytes)
             else:
-                if time.time() - self.old_time > 0.5:
+                if time.time() - self.old_time > 1:
                     if float(consumed_bytes) != self.old_part:
-                        speed = (float(consumed_bytes) - self.old_part) / 1024 / 1024 / 0.5
+                        speed = (float(consumed_bytes) - self.old_part) / 1024 / 1024
                     else:
                         speed = 0
 
@@ -802,9 +799,9 @@ class uploadThread(QThread):
                 "objProvider": {"provider": "UPLOAD_TYPE_UNKNOWN"}}
             if self.folder_id != "":
                 upload_url_data["parent_id"] = self.folder_id
-            upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data, proxies=proxies, timeout=5)
+            upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data,  timeout=5).json()
 
-            if "error" in upload_result.json():
+            if "error" in upload_result:
 
 
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -812,25 +809,26 @@ class uploadThread(QThread):
                 print(f"Info ({new_time}):登录过期，正在重新登录")
                 login()
                 login_headers = get_headers()
-                upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data, proxies=proxies, timeout=5)
+                upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data,  timeout=5)
 
-            if 'resumable' in upload_result.json():
-                auth = StsAuth(access_key_id=upload_result.json()['resumable']['params']['access_key_id'],
-                               access_key_secret=upload_result.json()['resumable']['params']['access_key_secret'],
-                               security_token=upload_result.json()['resumable']['params']['security_token']
+            if 'resumable' in upload_result:
+                auth = StsAuth(access_key_id=upload_result['resumable']['params']['access_key_id'],
+                               access_key_secret=upload_result['resumable']['params']['access_key_secret'],
+                               security_token=upload_result['resumable']['params']['security_token']
                                )
 
                 # Endpoint以杭州为例，其它Region请按实际情况填写。
                 bucket = Bucket(auth=auth,
-                                endpoint=f"https://{upload_result.json()['resumable']['params']['endpoint']}",
-                                bucket_name=upload_result.json()['resumable']['params']['bucket'], is_cname=True)
+                                endpoint=f"https://{upload_result['resumable']['params']['endpoint']}",
+                                bucket_name=upload_result['resumable']['params']['bucket'], is_cname=True,
+                                )
 
-                key = upload_result.json()['resumable']['params']['key']
+                key = upload_result['resumable']['params']['key']
 
                 oss2.resumable_upload(bucket, key, self.file_path,
                                       multipart_threshold=265 * 1024,
                                       part_size=265 * 1024,
-                                      num_threads=5,
+                                      num_threads=2,
                                       progress_callback=self.percentage)
                 # self.upload_proess_signal.emit([100, self.row, '0M/S', "上传完成"])  # 发送信号
 
@@ -1267,7 +1265,7 @@ class Add_download_Worker(QThread):
 
             else:
                 the_url = down_url
-                the_filesize = requests.get(the_url, stream=True, proxies=proxies, timeout=5).headers['Content-Length']
+                the_filesize = requests.get(the_url, stream=True,  timeout=5).headers['Content-Length']
                 self.valueChanged.emit([down_name, down_url, file_size, the_filesize, ""])
         except:
 
@@ -1463,7 +1461,7 @@ class Mouse_maintable_Worker(QThread):
 
     def run(self):
         try:
-            response = requests.get(self.img_url, proxies=proxies)  # 将这个图片保存在内存
+            response = requests.get(self.img_url)  # 将这个图片保存在内存
 
             # 得到这个图片的base64编码
             ls_f = base64.b64encode(BytesIO(response.content).read())
@@ -1520,7 +1518,7 @@ class Check_proxy_Worker(QThread):
 
 
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-                proxy_proxies = proxies
+
 
                 print(f"Info ({new_time}):未启用代理")
             elif self.Proxy_admin != "":
@@ -1606,7 +1604,7 @@ class offline_Thread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url, proxies=proxies, timeout=5).content
+                result = requests.get(icon_url,  timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
@@ -1642,7 +1640,7 @@ class trash_Thread(QThread):
             return icon_content[icon_url]
         else:
             try:
-                result = requests.get(icon_url, proxies=proxies, timeout=5).content
+                result = requests.get(icon_url,  timeout=5).content
                 icon_content[icon_url] = result
                 return result
             except:
