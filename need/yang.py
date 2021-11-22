@@ -680,7 +680,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.configscrollAreaWidgetContents = QtWidgets.QWidget()
-        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -509, 1245, 1019))
+        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1261, 952))
         self.configscrollAreaWidgetContents.setObjectName("configscrollAreaWidgetContents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.configscrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -693,61 +693,21 @@ class Ui_Form(object):
         self.widget1.setObjectName("widget1")
         self.gridLayout = QtWidgets.QGridLayout(self.widget1)
         self.gridLayout.setObjectName("gridLayout")
-        self.label_2 = QtWidgets.QLabel(self.widget1)
-        self.label_2.setMinimumSize(QtCore.QSize(0, 45))
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.label_2.setFont(font)
-        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
         self.label = QtWidgets.QLabel(self.widget1)
-        self.label.setMinimumSize(QtCore.QSize(0, 45))
+        self.label.setMinimumSize(QtCore.QSize(150, 45))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.label, 1, 1, 1, 1)
         self.user_lineEdit = QtWidgets.QLineEdit(self.widget1)
         self.user_lineEdit.setMaximumSize(QtCore.QSize(500, 16777215))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.user_lineEdit.setFont(font)
         self.user_lineEdit.setObjectName("user_lineEdit")
-        self.gridLayout.addWidget(self.user_lineEdit, 1, 1, 1, 1)
-        self.checklogin_Button = QtWidgets.QPushButton(self.widget1)
-        self.checklogin_Button.setStyleSheet("QPushButton:!hover{\n"
-"        border:1px solid rgb(234,144,146);\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"\n"
-"    border:1px solid rgb(234,144,146);\n"
-"    background-color:#faefef;\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"\n"
-"}")
-        self.checklogin_Button.setObjectName("checklogin_Button")
-        self.gridLayout.addWidget(self.checklogin_Button, 1, 2, 1, 1)
-        self.password_lineEdit = QtWidgets.QLineEdit(self.widget1)
-        self.password_lineEdit.setMaximumSize(QtCore.QSize(500, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.password_lineEdit.setFont(font)
-        self.password_lineEdit.setEchoMode(QtWidgets.QLineEdit.PasswordEchoOnEdit)
-        self.password_lineEdit.setObjectName("password_lineEdit")
-        self.gridLayout.addWidget(self.password_lineEdit, 2, 1, 1, 1)
-        self.label_6 = QtWidgets.QLabel(self.widget1)
-        self.label_6.setText("")
-        self.label_6.setObjectName("label_6")
-        self.gridLayout.addWidget(self.label_6, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.user_lineEdit, 1, 2, 1, 1)
         self.clear_headers_pushButton = QtWidgets.QPushButton(self.widget1)
         self.clear_headers_pushButton.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
@@ -767,7 +727,27 @@ class Ui_Form(object):
 "\n"
 "}")
         self.clear_headers_pushButton.setObjectName("clear_headers_pushButton")
-        self.gridLayout.addWidget(self.clear_headers_pushButton, 2, 2, 1, 1)
+        self.gridLayout.addWidget(self.clear_headers_pushButton, 2, 3, 1, 1)
+        self.checklogin_Button = QtWidgets.QPushButton(self.widget1)
+        self.checklogin_Button.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 14pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    padding:5px 10px 5px 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.checklogin_Button.setObjectName("checklogin_Button")
+        self.gridLayout.addWidget(self.checklogin_Button, 1, 3, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.widget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -779,7 +759,84 @@ class Ui_Form(object):
         self.label_5.setFont(font)
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
-        self.gridLayout.addWidget(self.label_5, 0, 0, 1, 4)
+        self.gridLayout.addWidget(self.label_5, 0, 1, 1, 4)
+        self.pushvipcode_Button = QtWidgets.QPushButton(self.widget1)
+        self.pushvipcode_Button.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 14pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    padding:5px 10px 5px 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.pushvipcode_Button.setObjectName("pushvipcode_Button")
+        self.gridLayout.addWidget(self.pushvipcode_Button, 3, 3, 1, 1)
+        self.vipcode_lineEdit = QtWidgets.QLineEdit(self.widget1)
+        self.vipcode_lineEdit.setMaximumSize(QtCore.QSize(500, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.vipcode_lineEdit.setFont(font)
+        self.vipcode_lineEdit.setObjectName("vipcode_lineEdit")
+        self.gridLayout.addWidget(self.vipcode_lineEdit, 3, 2, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.widget1)
+        self.label_2.setMinimumSize(QtCore.QSize(0, 45))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label_2.setFont(font)
+        self.label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 2, 1, 1, 1)
+        self.register_Button = QtWidgets.QPushButton(self.widget1)
+        self.register_Button.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 14pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    padding:5px 10px 5px 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.register_Button.setObjectName("register_Button")
+        self.gridLayout.addWidget(self.register_Button, 1, 4, 1, 1)
+        self.password_lineEdit = QtWidgets.QLineEdit(self.widget1)
+        self.password_lineEdit.setMaximumSize(QtCore.QSize(500, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.password_lineEdit.setFont(font)
+        self.password_lineEdit.setEchoMode(QtWidgets.QLineEdit.PasswordEchoOnEdit)
+        self.password_lineEdit.setObjectName("password_lineEdit")
+        self.gridLayout.addWidget(self.password_lineEdit, 2, 2, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.widget1)
+        self.label_6.setMaximumSize(QtCore.QSize(150, 150))
+        self.label_6.setText("")
+        self.label_6.setPixmap(QtGui.QPixmap(":/pic/src/pikpak.png"))
+        self.label_6.setScaledContents(True)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout.addWidget(self.label_6, 0, 0, 4, 1)
+        self.label_27 = QtWidgets.QLabel(self.widget1)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.label_27.setFont(font)
+        self.label_27.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_27.setObjectName("label_27")
+        self.gridLayout.addWidget(self.label_27, 3, 1, 1, 1)
         self.verticalLayout_9.addWidget(self.widget1)
         self.widget_21 = QtWidgets.QWidget(self.configscrollAreaWidgetContents)
         self.widget_21.setStyleSheet(".QWidget{\n"
@@ -791,7 +848,7 @@ class Ui_Form(object):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget_21)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_9 = QtWidgets.QLabel(self.widget_21)
-        self.label_9.setMinimumSize(QtCore.QSize(0, 45))
+        self.label_9.setMinimumSize(QtCore.QSize(250, 45))
         font = QtGui.QFont()
         font.setPointSize(14)
         self.label_9.setFont(font)
@@ -1400,107 +1457,35 @@ class Ui_Form(object):
         self.tab_6.setObjectName("tab_6")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.tab_6)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.textBrowser = QtWidgets.QTextBrowser(self.tab_6)
-        self.textBrowser.setStyleSheet("/*QScrollBar Style*/\n"
-"\n"
-"/*纵向滚动条*/\n"
-"QScrollBar:vertical {\n"
-"    background: transparent; /*背景透明*/\n"
-"    width: 10px; /*宽度*/\n"
-"    margin: 0px 0px 0px 0px; /**/\n"
-"    padding-top: 12px; /*距离上面12px*/\n"
-"    padding-bottom: 12px; /*距离底部12px*/\n"
-"}\n"
-"/*横向滚动条*/\n"
-"QScrollBar:horizontal {\n"
-"    background: transparent;\n"
-"    height: 10px; /*高度*/\n"
-"    margin: 0px 0px 0px 0px;\n"
-"    padding-left: 12px; /*距离左边12px*/\n"
-"    padding-right: 12px; /*距离右边12px*/\n"
-"}\n"
-"\n"
-"/*当鼠标放到纵向或者横向滚动条上面时*/\n"
-"QScrollBar:vertical:hover,QScrollBar:horizontal:hover {\n"
-"    background: rgba(0, 0, 0, 30); /*修改背景透明度 30*/\n"
-"    border-radius: 5px; /*圆角*/\n"
-"}\n"
-"\n"
-"/*纵向滚动条上面的滑块*/\n"
-"QScrollBar::handle:vertical {\n"
-"    background: rgb(131,179,249);\n"
-"    width: 10px;\n"
-"    border-radius: 5px;\n"
-"    border: none;\n"
-"}\n"
-"/*横向滚动条上面的滑块*/\n"
-"QScrollBar::handle:horizontal {\n"
-"    background: rgba(0, 0, 0, 50);\n"
-"    height: 10px;\n"
-"    border-radius: 5px;\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"/*当鼠标放到滚动条滑块上面时改变透明度实现颜色的深浅变化*/\n"
-"QScrollBar::handle:vertical:hover,QScrollBar::handle:horizontal:hover {\n"
-"    background: #6A6AFF;\n"
-"}\n"
-"\n"
-"/*纵向滚动条下部分块*/\n"
-"QScrollBar::add-page:vertical {\n"
-"    width: 10px;\n"
-"    background: transparent;\n"
-"}\n"
-"/*横向滚动条后面部分块*/\n"
-"QScrollBar::add-page:horizontal {\n"
-"    height: 10px;\n"
-"    background: transparent;\n"
-"}\n"
-"/*纵向滚动条上面部分块*/\n"
-"QScrollBar::sub-page:vertical {\n"
-"    width: 10px;\n"
-"    background: transparent;\n"
-"}\n"
-"/*横向滚动条左部分块*/\n"
-"QScrollBar::sub-page:horizontal {\n"
-"    height: 10px;\n"
-"    background: transparent;\n"
-"}\n"
-"/*纵向滚动条顶部三角形位置*/\n"
-"QScrollBar::sub-line:vertical {\n"
-"    height: 12px;\n"
-"    width: 10px;\n"
-"    background: transparent;\n"
-"    subcontrol-position: top;\n"
-"}\n"
-"/*横向滚动条左侧三角形位置*/\n"
-"QScrollBar::sub-line:horizontal {\n"
-"    height: 10px;\n"
-"    width: 12px;\n"
-"    background: transparent;\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"/*纵向滚动条下面三角形部分*/\n"
-"QScrollBar::add-line:vertical {\n"
-"    height: 12px;\n"
-"    width: 10px;\n"
-"    background: transparent;\n"
-"    subcontrol-position: bottom;\n"
-"}\n"
-"/*横向滚动条右边的三角形部分*/\n"
-"QScrollBar::add-line:horizontal {\n"
-"    height: 10px;\n"
-"    width: 12px;\n"
-"    background: transparent;\n"
-"    subcontrol-position: right;\n"
-"}\n"
-"")
-        self.textBrowser.setObjectName("textBrowser")
-        self.verticalLayout_7.addWidget(self.textBrowser)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.author_browser = QtWebEngineWidgets.QWebEngineView(self.tab_6)
+        self.author_browser.setObjectName("author_browser")
+        self.verticalLayout_7.addWidget(self.author_browser)
+        self.about_wight = QtWidgets.QWidget(self.tab_6)
+        self.about_wight.setMaximumSize(QtCore.QSize(16777215, 50))
+        self.about_wight.setObjectName("about_wight")
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout(self.about_wight)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.visitmeButton = QtWidgets.QPushButton(self.tab_6)
+        self.showhelp_Button = QtWidgets.QPushButton(self.about_wight)
+        self.showhelp_Button.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 14pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    padding:5px 10px 5px 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.showhelp_Button.setObjectName("showhelp_Button")
+        self.horizontalLayout_8.addWidget(self.showhelp_Button)
+        self.visitmeButton = QtWidgets.QPushButton(self.about_wight)
         self.visitmeButton.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
 "    color: rgb(234,144,146);\n"
@@ -1520,7 +1505,7 @@ class Ui_Form(object):
 "}")
         self.visitmeButton.setObjectName("visitmeButton")
         self.horizontalLayout_8.addWidget(self.visitmeButton)
-        self.visitpikpakButton = QtWidgets.QPushButton(self.tab_6)
+        self.visitpikpakButton = QtWidgets.QPushButton(self.about_wight)
         self.visitpikpakButton.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
 "    color: rgb(234,144,146);\n"
@@ -1540,7 +1525,7 @@ class Ui_Form(object):
 "}")
         self.visitpikpakButton.setObjectName("visitpikpakButton")
         self.horizontalLayout_8.addWidget(self.visitpikpakButton)
-        self.verticalLayout_7.addLayout(self.horizontalLayout_8)
+        self.verticalLayout_7.addWidget(self.about_wight)
         self.tabWidget.addTab(self.tab_6, "")
         self.horizontalLayout_2.addWidget(self.tabWidget)
         self.verticalLayout_8.addWidget(self.widget_2)
@@ -1595,7 +1580,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "PikPakDown"))
-        self.titlelabel.setText(_translate("Form", "PikPakDown v2.1"))
+        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.1"))
         self.pingtitlelabel.setText(_translate("Form", "连接情况:"))
         self.pinginfo_label.setText(_translate("Form", "检测中"))
         self.tohidepushButton.setText(_translate("Form", "-"))
@@ -1624,11 +1609,14 @@ class Ui_Form(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("Form", "回收站"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Form", "上传列表"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _translate("Form", "下载列表"))
-        self.label_2.setText(_translate("Form", " 密码 "))
         self.label.setText(_translate("Form", " 账号 "))
-        self.checklogin_Button.setText(_translate("Form", "检查登录"))
         self.clear_headers_pushButton.setText(_translate("Form", "清除登录缓存"))
+        self.checklogin_Button.setText(_translate("Form", "检查登录"))
         self.label_5.setText(_translate("Form", "账号设置"))
+        self.pushvipcode_Button.setText(_translate("Form", "提交兑换码"))
+        self.label_2.setText(_translate("Form", " 密码 "))
+        self.register_Button.setText(_translate("Form", "注册账号"))
+        self.label_27.setText(_translate("Form", "兑换码"))
         self.label_9.setText(_translate("Form", "本地下载路径"))
         self.chooselocalButton.setText(_translate("Form", "选择路径"))
         self.localdownloadlineEdit.setPlaceholderText(_translate("Form", "不设置则默认在程序目录下载文件夹"))
@@ -1672,91 +1660,9 @@ class Ui_Form(object):
         self.saveconfig_Button.setText(_translate("Form", "保存配置"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Form", "设置"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("Form", "输出台"))
-        self.textBrowser.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'SimSun\'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\"># 软件介绍</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">Pikpakdown是基于Python编写的Pikapk的第三方工具(Win)，所有信息来源均来自对官方app接口的调用，不对用户信息、文件进行保存，目前尚未整理开源，介意请勿使用。欢迎加入[Pikpak官方群组](https://t.me/pikpak_userservice).</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\"># 更新记录</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">## v2.1</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:自定义反代(api接口、user接口)</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:清除登录缓存</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:输出台显示:推送日志、错误捕获</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:崩溃错误日志保存(程序目录log.txt)</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:云盘文件操作:剪切、复制、删除(支持多选)、新建文件夹、重命名，支持右键菜单</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:离线下载界面文件图标加载</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:离线下载界面悬浮显示预览图</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增:删除离线任务</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:点击文件树根目录卡死</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:我的文件列表显示已删除的回收站文件(感谢@LHQ666888反馈)</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:悬停显示预览封面的偶发性卡死</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:根目录刷新时目录树不展开</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化:设置页滑动条样式</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化:端口数字限制</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">## v2.0</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：UI更改</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：文件夹目录树、与tablewidget同步操作</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：内置mpv播放器、双击播放</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：连接延迟查看，标题栏显示与服务器连接延迟</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：自定义代理，支持socks5，socks4，http</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：鼠标悬停显示预览封面图</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：加载等待动画</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：主页刷新列表、获取文件icon、返回上级目录、文件夹进入、刷新离线下载、检查登录线程化</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：配置修改时实时自动保存</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：未设置路径情况下提交任务弹出提示</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：设置页滚动</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复：取消选择路径时闪退</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">## v1.1.3</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：任务线程化，进度90%</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">优化：table宽度自适应</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复：文件夹显示不全</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复：复制单文件下载链接失败</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">## v1.1.2</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:webdav第二次打开才能正确验证的Bug</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:内部多选下载卡死</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">修复:软件及webdav文件夹文件显示不全</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增：名称、大小、时间排序</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">## v1.1</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">支持文件夹内文件夹、文件下载，保持路径(内部下载、aria2、IDM)，迅雷不支持保持文件夹结构</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">新增只读型webdav，支持rclone、raidrive、AE</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">鼠标悬停显示文件全名</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\"># 软件介绍</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">主要功能:</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 软件自带内部下载</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 推送迅雷</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 推送IDM</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 推送Potplayer</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 推送Aria2</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 多选文件推送(多选文件中不支持文件夹)</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 单个文件夹整体推送，保持文件夹的目录结构进行推送下载</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] 只读型webdav生成</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'SimSun\'; font-size:16pt;\">- [X] Pikpak秒传链接生成、导入</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'SimSun\'; font-size:16pt;\"><br /></p></body></html>"))
+        self.showhelp_Button.setText(_translate("Form", "显示帮助"))
         self.visitmeButton.setText(_translate("Form", "访问作者博客"))
         self.visitpikpakButton.setText(_translate("Form", "加入官方群"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_6), _translate("Form", "关于"))
+from PyQt5 import QtWebEngineWidgets
 import res_rc

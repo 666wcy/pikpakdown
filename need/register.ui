@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Register_Form</class>
+ <widget class="QWidget" name="Register_Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>421</width>
+    <height>256</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>注册账号</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QWidget" name="widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#widget {
+    background-color: white;
+border:1px solid red;
+    border-radius: 10px;
+}</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="2" column="2">
+       <widget class="QPushButton" name="sendcode_Button">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+        </property>
+        <property name="text">
+         <string>发送验证码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="2">
+       <widget class="QLineEdit" name="password_lineEdit">
+        <property name="placeholderText">
+         <string>6-16位密码，使用字母、数字和符号混合</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" colspan="2">
+       <widget class="QLineEdit" name="name_lineEdit">
+        <property name="placeholderText">
+         <string>用户名，留空则使用官方规则</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="code_lineEdit">
+        <property name="placeholderText">
+         <string>邮箱验证码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QLineEdit" name="email_lineEdit">
+        <property name="placeholderText">
+         <string>邮箱</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="4">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel{
+	color: rgb(131,179,249);
+font: '新宋体';
+font-weight:bold;
+padding-top:8px;
+padding-bottom:8px;
+}
+</string>
+        </property>
+        <property name="text">
+         <string>注册</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="2">
+       <widget class="QLineEdit" name="agian_lineEdit">
+        <property name="placeholderText">
+         <string>确认密码</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1" colspan="2">
+       <widget class="QPushButton" name="register_Button">
+        <property name="styleSheet">
+         <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 9pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+        </property>
+        <property name="text">
+         <string>注册</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1" colspan="2">
+       <widget class="QPushButton" name="closeButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 9pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+        </property>
+        <property name="text">
+         <string>关闭窗口</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>email_lineEdit</tabstop>
+  <tabstop>code_lineEdit</tabstop>
+  <tabstop>password_lineEdit</tabstop>
+  <tabstop>agian_lineEdit</tabstop>
+  <tabstop>name_lineEdit</tabstop>
+  <tabstop>register_Button</tabstop>
+  <tabstop>closeButton</tabstop>
+  <tabstop>sendcode_Button</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

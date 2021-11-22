@@ -65,6 +65,7 @@ elif app_config['Proxy_type'] == "系统代理":
 
     try:
         proxy=urllib.request.getproxies()
+        print(proxy)
         os.environ['HTTP_PROXY'] = str(proxy['http'])
 
         os.environ['HTTPS_PROXY'] = str(proxy['http'])
@@ -86,6 +87,7 @@ else:
 
 
 from need.hashui import Ui_Addhash
+from need.register import Ui_Register_Form
 from need.yang import Ui_Form
 from need.magnetui import Ui_MagnetDialog
 from need.rename_fileui import Ui_Rename_file_Dialog
@@ -94,8 +96,8 @@ from need.creat_new_folderui import Ui_New_folder_Dialog
 import time
 import re
 from PyQt5.QtWidgets import QMessageBox
-from need.pikabout import check_login, get_list, get_download_url,back_tash, \
-    get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,\
+from need.pikabout import check_login, get_list, get_download_url,back_tash,Register_account_send,Register_account_get, \
+    get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,push_vip_code,\
     delete_task,get_trash_list,delete_tash,get_my_vip, \
     get_headers, login, pikpak_add_hash, get_folder_all_file,creat_folder,copy_files,move_files,delete_files,rename_file
 
@@ -2099,7 +2101,154 @@ class PercentProgressBar(QWidget):
         return QSize(50, 50)
 
 
+# 注册账号子弹窗
+class Register_file_Form(QDialog, Ui_Register_Form):
 
+
+    def __init__(self, parent=None):
+
+        super(Register_file_Form, self).__init__(parent)
+        self.setupUi(self)
+
+        # 将子窗口置顶
+        #self.setWindowModality(QtCore.Qt.ApplicationModal)
+
+        # dialog相关
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        # self.widget.setStyleSheet(Widget_Stylesheet)
+
+        # 添加阴影
+        effect = QGraphicsDropShadowEffect(self)
+        effect.setBlurRadius(12)
+        effect.setOffset(0, 0)
+        effect.setColor(Qt.gray)
+        self.setGraphicsEffect(effect)
+
+        self.verification_id=None
+        self.captcha_token = None
+        self.closeButton.clicked.connect(self.close)
+        self.sendcode_Button.clicked.connect(self.send_code)
+        self.register_Button.clicked.connect(self.push_register)
+        self.count = 30
+
+        # 窗口淡化动画
+        self.animation = QPropertyAnimation(self, b'windowOpacity')
+        self.animation.setDuration(500)  # 持续时间1秒
+        self.doShow()
+
+    def send_code(self):
+        email = self.email_lineEdit.text()
+
+        if email =="":
+
+            QMessageBox.information(self, "提示", "邮箱地址为空")
+            return
+        elif "@" not in email:
+            QMessageBox.information(self, "提示", "邮箱地址错误，详情看输出台")
+            return
+
+        self.time = QTimer(self)
+        self.time.setInterval(1000)
+        self.time.timeout.connect(self.Refresh)
+        if self.sendcode_Button.isEnabled():
+            self.time.start()
+            self.sendcode_Button.setEnabled(False)
+        self.Register_account_send = Register_account_send(email)
+        self.Register_account_send.valueChanged.connect(self.get_code_result)
+        self.Register_account_send.start()
+
+    def get_code_result(self,result):
+
+
+        if result['status']:
+            QMessageBox.information(self, "提示", "验证码发送成功")
+            self.captcha_token=result['captcha_token']
+            self.verification_id=result['verification_id']
+        else:
+            QMessageBox.information(self, "错误", "验证码发送失败，请在输出台查看错误")
+
+    def push_register(self):
+        verification_id = self.verification_id
+        verification_code = self.code_lineEdit.text()
+        captcha_token = self.captcha_token
+        account_name = self.name_lineEdit.text()
+
+
+        email = self.email_lineEdit.text()
+        if account_name == "":
+            temp =str(email).split("@")[0]
+            account_name=f"U_{temp}"
+            print(f"默认官方名:{account_name}")
+
+        password = self.password_lineEdit.text()
+        tw_password = self.agian_lineEdit.text()
+        if password!=tw_password:
+            QMessageBox.information(self, "错误", "密码前后不一致")
+            return
+        self.Register_account_get = Register_account_get(verification_id,verification_code,captcha_token,account_name,email,password)
+        self.Register_account_get.valueChanged.connect(self.get_register_result)
+        self.Register_account_get.start()
+
+    def get_register_result(self,result):
+        if result:
+            QMessageBox.information(self, "提示", "注册成功")
+        else:
+            QMessageBox.information(self, "错误", "注册失败，请在输出台查看错误")
+
+
+
+    def Refresh(self):
+        if self.count > 0:
+            self.sendcode_Button.setText(str(self.count)+'秒后重发')
+            self.count -= 1
+        else:
+            self.time.stop()
+            self.sendcode_Button.setEnabled(True)
+            self.sendcode_Button.setText('发送验证码')
+            self.count = 30
+
+    # 窗口淡化动画
+    def doShow(self):
+        try:
+            # 尝试先取消动画完成后关闭窗口的信号
+            self.animation.finished.disconnect(self.close)
+        except:
+            pass
+        self.animation.stop()
+        # 透明度范围从0逐渐增加到1
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
+
+    def doClose(self):
+        self.animation.stop()
+        self.animation.finished.connect(self.close)  # 动画完成则关闭窗口
+        # 透明度范围从1逐渐减少到0
+        self.animation.setStartValue(1)
+        self.animation.setEndValue(0)
+        self.animation.start()
+
+    ###
+
+    # 鼠标移动事件
+    def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
+        if self._tracking:
+            self._endPos = e.pos() - self._startPos
+            self.move(self.pos() + self._endPos)
+
+    def mousePressEvent(self, e: QMouseEvent):
+        if e.button() == Qt.LeftButton:
+            self._startPos = QPoint(e.x(), e.y())
+            self._tracking = True
+
+    def mouseReleaseEvent(self, e: QMouseEvent):
+        if e.button() == Qt.LeftButton:
+            self._tracking = False
+            self._startPos = None
+            self._endPos = None
+
+    ###
 
 # 主窗口
 class MyPyQT_Form(QDialog, Ui_Form):
@@ -2141,8 +2290,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.check_networl_call()
         self.the_trash_page()
 
-        markdown_text = self.textBrowser.toPlainText()
-        self.textBrowser.setMarkdown(markdown_text)
+
 
         #粘贴列表
         self.paste_type = True
@@ -2303,9 +2451,6 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.browser.page().profile().setHttpAcceptLanguage("zh-CN,zh;q=0.9,en;q=0.8")
         self.browser.load(QUrl('file:///index.html#!/settings/rpc/set/http/127.0.0.1/29385/jsonrpc/cGlrcGFrZG93bg=='))
         self.verticalLayout_13.addWidget(self.browser)
-
-
-
 
 
 
@@ -2771,6 +2916,11 @@ class MyPyQT_Form(QDialog, Ui_Form):
         # self.textEdit.setStyleSheet("QTextEdit{background-color: rgb(85, 0, 0);}")
         self.visitmeButton.clicked.connect(self.visit_author_site)
         self.visitpikpakButton.clicked.connect(self.visit_pikpak_site)
+        self.showhelp_Button.clicked.connect(self.show_help)
+
+    def show_help(self):
+
+        QDesktopServices.openUrl(QUrl("https://weinb.top/index.php/archives/168/"))
 
     # 访问作者博客
     def visit_author_site(self):
@@ -3647,15 +3797,18 @@ class MyPyQT_Form(QDialog, Ui_Form):
         size_list = []
         file_hash_list = []
         for a in result:
-            info = re.findall("PikPak://(.*)", str(a), re.S)[0]
-            info_list = str(info).split("|")
-            name = info_list[0]
-            size = info_list[1]
-            file_hash = info_list[2]
+            try:
+                info = re.findall("PikPak://(.*)", str(a), re.S)[0]
+                info_list = str(info).split("|")
+                name = info_list[0]
+                size = info_list[1]
+                file_hash = info_list[2]
 
-            name_list.append(name)
-            size_list.append(size)
-            file_hash_list.append(file_hash)
+                name_list.append(name)
+                size_list.append(size)
+                file_hash_list.append(file_hash)
+            except:
+                continue
 
         now_path = self.root_label.text()
         for a in self.all_folder_tree_list:
@@ -3843,7 +3996,11 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
 
         self.quate_progressBar.setValue(int(int(result['quate']['quota']['usage'])/int(result['quate']['quota']['limit'])*100))
-        vip_text = f"会员到期时间:{self.start_get_thetime(str(result['user']['data']['expire']))}"
+        if str(result['user']['data']['type'])=="novip":
+            vip_text = f"非会员账号"
+        else:
+
+            vip_text = f"会员到期时间:{self.start_get_thetime(str(result['user']['data']['expire']))}"
 
         self.vip_time_label.setText(vip_text)
 
@@ -4085,6 +4242,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.change_webdav_pushButton.clicked.connect(self.start_the_webdav)
         self.check_sock_pushButton.clicked.connect(self.start_check_proxy_call)
         self.clear_headers_pushButton.clicked.connect(self.clear_login_headers)
+        self.pushvipcode_Button.clicked.connect(self.start_push_vip_code)
 
         self.user_lineEdit.textChanged.connect(self.save_config_now)  # 改变时发射的信号，传出文本框当前内容
         self.password_lineEdit.textChanged.connect(self.save_config_now)  # 改变时发射的信号，传出文本框当前内容
@@ -4110,7 +4268,23 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.Aria2_portlineEdit.setValidator(QIntValidator())#设置只能输入int类型的数据
         self.Proxy_port_lineEdit.setValidator(QIntValidator())#设置只能输入int类型的数据
         self.webdav_portlineEdit.setValidator(QIntValidator())#设置只能输入int类型的数据
+        self.register_Button.clicked.connect(self.show_Register)
 
+    def start_push_vip_code(self):
+        vip_code = self.vipcode_lineEdit.text()
+        if vip_code=="":
+            QMessageBox.information(self, "错误", "兑换码为空")
+            return
+        else:
+            t1 = threading.Thread(target=push_vip_code, args=(vip_code,))
+            t1.start()
+            QMessageBox.information(self, "提示", "已提交请求")
+            self.vipcode_lineEdit.clear()
+            return
+
+    def show_Register(self):
+        self.RegisterDialog = Register_file_Form()
+        self.RegisterDialog.show()
 
     # 检查代理，信号
     def start_check_proxy_back(self,check_result):
@@ -4312,6 +4486,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
 
 if __name__ == '__main__':
+    #自适应分辨率
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     #崩溃错误捕获
     log_dir = os.path.join(os.getcwd(), 'log')

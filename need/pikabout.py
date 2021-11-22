@@ -4,6 +4,7 @@ import json
 import hashlib
 from urllib.parse import urlparse
 import time
+from PyQt5.QtCore import QThread,pyqtSignal
 
 with open("config.json", "r") as jsonFile:
     data = json.load(jsonFile)
@@ -704,3 +705,179 @@ def get_my_vip():
 
 
 
+#发送验证码线程
+class Register_account_get(QThread):
+    valueChanged = pyqtSignal(bool)  # 值变化信号
+
+    def __init__(self, verification_id,verification_code,captcha_token,account_name,email,password):
+        super(Register_account_get, self).__init__()
+
+        self.email = email
+        self.verification_id=verification_id
+        self.verification_code = verification_code
+        self.captcha_token=captcha_token
+        self.account_name = account_name
+        self.password = password
+
+
+
+    def run(self):
+        try:
+
+
+
+
+
+            email = self.email
+            verification_id=self.verification_id
+            verification_code = self.verification_code
+            captcha_token=self.captcha_token
+            account_name = self.account_name
+            password = self.password
+            headers = {
+                'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                'Content-Type': 'application/json; charset=utf-8',
+                'Host': 'user.mypikpak.com',
+            }
+            if the_config['User_url'] != "":
+                host = urlparse(str(the_config['User_url']))[1]
+                headers['Host'] = host
+
+            verify_url = f"{pikpak_user_url}/v1/auth/verification/verify?client_id=YNxT9w7GMdWvEOKa"
+            verify_json = {"client_id": "YNxT9w7GMdWvEOKa",
+                           "verification_id": verification_id,
+                           "verification_code": verification_code}
+
+            verify_result = requests.post(url=verify_url, headers=headers, json=verify_json)
+
+            verification_token = verify_result.json()['verification_token']
+
+            signup_url = f"{pikpak_user_url}/v1/auth/signup?client_id=YNxT9w7GMdWvEOKa"
+            signup_json = {
+                "captcha_token": captcha_token,
+                "client_id": "YNxT9w7GMdWvEOKa", "client_secret": "dbw2OtmVEeuUvIptb1Coyg", "email": email,
+                "name": account_name, "password": password,
+                "verification_token": verification_token}
+            signup_result = requests.post(url=signup_url, headers=headers, json=signup_json)
+
+
+            captcha_json = {"action": "POST:/v1/auth/signup", "captcha_token": captcha_token,
+                            "client_id": "YNxT9w7GMdWvEOKa",
+                            "device_id": "073163586e9858ede866bcc9171ae3dc", "meta": {"email": email},
+                            "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor"}
+
+            captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
+            captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
+
+            captcha_token = captcha_result.json()['captcha_token']
+
+            verify_json = {"client_id": "YNxT9w7GMdWvEOKa",
+                           "verification_id": verification_id,
+                           "verification_code": verification_code}
+
+            verify_result = requests.post(url=verify_url, headers=headers, json=verify_json)
+
+            verification_token = verify_result.json()['verification_token']
+            signup_url = f"{pikpak_user_url}/v1/auth/signup?client_id=YNxT9w7GMdWvEOKa"
+            signup_json = {
+                "captcha_token": captcha_token,
+                "client_id": "YNxT9w7GMdWvEOKa", "client_secret": "dbw2OtmVEeuUvIptb1Coyg", "email": email,
+                "name": account_name, "password": password,
+                "verification_token": verification_token}
+            signup_result = requests.post(url=signup_url, headers=headers, json=signup_json)
+
+            if 'error' in signup_result.json():
+
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                print(f"Error ({new_time}):注册失败:{signup_result.json()}")
+
+                self.valueChanged.emit(False)
+
+            else:
+
+                self.valueChanged.emit(True)
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"Error ({new_time}):注册失败:{e}")
+
+            self.valueChanged.emit(False)
+
+
+
+
+
+#发送验证码线程
+class Register_account_send(QThread):
+    valueChanged = pyqtSignal(dict)  # 值变化信号
+
+    def __init__(self, email):
+        super(Register_account_send, self).__init__()
+
+        self.email = email
+
+
+    def run(self):
+        email = self.email
+        captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
+        captcha_json = {"action": "POST:/v1/auth/verification", "captcha_token": "", "client_id": "YNxT9w7GMdWvEOKa",
+                        "device_id": "073163586e9858ede866bcc9171ae3dc", "meta": {"email": email},
+                        "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor"}
+
+        headers = {
+            'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+            'Content-Type': 'application/json; charset=utf-8',
+            'Host': 'user.mypikpak.com',
+        }
+        if the_config['User_url'] != "":
+            host = urlparse(str(the_config['User_url']))[1]
+            headers['Host'] = host
+
+        captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
+
+        captcha_token = captcha_result.json()['captcha_token']
+
+        verification_url = f"{pikpak_user_url}/v1/auth/verification?client_id=YNxT9w7GMdWvEOKa"
+
+        verification_json = {
+            "captcha_token": captcha_token,
+            "client_id": "YNxT9w7GMdWvEOKa", "email": email, "locale": "zh-cn", "target": "ANY"}
+        verification_result = requests.post(url=verification_url, headers=headers, json=verification_json)
+
+        try:
+            verification_id = verification_result.json()['verification_id']
+            result = {'status':True,'verification_id':verification_id,'captcha_token':captcha_token,'text':''}
+            self.valueChanged.emit(result)
+        except Exception as e :
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"Error ({new_time}):请求注册码失败:{e}")
+            result = {'status': False, 'verification_id': "", 'captcha_token':"", 'text': ''}
+            self.valueChanged.emit(result)
+        return
+
+
+#register_account()
+
+#删除回收站文件
+def push_vip_code(vip_code):
+
+    login_headers = get_headers()
+
+    push_vip_url = f"{pikpak_api_url}/vip/v1/order/activation-code"
+
+    push_vip_data = {"activation_code":vip_code}
+    push_vip_result = requests.post(url=push_vip_url, headers=login_headers, json=push_vip_data,  timeout=5)
+    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+    print(f"INFO ({new_time}):提交兑换码:{vip_code}")
+    if "error" in push_vip_result.json():
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+        print(f"INFO ({new_time}):登录过期，正在重新登录")
+        login()
+        login_headers = get_headers()
+        push_vip_result = requests.post(url=push_vip_url, headers=login_headers, json=push_vip_data, timeout=5)
+
+    return push_vip_result.json()
