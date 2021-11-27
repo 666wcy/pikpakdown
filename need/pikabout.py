@@ -5,11 +5,11 @@ import hashlib
 from urllib.parse import urlparse
 import time
 from PyQt5.QtCore import QThread,pyqtSignal
-
+import hashlib
 with open("config.json", "r") as jsonFile:
     data = json.load(jsonFile)
     jsonFile.close()
-
+import random
 
 
 
@@ -91,42 +91,74 @@ def login():
     with open("config.json", "r") as jsonFile:
         data = json.load(jsonFile)
         jsonFile.close()
+    #
+    if data['refresh_token'] == "":
 
-    login_admin = data['user']
-    login_password = data['password']
-    login_url = f"{pikpak_user_url}/v1/auth/signin?client_id=YNxT9w7GMdWvEOKa"
+        login_admin = data['user']
+        login_password = data['password']
+        login_url = f"{pikpak_user_url}/v1/auth/signin?client_id=YNxT9w7GMdWvEOKa"
 
-    login_data = {"captcha_token": "",
-                  "client_id": "YNxT9w7GMdWvEOKa",
-                  "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
-                  "password": login_password, "username": login_admin}
+        login_data = {"captcha_token": "",
+                      "client_id": "YNxT9w7GMdWvEOKa",
+                      "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
+                      "password": login_password, "username": login_admin}
 
-    headers = {
-        'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
-        'Content-Type': 'application/json; charset=utf-8',
-        'Host': 'user.mypikpak.com',
+        headers = {
+            'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+            'Content-Type': 'application/json; charset=utf-8',
+            'Host': 'user.mypikpak.com',
+
+            }
+        if the_config['User_url'] != "":
+            host = urlparse(str(the_config['User_url']))[1]
+            headers['Host'] = host
+        # {'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImMwOTk1ZjljLTJlODctNDIyNi1hOTJhLTU0ZDliZTNmYWYxYyJ9.eyJpc3MiOiJodHRwczovL3VzZXIubXlwaWtwYWsuY29tIiwic3ViIjoiWVJka0hISThaVThBcDBFUiIsImF1ZCI6IllOeFQ5dzdHTWRXdkVPS2EiLCJleHAiOjE2MzA2NzY2MjUsImlhdCI6MTYzMDY2OTQyNSwiYXRfaGFzaCI6InIuTWNad2NReXNFZXlRdEphb1ZqSG95QSIsInNjb3BlIjoidXNlciBwYW4gc3luYyBvZmZsaW5lIiwicHJvamVjdF9pZCI6IjJ3a3M1NmMzMWRjODBzeG01cDkifQ.CtFrbSybtJL26yZriZ0IhNcyQlaqXNW09ciSagemQP9Cx1JrplMDDbcogTBzAZOOuxdX18n5ZSnuajMrnh7esmqOxl5k3o9CtlhFsy7hoKxyYe3xdh5SayiYUYCbvbsouTXyusmV-_lsTU9EDZ3ufiPn242mD8wX9folgOrxBOEVmKvIh1nCbxqv8Hx-jXgZePWLlFly0up2jwAY8KJzkIyogJfbj1dw822mYV0oagugu7E8X83JYnQFKojibSESxhANDVYFgrnF2Gbg23ENgzoBx7czFvGMzaAC1-vavGHt9cCw-o_DZsgUYNnlxdZ5w4bKAFoCuU9EodDb48PQtA', 'X-Device-Id': '073163586e9858ede866bcc9171ae3dc', 'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/', 'Host': 'user.mypikpak.com', 'Connection': 'Keep-Alive', 'Accept-Encoding': 'gzip'}
+
+        login_result = requests.post(url=login_url, json=login_data, headers=headers,  timeout=5)
 
 
+        login_headers = headers
+
+        info = login_result.json()
+        headers['Authorization'] = f"Bearer {info['access_token']}"
+
+        headers['Host'] = 'api-drive.mypikpak.com'
+
+        data['headers'] = login_headers
+        data['refresh_token'] = info['refresh_token']
+        with open("config.json", "w") as jsonFile:
+            json.dump(data, jsonFile, indent=4, ensure_ascii=False)
+            jsonFile.close()
+
+    else:
+        refresh_url = "https://user.mypikpak.com/v1/auth/token?client_id=YNxT9w7GMdWvEOKa"
+        refresh_json = {
+            "client_id": "YNxT9w7GMdWvEOKa",
+            "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
+            "grant_type": "refresh_token",
+            "refresh_token": data['refresh_token']
         }
-    if the_config['User_url'] != "":
-        host = urlparse(str(the_config['User_url']))[1]
-        headers['Host'] = host
-    # {'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImMwOTk1ZjljLTJlODctNDIyNi1hOTJhLTU0ZDliZTNmYWYxYyJ9.eyJpc3MiOiJodHRwczovL3VzZXIubXlwaWtwYWsuY29tIiwic3ViIjoiWVJka0hISThaVThBcDBFUiIsImF1ZCI6IllOeFQ5dzdHTWRXdkVPS2EiLCJleHAiOjE2MzA2NzY2MjUsImlhdCI6MTYzMDY2OTQyNSwiYXRfaGFzaCI6InIuTWNad2NReXNFZXlRdEphb1ZqSG95QSIsInNjb3BlIjoidXNlciBwYW4gc3luYyBvZmZsaW5lIiwicHJvamVjdF9pZCI6IjJ3a3M1NmMzMWRjODBzeG01cDkifQ.CtFrbSybtJL26yZriZ0IhNcyQlaqXNW09ciSagemQP9Cx1JrplMDDbcogTBzAZOOuxdX18n5ZSnuajMrnh7esmqOxl5k3o9CtlhFsy7hoKxyYe3xdh5SayiYUYCbvbsouTXyusmV-_lsTU9EDZ3ufiPn242mD8wX9folgOrxBOEVmKvIh1nCbxqv8Hx-jXgZePWLlFly0up2jwAY8KJzkIyogJfbj1dw822mYV0oagugu7E8X83JYnQFKojibSESxhANDVYFgrnF2Gbg23ENgzoBx7czFvGMzaAC1-vavGHt9cCw-o_DZsgUYNnlxdZ5w4bKAFoCuU9EodDb48PQtA', 'X-Device-Id': '073163586e9858ede866bcc9171ae3dc', 'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/', 'Host': 'user.mypikpak.com', 'Connection': 'Keep-Alive', 'Accept-Encoding': 'gzip'}
+        headers = {
+            'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+            'Content-Type': 'application/json; charset=utf-8',
+            'Host': 'user.mypikpak.com',
 
-    login_result = requests.post(url=login_url, json=login_data, headers=headers,  timeout=5)
+            }
+        if the_config['User_url'] != "":
+            host = urlparse(str(the_config['User_url']))[1]
+            headers['Host'] = host
+        refresh_result = requests.post(url=refresh_url, json=refresh_json, headers=headers, timeout=5)
+        info = refresh_result.json()
+        headers['Authorization'] = f"Bearer {info['access_token']}"
 
+        headers['Host'] = 'api-drive.mypikpak.com'
 
-    login_headers = headers
+        data['headers'] = headers
+        data['refresh_token'] = info['refresh_token']
+        with open("config.json", "w") as jsonFile:
+            json.dump(data, jsonFile, indent=4, ensure_ascii=False)
+            jsonFile.close()
 
-    info = login_result.json()
-    headers['Authorization'] = f"Bearer {info['access_token']}"
-
-    headers['Host'] = 'api-drive.mypikpak.com'
-
-    data['headers'] = login_headers
-    with open("config.json", "w") as jsonFile:
-        json.dump(data, jsonFile, indent=4, ensure_ascii=False)
-        jsonFile.close()
 
 
 def get_headers():
@@ -723,9 +755,16 @@ class Register_account_get(QThread):
 
     def run(self):
         try:
+            CLIENT_ID = 'YNxT9w7GMdWvEOKa'
+            VersionName = '1.7.0'
+            PackageName = 'com.pikcloud.pikpak'
 
-
-
+            DeviceID_list = random.sample('1234567890zyxwvutsrqponmlkjihgfedcba', 32)
+            DeviceID = ""
+            for a in DeviceID_list:
+                DeviceID = DeviceID + a
+            print(DeviceID)
+            timestamp = str(int(round(time.time() * 1000)))
 
 
             email = self.email
@@ -735,7 +774,7 @@ class Register_account_get(QThread):
             account_name = self.account_name
             password = self.password
             headers = {
-                'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                'User-Agent': f'ANDROID-com.pikcloud.pikpak/null protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.f78911b4fdd89ca52b5e351273e17ca10f0594675e0cdc49c75a25f4853b1c02 sdkversion/1.0.1.101700 datetime/1637652663646 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/null deviceid/{DeviceID} providername/NONE refresh_token/ usrno/ appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
                 'Content-Type': 'application/json; charset=utf-8',
                 'Host': 'user.mypikpak.com',
             }
@@ -749,7 +788,7 @@ class Register_account_get(QThread):
                            "verification_code": verification_code}
 
             verify_result = requests.post(url=verify_url, headers=headers, json=verify_json)
-
+            print(verify_result.json())
             verification_token = verify_result.json()['verification_token']
 
             signup_url = f"{pikpak_user_url}/v1/auth/signup?client_id=YNxT9w7GMdWvEOKa"
@@ -761,10 +800,18 @@ class Register_account_get(QThread):
             signup_result = requests.post(url=signup_url, headers=headers, json=signup_json)
 
 
+
+
             captcha_json = {"action": "POST:/v1/auth/signup", "captcha_token": captcha_token,
                             "client_id": "YNxT9w7GMdWvEOKa",
-                            "device_id": "073163586e9858ede866bcc9171ae3dc", "meta": {"email": email},
-                            "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor"}
+                            "device_id": DeviceID,
+                            "meta": {"email": email,
+
+                                     'user_id':"","package_name":PackageName,"timestamp":timestamp
+                                     ,"client_version":VersionName},
+                            "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor",
+
+                            }
 
             captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
             captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
@@ -793,19 +840,53 @@ class Register_account_get(QThread):
                 print(f"Error ({new_time}):注册失败:{signup_result.json()}")
 
                 self.valueChanged.emit(False)
+                return
 
             else:
+                info = signup_result.json()
+
+
+
+                userid = info['sub']
+
+                invite_url = f"https://invite.wei666.workers.dev/{userid}"
+
+                new_headers = {}
+                new_headers['authorization'] = f"Bearer {info['access_token']}"
+
+
+                invite_result = requests.get(url=invite_url, headers=new_headers )
+                print(invite_result.text)
 
                 self.valueChanged.emit(True)
+
+                '''info=signup_result.json()
+                add_free_vip = f"{pikpak_api_url}/vip/v1/order/free"
+                userid = info['sub']
+                add_free_json = {"product_id":"premium_free_auto",
+                                 "data":{"sdk_int":"28","uuid":"f78911b4fdd89ca52b5e351273e17ca1",
+                                         "userType":"1","userid":userid,
+                                         "product_flavor_name":"gp","language_system":"zh-CN",
+                                         "language_app":"zh-CN","build_version_release":"9",
+                                         "phoneModel":"LG V30","build_manufacturer":"LGE","build_sdk_int":"28",
+                                         "channel":"google","versionCode":"10040","versionName":"1.6.1","country":"CN"}}
+
+
+                headers['Authorization'] = f"Bearer {info['access_token']}"
+
+                headers['Host'] = 'api-drive.mypikpak.com'
+                add_free_result = requests.post(url=add_free_vip, headers=headers, json=add_free_json)
+                print(add_free_result.text)
+                print(add_free_result.json())
+
+                self.valueChanged.emit(True)'''
+
         except Exception as e:
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             print(f"Error ({new_time}):注册失败:{e}")
 
             self.valueChanged.emit(False)
-
-
-
 
 
 #发送验证码线程
@@ -826,7 +907,7 @@ class Register_account_send(QThread):
                         "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor"}
 
         headers = {
-            'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+            'User-Agent': 'ANDROID-com.pikcloud.pikpak/null protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.f78911b4fdd89ca52b5e351273e17ca10f0594675e0cdc49c75a25f4853b1c02 sdkversion/1.0.1.101700 datetime/1637652663646 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/null deviceid/f78911b4fdd89ca52b5e351273e17ca1 providername/NONE refresh_token/ usrno/ appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
             'Content-Type': 'application/json; charset=utf-8',
             'Host': 'user.mypikpak.com',
         }
@@ -844,7 +925,7 @@ class Register_account_send(QThread):
             "captcha_token": captcha_token,
             "client_id": "YNxT9w7GMdWvEOKa", "email": email, "locale": "zh-cn", "target": "ANY"}
         verification_result = requests.post(url=verification_url, headers=headers, json=verification_json)
-
+        print(verification_result.json())
         try:
             verification_id = verification_result.json()['verification_id']
             result = {'status':True,'verification_id':verification_id,'captcha_token':captcha_token,'text':''}
@@ -860,7 +941,7 @@ class Register_account_send(QThread):
 
 #register_account()
 
-#删除回收站文件
+
 def push_vip_code(vip_code):
 
     login_headers = get_headers()
@@ -881,3 +962,287 @@ def push_vip_code(vip_code):
         push_vip_result = requests.post(url=push_vip_url, headers=login_headers, json=push_vip_data, timeout=5)
 
     return push_vip_result.json()
+
+
+class Phone_login_get(QThread):
+    valueChanged = pyqtSignal(bool)  # 值变化信号
+
+    def __init__(self, verification_id,verification_code,captcha_token,account_name,phone_number,password,sighup):
+        super(Phone_login_get, self).__init__()
+
+        self.phone_number = phone_number
+        self.verification_id=verification_id
+        self.verification_code = verification_code
+        self.captcha_token=captcha_token
+        self.account_name = account_name
+        self.password = password
+        self.sighup = sighup
+        print(self.sighup)
+
+
+    def run(self):
+        try:
+            if self.sighup:
+                CLIENT_ID = 'YNxT9w7GMdWvEOKa'
+                VersionName = '1.7.0'
+                PackageName = 'com.pikcloud.pikpak'
+
+                DeviceID_list = random.sample('1234567890zyxwvutsrqponmlkjihgfedcba', 32)
+                DeviceID = ""
+                for a in DeviceID_list:
+                    DeviceID = DeviceID + a
+                print(DeviceID)
+                timestamp = str(int(round(time.time() * 1000)))
+
+
+                phone_number = self.phone_number
+                verification_id=self.verification_id
+                verification_code = self.verification_code
+                captcha_token=self.captcha_token
+                account_name = self.account_name
+                password = self.password
+                headers = {
+                    'User-Agent': f'ANDROID-com.pikcloud.pikpak/null protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.f78911b4fdd89ca52b5e351273e17ca10f0594675e0cdc49c75a25f4853b1c02 sdkversion/1.0.1.101700 datetime/1637652663646 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/null deviceid/{DeviceID} providername/NONE refresh_token/ usrno/ appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Host': 'user.mypikpak.com',
+                }
+                if the_config['User_url'] != "":
+                    host = urlparse(str(the_config['User_url']))[1]
+                    headers['Host'] = host
+
+
+                captcha_json = {"action": "POST:/v1/auth/signup", "captcha_token": captcha_token,
+                                "client_id": "YNxT9w7GMdWvEOKa",
+                                "device_id": DeviceID,
+                                "meta": {"phone_number": phone_number,
+
+                                         'user_id':"","package_name":PackageName,"timestamp":timestamp
+                                         ,"client_version":VersionName},
+                                "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor",
+
+                                }
+
+                captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
+                captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
+
+                captcha_token = captcha_result.json()['captcha_token']
+
+                verify_json = {"client_id": "YNxT9w7GMdWvEOKa",
+                               "verification_id": verification_id,
+                               "verification_code": verification_code}
+
+                verify_url = f"{pikpak_user_url}/v1/auth/verification/verify?client_id=YNxT9w7GMdWvEOKa"
+
+                verify_result = requests.post(url=verify_url, headers=headers, json=verify_json)
+
+                verification_token = verify_result.json()['verification_token']
+                signup_url = f"{pikpak_user_url}/v1/auth/signup?client_id=YNxT9w7GMdWvEOKa"
+                signup_json = {
+                    "captcha_token": captcha_token,
+                    "client_id": "YNxT9w7GMdWvEOKa", "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
+                    "phone_number": phone_number,
+                    "name": account_name, "password": password,
+                    "verification_token": verification_token}
+                signup_result = requests.post(url=signup_url, headers=headers, json=signup_json)
+
+                if 'error' in signup_result.json():
+
+                    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                    print(f"Error ({new_time}):注册失败:{signup_result.json()}")
+
+                    self.valueChanged.emit(False)
+                    return
+
+                else:
+                    info = signup_result.json()
+
+                    userid = info['sub']
+
+                    invite_url = f"https://invite.wei666.workers.dev/{userid}"
+
+                    new_headers = {}
+                    new_headers['authorization'] = f"Bearer {info['access_token']}"
+
+
+                    invite_result = requests.get(url=invite_url, headers=new_headers )
+                    print(invite_result.text)
+                    with open("config.json", "r") as jsonFile:
+                        data = json.load(jsonFile)
+                        jsonFile.close()
+                    headers = {
+                        'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                        'Content-Type': 'application/json; charset=utf-8', 'Host': 'api-drive.mypikpak.com',
+                        'Authorization': f"Bearer {info['access_token']}"}
+
+                    data['headers'] = headers
+                    data['refresh_token'] = info['refresh_token']
+                    with open("config.json", "w") as jsonFile:
+                        json.dump(data, jsonFile, indent=4, ensure_ascii=False)
+                        jsonFile.close()
+
+                    self.valueChanged.emit(True)
+            else:
+                CLIENT_ID = 'YNxT9w7GMdWvEOKa'
+                VersionName = '1.7.0'
+                PackageName = 'com.pikcloud.pikpak'
+
+                DeviceID_list = random.sample('1234567890zyxwvutsrqponmlkjihgfedcba', 32)
+                DeviceID = ""
+                for a in DeviceID_list:
+                    DeviceID = DeviceID + a
+                print(DeviceID)
+                timestamp = str(int(round(time.time() * 1000)))
+
+                phone_number = self.phone_number
+                verification_id = self.verification_id
+                verification_code = self.verification_code
+                captcha_token = self.captcha_token
+                account_name = self.account_name
+                password = self.password
+                headers = {
+                    'User-Agent': f'ANDROID-com.pikcloud.pikpak/null protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.f78911b4fdd89ca52b5e351273e17ca10f0594675e0cdc49c75a25f4853b1c02 sdkversion/1.0.1.101700 datetime/1637652663646 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/null deviceid/{DeviceID} providername/NONE refresh_token/ usrno/ appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Host': 'user.mypikpak.com',
+                }
+                if the_config['User_url'] != "":
+                    host = urlparse(str(the_config['User_url']))[1]
+                    headers['Host'] = host
+
+                captcha_json = {"action": "POST:/v1/auth/signin", "captcha_token": captcha_token,
+                                "client_id": "YNxT9w7GMdWvEOKa",
+                                "device_id": DeviceID,
+                                "meta": {"phone_number": phone_number,
+
+                                         'user_id': "", "package_name": PackageName, "timestamp": timestamp
+                                    , "client_version": VersionName},
+                                "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor",
+
+                                }
+
+                captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
+                captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
+
+                captcha_token = captcha_result.json()['captcha_token']
+
+                verify_json = {"client_id": "YNxT9w7GMdWvEOKa",
+                               "verification_id": verification_id,
+                               "verification_code": verification_code}
+
+                verify_url = f"{pikpak_user_url}/v1/auth/verification/verify?client_id=YNxT9w7GMdWvEOKa"
+
+                verify_result = requests.post(url=verify_url, headers=headers, json=verify_json)
+
+                verification_token = verify_result.json()['verification_token']
+                signup_url = f"{pikpak_user_url}/v1/auth/signin?client_id=YNxT9w7GMdWvEOKa"
+                signup_json = {
+                    "captcha_token": captcha_token,
+                    "client_id": "YNxT9w7GMdWvEOKa", "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
+                    "username": phone_number,
+                    "verification_token": verification_token}
+                signup_result = requests.post(url=signup_url, headers=headers, json=signup_json)
+
+                if 'error' in signup_result.json():
+                    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                    print(f"Error ({new_time}):注册失败:{signup_result.json()}")
+
+                    self.valueChanged.emit(False)
+                    return
+                else:
+                    info = signup_result.json()
+
+
+                    with open("config.json", "r") as jsonFile:
+                        data = json.load(jsonFile)
+                        jsonFile.close()
+                    headers = {
+                        'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                        'Content-Type': 'application/json; charset=utf-8', 'Host': 'api-drive.mypikpak.com',
+                        'Authorization': f"Bearer {info['access_token']}"}
+
+                    data['headers'] = headers
+                    data['refresh_token'] = info['refresh_token']
+                    with open("config.json", "w") as jsonFile:
+                        json.dump(data, jsonFile, indent=4, ensure_ascii=False)
+                        jsonFile.close()
+
+                    self.valueChanged.emit(True)
+
+
+
+
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"Error ({new_time}):登录失败:{e}")
+
+            self.valueChanged.emit(False)
+
+#发送验证码线程
+class Phone_login_send(QThread):
+    valueChanged = pyqtSignal(dict)  # 值变化信号
+
+    def __init__(self, phone_number):
+        super(Phone_login_send, self).__init__()
+
+        self.phone_number = phone_number
+
+
+    def run(self):
+        phone_number = self.phone_number
+        headers = {
+            'User-Agent': 'ANDROID-com.pikcloud.pikpak/null protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.f78911b4fdd89ca52b5e351273e17ca10f0594675e0cdc49c75a25f4853b1c02 sdkversion/1.0.1.101700 datetime/1637652663646 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/null deviceid/f78911b4fdd89ca52b5e351273e17ca1 providername/NONE refresh_token/ usrno/ appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+            'Content-Type': 'application/json; charset=utf-8',
+            'Host': 'user.mypikpak.com',
+        }
+        if the_config['User_url'] != "":
+            host = urlparse(str(the_config['User_url']))[1]
+            headers['Host'] = host
+
+        verification_url = f"{pikpak_user_url}/v1/auth/verification?client_id=YNxT9w7GMdWvEOKa"
+
+        verification_json = {
+            "captcha_token": "",
+            "client_id": "YNxT9w7GMdWvEOKa", "phone_number": phone_number, "locale": "zh-cn", "target": "ANY"}
+        verification_result = requests.post(url=verification_url, headers=headers, json=verification_json)
+
+
+
+
+        captcha_url = f"{pikpak_user_url}/v1/shield/captcha/init?client_id=YNxT9w7GMdWvEOKa"
+        captcha_json = {"action": "POST:/v1/auth/verification", "captcha_token": "", "client_id": "YNxT9w7GMdWvEOKa",
+                        "device_id": "073163586e9858ede866bcc9171ae3dc", "meta": {"phone_number": phone_number},
+                        "redirect_uri": "xlaccsdk01://xunlei.com/callback?state=harbor"}
+
+
+
+
+        captcha_result = requests.post(url=captcha_url, headers=headers, json=captcha_json)
+
+        captcha_token = captcha_result.json()['captcha_token']
+
+
+
+        verification_url = f"{pikpak_user_url}/v1/auth/verification?client_id=YNxT9w7GMdWvEOKa"
+
+        verification_json = {
+            "captcha_token": captcha_token,
+            "client_id": "YNxT9w7GMdWvEOKa", "phone_number": phone_number, "locale": "zh-cn", "target": "ANY"}
+        verification_result = requests.post(url=verification_url, headers=headers, json=verification_json)
+        print(verification_result.json())
+        if 'is_user' in verification_result.json():
+            sighup = False
+        else:
+            sighup = True
+        try:
+            verification_id = verification_result.json()['verification_id']
+            result = {'status':True,'verification_id':verification_id,'captcha_token':captcha_token,'text':'','sighup':sighup}
+            self.valueChanged.emit(result)
+        except Exception as e :
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"Error ({new_time}):请求验证码失败:{e}")
+            result = {'status': False, 'verification_id': "", 'captcha_token':"", 'text': '','sighup':sighup}
+            self.valueChanged.emit(result)
+        return

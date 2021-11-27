@@ -319,16 +319,28 @@ class Ui_Form(object):
         self.widget_12.setObjectName("widget_12")
         self.gridLayout_9 = QtWidgets.QGridLayout(self.widget_12)
         self.gridLayout_9.setObjectName("gridLayout_9")
-        self.quota_label = QtWidgets.QLabel(self.widget_12)
-        self.quota_label.setMinimumSize(QtCore.QSize(200, 0))
-        self.quota_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        font = QtGui.QFont()
-        font.setPointSize(9)
-        self.quota_label.setFont(font)
-        self.quota_label.setObjectName("quota_label")
-        self.gridLayout_9.addWidget(self.quota_label, 0, 0, 1, 1)
+        self.refresh_vip_pushButton = QtWidgets.QPushButton(self.widget_12)
+        self.refresh_vip_pushButton.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid #B9B9FF;\n"
+"    color: #B9B9FF;\n"
+"    font: 75 8pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    \n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid #B9B9FF;\n"
+"    background-color:#B9B9FF;\n"
+"    color: blue;\n"
+"    font: 75 8pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.refresh_vip_pushButton.setObjectName("refresh_vip_pushButton")
+        self.gridLayout_9.addWidget(self.refresh_vip_pushButton, 2, 2, 1, 1)
         self.quate_progressBar = QtWidgets.QProgressBar(self.widget_12)
-        self.quate_progressBar.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.quate_progressBar.setMaximumSize(QtCore.QSize(180, 16777215))
         font = QtGui.QFont()
         font.setPointSize(8)
         self.quate_progressBar.setFont(font)
@@ -345,7 +357,15 @@ class Ui_Form(object):
 "}")
         self.quate_progressBar.setProperty("value", 0)
         self.quate_progressBar.setObjectName("quate_progressBar")
-        self.gridLayout_9.addWidget(self.quate_progressBar, 0, 1, 1, 1)
+        self.gridLayout_9.addWidget(self.quate_progressBar, 0, 1, 1, 2)
+        self.quota_label = QtWidgets.QLabel(self.widget_12)
+        self.quota_label.setMinimumSize(QtCore.QSize(200, 0))
+        self.quota_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.quota_label.setFont(font)
+        self.quota_label.setObjectName("quota_label")
+        self.gridLayout_9.addWidget(self.quota_label, 0, 0, 1, 1)
         self.vip_time_label = QtWidgets.QLabel(self.widget_12)
         font = QtGui.QFont()
         font.setPointSize(9)
@@ -689,6 +709,23 @@ class Ui_Form(object):
 "border:3px ridge #E0E0E0;\n"
 "border-radius:15px;\n"
 "}\n"
+"QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 14pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    padding:5px 10px 5px 10px;\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}\n"
 "")
         self.widget1.setObjectName("widget1")
         self.gridLayout = QtWidgets.QGridLayout(self.widget1)
@@ -709,43 +746,11 @@ class Ui_Form(object):
         self.user_lineEdit.setObjectName("user_lineEdit")
         self.gridLayout.addWidget(self.user_lineEdit, 1, 2, 1, 1)
         self.clear_headers_pushButton = QtWidgets.QPushButton(self.widget1)
-        self.clear_headers_pushButton.setStyleSheet("QPushButton:!hover{\n"
-"        border:1px solid rgb(234,144,146);\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"\n"
-"    border:1px solid rgb(234,144,146);\n"
-"    background-color:#faefef;\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"\n"
-"}")
+        self.clear_headers_pushButton.setStyleSheet("")
         self.clear_headers_pushButton.setObjectName("clear_headers_pushButton")
         self.gridLayout.addWidget(self.clear_headers_pushButton, 2, 3, 1, 1)
         self.checklogin_Button = QtWidgets.QPushButton(self.widget1)
-        self.checklogin_Button.setStyleSheet("QPushButton:!hover{\n"
-"        border:1px solid rgb(234,144,146);\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"\n"
-"    border:1px solid rgb(234,144,146);\n"
-"    background-color:#faefef;\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"\n"
-"}")
+        self.checklogin_Button.setStyleSheet("")
         self.checklogin_Button.setObjectName("checklogin_Button")
         self.gridLayout.addWidget(self.checklogin_Button, 1, 3, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.widget1)
@@ -761,23 +766,7 @@ class Ui_Form(object):
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 0, 1, 1, 4)
         self.pushvipcode_Button = QtWidgets.QPushButton(self.widget1)
-        self.pushvipcode_Button.setStyleSheet("QPushButton:!hover{\n"
-"        border:1px solid rgb(234,144,146);\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"\n"
-"    border:1px solid rgb(234,144,146);\n"
-"    background-color:#faefef;\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"\n"
-"}")
+        self.pushvipcode_Button.setStyleSheet("")
         self.pushvipcode_Button.setObjectName("pushvipcode_Button")
         self.gridLayout.addWidget(self.pushvipcode_Button, 3, 3, 1, 1)
         self.vipcode_lineEdit = QtWidgets.QLineEdit(self.widget1)
@@ -796,23 +785,7 @@ class Ui_Form(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 2, 1, 1, 1)
         self.register_Button = QtWidgets.QPushButton(self.widget1)
-        self.register_Button.setStyleSheet("QPushButton:!hover{\n"
-"        border:1px solid rgb(234,144,146);\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"\n"
-"    border:1px solid rgb(234,144,146);\n"
-"    background-color:#faefef;\n"
-"    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
-"border-radius:8px;\n"
-"\n"
-"}")
+        self.register_Button.setStyleSheet("")
         self.register_Button.setObjectName("register_Button")
         self.gridLayout.addWidget(self.register_Button, 1, 4, 1, 1)
         self.password_lineEdit = QtWidgets.QLineEdit(self.widget1)
@@ -837,6 +810,9 @@ class Ui_Form(object):
         self.label_27.setAlignment(QtCore.Qt.AlignCenter)
         self.label_27.setObjectName("label_27")
         self.gridLayout.addWidget(self.label_27, 3, 1, 1, 1)
+        self.phonelogin_Button = QtWidgets.QPushButton(self.widget1)
+        self.phonelogin_Button.setObjectName("phonelogin_Button")
+        self.gridLayout.addWidget(self.phonelogin_Button, 2, 4, 1, 1)
         self.verticalLayout_9.addWidget(self.widget1)
         self.widget_21 = QtWidgets.QWidget(self.configscrollAreaWidgetContents)
         self.widget_21.setStyleSheet(".QWidget{\n"
@@ -1580,12 +1556,13 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "PikPakDown"))
-        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.1"))
+        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.2"))
         self.pingtitlelabel.setText(_translate("Form", "连接情况:"))
         self.pinginfo_label.setText(_translate("Form", "检测中"))
         self.tohidepushButton.setText(_translate("Form", "-"))
         self.pushMaxButton.setText(_translate("Form", "□"))
         self.exitapppushButton.setText(_translate("Form", "X"))
+        self.refresh_vip_pushButton.setText(_translate("Form", "刷 新"))
         self.quota_label.setText(_translate("Form", "容量使用:"))
         self.vip_time_label.setText(_translate("Form", "会员到期时间:"))
         self.root_label.setText(_translate("Form", "根目录"))
@@ -1617,6 +1594,7 @@ class Ui_Form(object):
         self.label_2.setText(_translate("Form", " 密码 "))
         self.register_Button.setText(_translate("Form", "注册账号"))
         self.label_27.setText(_translate("Form", "兑换码"))
+        self.phonelogin_Button.setText(_translate("Form", "手机号登录"))
         self.label_9.setText(_translate("Form", "本地下载路径"))
         self.chooselocalButton.setText(_translate("Form", "选择路径"))
         self.localdownloadlineEdit.setPlaceholderText(_translate("Form", "不设置则默认在程序目录下载文件夹"))

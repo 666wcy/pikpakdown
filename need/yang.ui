@@ -76,7 +76,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.1</string>
+            <string>PikPakDown v2.2.2</string>
            </property>
           </widget>
          </item>
@@ -443,35 +443,37 @@ border-radius:4px;
 }</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_9">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="quota_label">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>9</pointsize>
-                      </font>
+                   <item row="2" column="2">
+                    <widget class="QPushButton" name="refresh_vip_pushButton">
+                     <property name="styleSheet">
+                      <string notr="true">QPushButton:!hover{
+		border:1px solid #B9B9FF;
+	color: #B9B9FF;
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid #B9B9FF;
+	background-color:#B9B9FF;
+	color: blue;
+	font: 75 8pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
                      </property>
                      <property name="text">
-                      <string>容量使用:</string>
+                      <string>刷 新</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
+                   <item row="0" column="1" colspan="2">
                     <widget class="QProgressBar" name="quate_progressBar">
                      <property name="maximumSize">
                       <size>
-                       <width>16777215</width>
+                       <width>180</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -495,6 +497,30 @@ border-radius:10px;
                      </property>
                      <property name="value">
                       <number>0</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="quota_label">
+                     <property name="minimumSize">
+                      <size>
+                       <width>200</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>9</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>容量使用:</string>
                      </property>
                     </widget>
                    </item>
@@ -989,6 +1015,23 @@ QScrollBar::add-line:horizontal {
 border:3px ridge #E0E0E0;
 border-radius:15px;
 }
+QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	padding:5px 10px 5px 10px;
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}
 </string>
                    </property>
                    <layout class="QGridLayout" name="gridLayout">
@@ -1031,23 +1074,7 @@ border-radius:15px;
                     <item row="2" column="3">
                      <widget class="QPushButton" name="clear_headers_pushButton">
                       <property name="styleSheet">
-                       <string notr="true">QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
-border-radius:8px;
-	padding:5px 10px 5px 10px;
-}
-
-QPushButton:hover{
-
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
-border-radius:8px;
-
-}</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>清除登录缓存</string>
@@ -1057,23 +1084,7 @@ border-radius:8px;
                     <item row="1" column="3">
                      <widget class="QPushButton" name="checklogin_Button">
                       <property name="styleSheet">
-                       <string notr="true">QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
-border-radius:8px;
-	padding:5px 10px 5px 10px;
-}
-
-QPushButton:hover{
-
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
-border-radius:8px;
-
-}</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>检查登录</string>
@@ -1104,23 +1115,7 @@ border-radius:8px;
                     <item row="3" column="3">
                      <widget class="QPushButton" name="pushvipcode_Button">
                       <property name="styleSheet">
-                       <string notr="true">QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
-border-radius:8px;
-	padding:5px 10px 5px 10px;
-}
-
-QPushButton:hover{
-
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
-border-radius:8px;
-
-}</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>提交兑换码</string>
@@ -1166,23 +1161,7 @@ border-radius:8px;
                     <item row="1" column="4">
                      <widget class="QPushButton" name="register_Button">
                       <property name="styleSheet">
-                       <string notr="true">QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
-border-radius:8px;
-	padding:5px 10px 5px 10px;
-}
-
-QPushButton:hover{
-
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
-border-radius:8px;
-
-}</string>
+                       <string notr="true"/>
                       </property>
                       <property name="text">
                        <string>注册账号</string>
@@ -1238,6 +1217,13 @@ border-radius:8px;
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="4">
+                     <widget class="QPushButton" name="phonelogin_Button">
+                      <property name="text">
+                       <string>手机号登录</string>
                       </property>
                      </widget>
                     </item>

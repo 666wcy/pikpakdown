@@ -119,6 +119,7 @@ def thread_IDM(file_id,IDM):
         jsonFile.close()
 
     Popen([IDM])
+
     if type(file_id) == list:
         down_name_list = []
         down_url_list = []
@@ -133,7 +134,8 @@ def thread_IDM(file_id,IDM):
 
             print(f"INFO ({new_time}):推送IDM:{down_name}")
 
-            Popen([IDM, '/d', down_url, "/p", data['Download_path'], '/f', down_name, '/n'])
+            Popen([IDM, '/d', down_url, "/p", data['Download_path'], '/f', down_name, '/n', '/a'])
+
 
         new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 

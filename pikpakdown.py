@@ -42,7 +42,9 @@ def read_config():
             "Proxy_admin": "",
             "Proxy_pass": "",
             "Nginx_url":"",
-            "User_url": ""
+            "User_url": "",
+            "refresh_token": ""
+
 
         }
 
@@ -93,25 +95,26 @@ from need.magnetui import Ui_MagnetDialog
 from need.rename_fileui import Ui_Rename_file_Dialog
 from need.web import Open_webdav_Worker
 from need.creat_new_folderui import Ui_New_folder_Dialog
+from  need.phone import Ui_Phone_Form
 import time
 import re
 from PyQt5.QtWidgets import QMessageBox
 from need.pikabout import check_login, get_list, get_download_url,back_tash,Register_account_send,Register_account_get, \
-    get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,push_vip_code,\
+    get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,push_vip_code,Phone_login_get,Phone_login_send,\
     delete_task,get_trash_list,delete_tash,get_my_vip, \
     get_headers, login, pikpak_add_hash, get_folder_all_file,creat_folder,copy_files,move_files,delete_files,rename_file
 
 from need.plugins import thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker
 
 import sys
-from PyQt5.QtWidgets import QMenu, QTableWidget, QTableWidgetItem, QHeaderView, QTreeWidgetItem, QVBoxLayout
+from PyQt5.QtWidgets import QMenu, QTableWidget, QTableWidgetItem, QHeaderView, QTreeWidgetItem
 from PyQt5.QtCore import QThread, QWaitCondition, QMutex, QPoint, QPropertyAnimation, QUrl
 from PyQt5 import QtCore, QtWidgets, Qt
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog,QDesktopWidget
 from PyQt5.QtGui import QMouseEvent, QIcon, QDesktopServices, QMovie,QIntValidator
-from PyQt5.QtWidgets import QDialog, QWidget, QLabel, QHBoxLayout, \
+from PyQt5.QtWidgets import QDialog,  QLabel,  \
     QGridLayout, QSpacerItem, QSizePolicy, QGraphicsDropShadowEffect, \
-    QListWidget, QListWidgetItem, QApplication, QRubberBand
+    QListWidget, QListWidgetItem
 import need.res_rc
 from PyQt5.QtCore import  QEvent, QObject
 from oss2 import StsAuth, Bucket
@@ -140,19 +143,19 @@ import cgitb
 
 normal_button_style = '''
 QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+        border:1px solid rgb(234,144,146);
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
-	padding:5px 10px 5px 10px;
+    padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+    border:1px solid rgb(234,144,146);
+    background-color:#faefef;
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -160,19 +163,19 @@ border-radius:8px;
 
 running_button_style = '''
 QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+        border:1px solid rgb(234,144,146);
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
-	padding:5px 10px 5px 10px;
+    padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+    border:1px solid rgb(234,144,146);
+    background-color:#faefef;
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -2193,6 +2196,7 @@ class Register_file_Form(QDialog, Ui_Register_Form):
     def get_register_result(self,result):
         if result:
             QMessageBox.information(self, "提示", "注册成功")
+            self.close()
         else:
             QMessageBox.information(self, "错误", "注册失败，请在输出台查看错误")
 
@@ -2249,6 +2253,158 @@ class Register_file_Form(QDialog, Ui_Register_Form):
             self._endPos = None
 
     ###
+
+# 手机号登录
+class Phone_file_Form(QDialog, Ui_Phone_Form):
+
+
+    def __init__(self, parent=None):
+
+        super(Phone_file_Form, self).__init__(parent)
+        self.setupUi(self)
+
+        # 将子窗口置顶
+        #self.setWindowModality(QtCore.Qt.ApplicationModal)
+
+        # dialog相关
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        # self.widget.setStyleSheet(Widget_Stylesheet)
+
+        # 添加阴影
+        effect = QGraphicsDropShadowEffect(self)
+        effect.setBlurRadius(12)
+        effect.setOffset(0, 0)
+        effect.setColor(Qt.gray)
+        self.setGraphicsEffect(effect)
+
+        self.verification_id=None
+        self.captcha_token = None
+        self.closeButton.clicked.connect(self.close)
+        self.sendcode_Button.clicked.connect(self.send_code)
+        self.register_Button.clicked.connect(self.push_register)
+
+
+        self.count = 30
+
+        # 窗口淡化动画
+        self.animation = QPropertyAnimation(self, b'windowOpacity')
+        self.animation.setDuration(500)  # 持续时间1秒
+        self.doShow()
+
+
+    def send_code(self):
+        phone = self.phone_lineEdit.text()
+
+
+
+        self.time = QTimer(self)
+        self.time.setInterval(1000)
+        self.time.timeout.connect(self.Refresh)
+        if self.sendcode_Button.isEnabled():
+            self.time.start()
+            self.sendcode_Button.setEnabled(False)
+        self.Phone_login_send = Phone_login_send(phone)
+        self.Phone_login_send.valueChanged.connect(self.get_code_result)
+        self.Phone_login_send.start()
+
+    def get_code_result(self,result):
+
+
+        if result['status']:
+            QMessageBox.information(self, "提示", "验证码发送成功")
+            self.captcha_token=result['captcha_token']
+            self.verification_id=result['verification_id']
+            self.sighup = result['sighup']
+        else:
+            QMessageBox.information(self, "错误", "验证码发送失败，请在输出台查看错误")
+
+    def push_register(self):
+        verification_id = self.verification_id
+        verification_code = self.code_lineEdit.text()
+        captcha_token = self.captcha_token
+        account_name = self.name_lineEdit.text()
+        sighup = self.sighup
+
+
+        phone = self.phone_lineEdit.text()
+        if account_name == "":
+
+            account_name=f"U_{phone}"
+            print(f"默认官方名:{account_name}")
+
+        password = self.password_lineEdit.text()
+        tw_password = self.agian_lineEdit.text()
+        if password!=tw_password:
+            QMessageBox.information(self, "错误", "密码前后不一致")
+            return
+        self.Phone_login_get = Phone_login_get(verification_id,verification_code,captcha_token,account_name,phone,password,sighup)
+        self.Phone_login_get.valueChanged.connect(self.get_register_result)
+        self.Phone_login_get.start()
+
+    def get_register_result(self,result):
+        if result and self.sighup:
+            QMessageBox.information(self, "提示", "注册成功")
+            self.close()
+        elif result and not self.sighup:
+            QMessageBox.information(self, "提示", "登录成功")
+            self.close()
+        else:
+            QMessageBox.information(self, "错误", "登录失败，请在输出台查看错误")
+
+
+    def Refresh(self):
+        if self.count > 0:
+            self.sendcode_Button.setText(str(self.count)+'秒后重发')
+            self.count -= 1
+        else:
+            self.time.stop()
+            self.sendcode_Button.setEnabled(True)
+            self.sendcode_Button.setText('发送验证码')
+            self.count = 30
+
+    # 窗口淡化动画
+    def doShow(self):
+        try:
+            # 尝试先取消动画完成后关闭窗口的信号
+            self.animation.finished.disconnect(self.close)
+        except:
+            pass
+        self.animation.stop()
+        # 透明度范围从0逐渐增加到1
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
+
+    def doClose(self):
+        self.animation.stop()
+        self.animation.finished.connect(self.close)  # 动画完成则关闭窗口
+        # 透明度范围从1逐渐减少到0
+        self.animation.setStartValue(1)
+        self.animation.setEndValue(0)
+        self.animation.start()
+
+    ###
+
+    # 鼠标移动事件
+    def mouseMoveEvent(self, e: QMouseEvent):  # 重写移动事件
+        if self._tracking:
+            self._endPos = e.pos() - self._startPos
+            self.move(self.pos() + self._endPos)
+
+    def mousePressEvent(self, e: QMouseEvent):
+        if e.button() == Qt.LeftButton:
+            self._startPos = QPoint(e.x(), e.y())
+            self._tracking = True
+
+    def mouseReleaseEvent(self, e: QMouseEvent):
+        if e.button() == Qt.LeftButton:
+            self._tracking = False
+            self._startPos = None
+            self._endPos = None
+
+    ###
+
 
 # 主窗口
 class MyPyQT_Form(QDialog, Ui_Form):
@@ -2326,10 +2482,18 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.my_print()
         self.show_download_html()
+        self.center()
+
+
 
        ###
 
-    #输出到控制台
+    # // 实现居中方式2
+    def center(self):
+        screen = QDesktopWidget().screenGeometry()
+        size = self.geometry()
+        self.move((screen.width() - size.width()) / 2,
+                  (screen.height() - size.height()) / 2)
 
     #输出到输出台
     def outputWritten(self, text):
@@ -2525,10 +2689,12 @@ class MyPyQT_Form(QDialog, Ui_Form):
             it_name.setToolTip(str(a["name"]))
 
             it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
-
-            pixmap = QPixmap()
-            pixmap.loadFromData(a['icon_content'])
-            icon = QIcon(pixmap)
+            try:
+                pixmap = QPixmap()
+                pixmap.loadFromData(a['icon_content'])
+                icon = QIcon(pixmap)
+            except:
+                None
 
             it_name.setIcon(icon)
 
@@ -2842,13 +3008,16 @@ class MyPyQT_Form(QDialog, Ui_Form):
             it_id = QtWidgets.QTableWidgetItem(a["id"])
             it_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
 
-
-            if a["reference_resource"]["thumbnail_link"]!="":
-                img_url = QTableWidgetItem(a["reference_resource"]["thumbnail_link"])  # 创建表格项---文本项目
-                img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            else:
+            try:
+                if a["reference_resource"]["thumbnail_link"]!="":
+                    img_url = QTableWidgetItem(a["reference_resource"]["thumbnail_link"])  # 创建表格项---文本项目
+                    img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                else:
+                    img_url = QTableWidgetItem("")  # 创建表格项---文本项目
+                    img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            except:
                 img_url = QTableWidgetItem("")  # 创建表格项---文本项目
-                img_url .setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                img_url.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
 
             self.offlineWidget.insertRow(row_cnt)
 
@@ -3439,6 +3608,15 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.move_file_pushButton.clicked.connect(self.start_move_file)
         self.delete_file_pushButton.clicked.connect(self.start_delete_file_call)
         self.rename_pushButton.clicked.connect(self.start_rename_call)
+        self.refresh_vip_pushButton.clicked.connect(self.refresh_my_vip)
+
+    def refresh_my_vip(self):
+        self.quate_progressBar.setValue(0)
+        self.quota_label.clear()
+        self.vip_time_label.clear()
+        self.Get_quate_task_Worker = Get_quate_task_Worker()
+        self.Get_quate_task_Worker.valueChanged.connect(self.get_my_quate_back)
+        self.Get_quate_task_Worker.start()
 
     #重命名信号接收
     def start_rename_back_back(self, result):
@@ -4050,6 +4228,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
                     print(f"Error ({new_time}):调用鼠标线程错误:{e}")
 
 
+
     # table鼠标悬停,接受信号
     def choose_tableWidget_back(self,result):
         row ,column ,img_html =result
@@ -4243,6 +4422,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.check_sock_pushButton.clicked.connect(self.start_check_proxy_call)
         self.clear_headers_pushButton.clicked.connect(self.clear_login_headers)
         self.pushvipcode_Button.clicked.connect(self.start_push_vip_code)
+        self.phonelogin_Button.clicked.connect(self.show_phone_login)
 
         self.user_lineEdit.textChanged.connect(self.save_config_now)  # 改变时发射的信号，传出文本框当前内容
         self.password_lineEdit.textChanged.connect(self.save_config_now)  # 改变时发射的信号，传出文本框当前内容
@@ -4281,6 +4461,10 @@ class MyPyQT_Form(QDialog, Ui_Form):
             QMessageBox.information(self, "提示", "已提交请求")
             self.vipcode_lineEdit.clear()
             return
+
+    def show_phone_login(self):
+        self.PhoneDialog = Phone_file_Form()
+        self.PhoneDialog.show()
 
     def show_Register(self):
         self.RegisterDialog = Register_file_Form()
@@ -4357,6 +4541,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         print(f"Info ({new_time}):清除登录缓存")
         app_config['headers'] = {}
+        app_config['refresh_token'] = ""
         self.save_config()
 
     # 实时保存配置
