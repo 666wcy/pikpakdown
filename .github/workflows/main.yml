@@ -50,6 +50,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "pikpakdown ${{ github.ref }}_win32.zip"
+          body: ${{ github.event.head_commit.message }}
 
   build_app_32_all:
     name: Built app 32 all
