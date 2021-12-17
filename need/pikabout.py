@@ -1,7 +1,6 @@
 import requests
 import os
 import json
-import hashlib
 from urllib.parse import urlparse
 import time
 from PyQt5.QtCore import QThread,pyqtSignal
@@ -120,6 +119,7 @@ def login():
         login_headers = headers
 
         info = login_result.json()
+        print(info)
         headers['Authorization'] = f"Bearer {info['access_token']}"
 
         headers['Host'] = 'api-drive.mypikpak.com'
@@ -149,12 +149,49 @@ def login():
             headers['Host'] = host
         refresh_result = requests.post(url=refresh_url, json=refresh_json, headers=headers, timeout=5)
         info = refresh_result.json()
+        print(info)
+        if "error" in info:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+
+            if info['error_code'] == 4126:
+                print(f"INFO ({new_time}):其它设备登录，发生挤号，正在尝试账号密码重新登录")
+                login_admin = data['user']
+
+                if login_admin == "":
+                    print(f"INFO ({new_time}):未检测到账号密码，手机登录请重新在设置页获取验证码")
+                    return
+
+                login_password = data['password']
+                login_url = f"{pikpak_user_url}/v1/auth/signin?client_id=YNxT9w7GMdWvEOKa"
+
+                login_data = {"captcha_token": "",
+                              "client_id": "YNxT9w7GMdWvEOKa",
+                              "client_secret": "dbw2OtmVEeuUvIptb1Coyg",
+                              "password": login_password, "username": login_admin}
+                headers = {
+                    'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/',
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Host': 'user.mypikpak.com',
+
+                }
+                if the_config['User_url'] != "":
+                    host = urlparse(str(the_config['User_url']))[1]
+                    headers['Host'] = host
+                # {'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImMwOTk1ZjljLTJlODctNDIyNi1hOTJhLTU0ZDliZTNmYWYxYyJ9.eyJpc3MiOiJodHRwczovL3VzZXIubXlwaWtwYWsuY29tIiwic3ViIjoiWVJka0hISThaVThBcDBFUiIsImF1ZCI6IllOeFQ5dzdHTWRXdkVPS2EiLCJleHAiOjE2MzA2NzY2MjUsImlhdCI6MTYzMDY2OTQyNSwiYXRfaGFzaCI6InIuTWNad2NReXNFZXlRdEphb1ZqSG95QSIsInNjb3BlIjoidXNlciBwYW4gc3luYyBvZmZsaW5lIiwicHJvamVjdF9pZCI6IjJ3a3M1NmMzMWRjODBzeG01cDkifQ.CtFrbSybtJL26yZriZ0IhNcyQlaqXNW09ciSagemQP9Cx1JrplMDDbcogTBzAZOOuxdX18n5ZSnuajMrnh7esmqOxl5k3o9CtlhFsy7hoKxyYe3xdh5SayiYUYCbvbsouTXyusmV-_lsTU9EDZ3ufiPn242mD8wX9folgOrxBOEVmKvIh1nCbxqv8Hx-jXgZePWLlFly0up2jwAY8KJzkIyogJfbj1dw822mYV0oagugu7E8X83JYnQFKojibSESxhANDVYFgrnF2Gbg23ENgzoBx7czFvGMzaAC1-vavGHt9cCw-o_DZsgUYNnlxdZ5w4bKAFoCuU9EodDb48PQtA', 'X-Device-Id': '073163586e9858ede866bcc9171ae3dc', 'User-Agent': 'protocolversion/200 clientid/YNxT9w7GMdWvEOKa action_type/ networktype/WIFI sessionid/ devicesign/div101.073163586e9858ede866bcc9171ae3dcd067a68cbbee55455ab0b6096ea846a0 sdkversion/1.0.1.101300 datetime/1630669401815 appname/android-com.pikcloud.pikpak session_origin/ grant_type/ clientip/ devicemodel/LG V30 accesstype/ clientversion/ deviceid/073163586e9858ede866bcc9171ae3dc providername/NONE refresh_token/ usrno/null appid/ devicename/Lge_Lg V30 cmd/login osversion/9 platformversion/10 accessmode/', 'Host': 'user.mypikpak.com', 'Connection': 'Keep-Alive', 'Accept-Encoding': 'gzip'}
+
+                login_result = requests.post(url=login_url, json=login_data, headers=headers, timeout=5)
+
+                info = login_result.json()
+
+
         headers['Authorization'] = f"Bearer {info['access_token']}"
 
         headers['Host'] = 'api-drive.mypikpak.com'
 
         data['headers'] = headers
         data['refresh_token'] = info['refresh_token']
+
         with open("config.json", "w") as jsonFile:
             json.dump(data, jsonFile, indent=4, ensure_ascii=False)
             jsonFile.close()
@@ -193,7 +230,7 @@ def get_headers():
 
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            print(f"INFO ({new_time}):读取配置失败:{e}")
+            print(f"Error ({new_time}):读取配置失败:{e}")
             return False
 
     else:
@@ -213,12 +250,18 @@ def get_list(foder_id):
         list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
 
         if "error" in list_result.json():
-            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            if list_result.json()['error_code'] == 16:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            print(f"INFO ({new_time}):登录过期，正在重新登录")
-            login()
-            login_headers = get_headers()
-            list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
+                print(f"INFO ({new_time}):登录过期，正在重新登录")
+                login()
+                login_headers = get_headers()
+                list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):f{list_result.json()['error_description']}")
+                return
+
 
 
         file_list = file_list + list_result.json()['files']
@@ -247,18 +290,22 @@ def get_list(foder_id):
 
 def get_download_url(file_id):
     login_headers = get_headers()
-    download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}"
+    download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}?magic=2021&thumbnail_size=SIZE_LARGE"
     download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
 
     if "error" in download_info.json():
+        if download_info.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{download_info.json()['error_description']}")
+            return
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}"
-        download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
 
 
     return download_info.json()['name'], download_info.json()['web_content_link'], download_info.json()['size']
@@ -272,13 +319,18 @@ def get_offline_list():
     offline_list_info = requests.get(url=offline_list_url, headers=login_headers,  timeout=5)
 
     if "error" in offline_list_info.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if offline_list_info.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        offline_list_url = f"{pikpak_api_url}/drive/v1/tasks?type=offline&page_token=&thumbnail_size=SIZE_LARGE&filters=%7B%7D&with=reference_resource"
-        offline_list_info = requests.get(url=offline_list_url, headers=login_headers,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            offline_list_info = requests.get(url=offline_list_url, headers=login_headers,  timeout=5)
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{offline_list_info.json()['error_description']}")
+            return
+
 
 
     return offline_list_info.json()['tasks']
@@ -306,9 +358,18 @@ def magnet_upload(file_url):
             torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
 
             if "error" in torrent_result.json():
-                login()
-                login_headers = get_headers()
-                torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
+                if torrent_result.json()['error_code'] == 16:
+                    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                    print(f"INFO ({new_time}):登录过期，正在重新登录")
+                    login()
+                    login_headers = get_headers()
+                    torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
+                else:
+                    new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                    print(f"Error ({new_time}):f{torrent_result.json()['error_description']}")
+                    return
+
 
             num = num+1
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -333,9 +394,19 @@ def magnet_upload(file_url):
         torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
 
         if "error" in torrent_result.json():
-            login()
-            login_headers = get_headers()
-            torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
+            if torrent_result.json()['error_code'] == 16:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                print(f"INFO ({new_time}):登录过期，正在重新登录")
+                login()
+                login_headers = get_headers()
+                torrent_result = requests.post(url=torrent_url, headers=login_headers, json=torrent_data,  timeout=5)
+
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):f{torrent_result.json()['error_description']}")
+                return
+
 
         new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
@@ -378,12 +449,19 @@ def pikpak_add_hash(filename, file_size, file_hash, folder_id):
     upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data,  timeout=5)
 
     if "error" in upload_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if upload_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            upload_result = requests.post(url=upload_url, headers=login_headers, json=upload_url_data,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{upload_result.json()['error_description']}")
+            return
+
 
     if 'resumable' in upload_result.json():
         return False
@@ -402,12 +480,19 @@ def pikpak_copy_file(file_id, to_folder_id):
     copy_info = requests.post(url=copy_url, headers=login_headers, json=copy_data,  timeout=5)
 
     if "error" in copy_info.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if copy_info.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        copy_info = requests.post(url=copy_url, headers=login_headers, json=copy_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            copy_info = requests.post(url=copy_url, headers=login_headers, json=copy_data,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{copy_info.json()['error_description']}")
+            return
+
 
 
 
@@ -418,42 +503,41 @@ def get_download_info(file_id):
     download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
 
     if "error" in download_info.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if download_info.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}"
-        download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{download_info.json()['error_description']}")
+            return
+
 
 
     return download_info.json()
 
 
 def get_folder_all_file(folder_id,path):
-    name_list = []
-    url_list = []
-    size_list = []
-    path_list = []
+
+
     foler_list = get_list(foder_id=folder_id)
 
     for a in foler_list:
         if a["kind"] == "drive#file":
             down_name, down_url, file_size = get_download_url(file_id=a["id"])
-            name_list.append(down_name)
-            url_list.append(down_url)
-            size_list.append(file_size)
-            path_list.append(path)
+
+            yield down_name,down_url, file_size,path
         else:
             new_path = path + a['name'] + "/"
-            temp_name,temp_url,temp_size,temp_path = get_folder_all_file(folder_id=a["id"],path=new_path)
-            name_list = name_list + temp_name
-            url_list = url_list + temp_url
-            size_list = size_list + temp_size
-            path_list = path_list + temp_path
 
+            for temp_name,temp_url,temp_size,temp_path in get_folder_all_file(folder_id=a["id"],path=new_path):
 
-    return name_list,url_list,size_list,path_list
+                yield temp_name,temp_url,temp_size,temp_path
+
 
 #新建文件夹
 def creat_folder(parent_id,name):
@@ -465,12 +549,18 @@ def creat_folder(parent_id,name):
     creat_folder_result = requests.post(url=creat_folder_url, headers=login_headers,json=creat_folder_data,  timeout=5)
 
     if "error" in creat_folder_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if creat_folder_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        creat_folder_result = requests.post(url=creat_folder_url, headers=login_headers,json=creat_folder_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            creat_folder_result = requests.post(url=creat_folder_url, headers=login_headers,json=creat_folder_data,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{creat_folder_result.json()['error_description']}")
+            return
 
     return creat_folder_result.json()
 
@@ -490,12 +580,18 @@ def delete_files(file_id):
     delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
 
     if "error" in delete_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if delete_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{delete_files_result.json()['error_description']}")
+            return
 
     return delete_files_result.json()
 
@@ -509,12 +605,21 @@ def get_task_info(task_id):
     get_task_info_result = requests.get(url=get_task_info_url, headers=login_headers,  timeout=5)
 
     if "error" in get_task_info_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if get_task_info_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        get_task_info_result = requests.post(url=get_task_info_url, headers=login_headers,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            get_task_info_result = requests.post(url=get_task_info_url, headers=login_headers,  timeout=5)
+
+
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{get_task_info_result.json()['error_description']}")
+            return
+
 
     return get_task_info_result.json()
 
@@ -531,12 +636,18 @@ def move_files(parent_id,file_id):
     move_files_result = requests.post(url=move_files_url, headers=login_headers, json=move_files_data,  timeout=5)
 
     if "error" in move_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if move_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        move_files_result = requests.post(url=move_files_url, headers=login_headers, json=move_files_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            move_files_result = requests.post(url=move_files_url, headers=login_headers, json=move_files_data,  timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{move_files_result.json()['error_description']}")
+            return
 
     return move_files_result.json()
 
@@ -554,12 +665,19 @@ def copy_files(parent_id,file_id):
     copy_files_result = requests.post(url=copy_files_url, headers=login_headers, json=copy_files_data,  timeout=5)
 
     if "error" in copy_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if copy_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        copy_files_result = requests.post(url=copy_files_url, headers=login_headers, json=copy_files_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            copy_files_result = requests.post(url=copy_files_url, headers=login_headers, json=copy_files_data,
+                                              timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{copy_files_result.json()['error_description']}")
+            return
 
     return copy_files_result.json()
 
@@ -574,12 +692,19 @@ def rename_file(file_id,name):
     rename_files_result = requests.patch(url=rename_files_url, headers=login_headers, json=rename_files_data,  timeout=5)
 
     if "error" in rename_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if rename_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        rename_files_result = requests.patch(url=rename_files_url, headers=login_headers, json=rename_files_data,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            rename_files_result = requests.patch(url=rename_files_url, headers=login_headers, json=rename_files_data,  timeout=5)
+
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{rename_files_result.json()['error_description']}")
+            return
 
     return rename_files_result.json()
 
@@ -599,12 +724,19 @@ def delete_task(task_id):
     get_task_info_result = requests.delete(url=get_task_info_url, headers=login_headers,  timeout=5)
 
     if "error" in get_task_info_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if get_task_info_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        get_task_info_result = requests.delete(url=get_task_info_url, headers=login_headers,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            get_task_info_result = requests.delete(url=get_task_info_url, headers=login_headers, timeout=5)
+
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{get_task_info_result.json()['error_description']}")
+            return
 
     return get_task_info_result.json()
 
@@ -620,12 +752,19 @@ def get_trash_list():
         list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
 
         if "error" in list_result.json():
-            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            if list_result.json()['error_code'] == 16:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            print(f"INFO ({new_time}):登录过期，正在重新登录")
-            login()
-            login_headers = get_headers()
-            list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
+                print(f"INFO ({new_time}):登录过期，正在重新登录")
+                login()
+                login_headers = get_headers()
+                list_result = requests.get(url=list_url, headers=login_headers,  timeout=5)
+
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):f{list_result.json()['error_description']}")
+                return
+
 
 
         file_list = file_list + list_result.json()['files']
@@ -665,12 +804,20 @@ def delete_tash(file_id):
     delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
 
     if "error" in delete_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
+        if delete_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,
+                                                timeout=5)
+
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{delete_files_result.json()['error_description']}")
+            return
 
     return delete_files_result.json()
 
@@ -687,12 +834,18 @@ def back_tash(file_id):
     delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data,  timeout=5)
 
     if "error" in delete_files_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if delete_files_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data, timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            delete_files_result = requests.post(url=delete_files_url, headers=login_headers, json=delete_files_data, timeout=5)
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{delete_files_result.json()['error_description']}")
+            return
+
 
     return delete_files_result.json()
 
@@ -705,12 +858,18 @@ def get_quate_info():
     get_quate_info_result = requests.get(url=get_quate_info_url, headers=login_headers,  timeout=5)
 
     if "error" in get_quate_info_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if get_quate_info_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
-        get_quate_info_result = requests.get(url=get_quate_info_url, headers=login_headers,  timeout=5)
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            get_quate_info_result = requests.get(url=get_quate_info_url, headers=login_headers, timeout=5)
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{get_quate_info_result.json()['error_description']}")
+            return
+
 
     return get_quate_info_result.json()
 
@@ -722,15 +881,21 @@ def get_my_vip():
     me_url =  f"{pikpak_api_url}/drive/v1/privilege/vip"
     me_result = requests.get(url=me_url, headers=login_headers,  timeout=5)
     if "error" in me_result.json():
-        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if me_result.json()['error_code'] == 16:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-        print(f"INFO ({new_time}):登录过期，正在重新登录")
-        login()
-        login_headers = get_headers()
+            print(f"INFO ({new_time}):登录过期，正在重新登录")
+            login()
+            login_headers = get_headers()
+            me_result = requests.get(url=me_url, headers=login_headers, timeout=5)
+        else:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):f{me_result.json()['error_description']}")
+            return
 
 
 
-        me_result = requests.get(url=me_url, headers=login_headers,  timeout=5)
+
 
 
     return me_result.json()

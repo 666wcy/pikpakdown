@@ -143,19 +143,19 @@ import cgitb
 
 normal_button_style = '''
 QPushButton:!hover{
-        border:1px solid rgb(234,144,146);
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
-    padding:5px 10px 5px 10px;
+	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-    border:1px solid rgb(234,144,146);
-    background-color:#faefef;
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -163,19 +163,19 @@ border-radius:8px;
 
 running_button_style = '''
 QPushButton:!hover{
-        border:1px solid rgb(234,144,146);
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
-    padding:5px 10px 5px 10px;
+	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-    border:1px solid rgb(234,144,146);
-    background-color:#faefef;
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -1255,10 +1255,9 @@ class Add_download_Worker(QThread):
 
                 print(f"Info ({new_time}):内部下载,识别为文件夹:{down_name}")
 
-                name_list, url_list, size_list, path_list = get_folder_all_file(folder_id=self.fileid, path=f"{down_name}/")
-                for name, url, size, path in zip(name_list, url_list, size_list, path_list):
-
-
+                #name_list, url_list, size_list, path_list = get_folder_all_file(folder_id=self.fileid, path=f"{down_name}/")
+                #result = get_folder_all_file(folder_id=self.fileid, path=f"{down_name}/")
+                for name, url, size, path in get_folder_all_file(folder_id=self.fileid, path=f"{down_name}/"):
 
                     down_name = f"{name}"
                     the_filesize = size
@@ -2413,8 +2412,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.setupUi(self)
 
-        sys.stdout = EmittingStr(textWritten=self.outputWritten)
-        sys.stderr = EmittingStr(textWritten=self.outputWritten)
+        '''sys.stdout = EmittingStr(textWritten=self.outputWritten)
+        sys.stderr = EmittingStr(textWritten=self.outputWritten)'''
 
         # dialog相关
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
@@ -4186,11 +4185,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
     # 刷新主页当前目录，进程
     def new_main_folder_call(self):
         self.show_loading()
-        if self.my_info:
-            self.Get_quate_task_Worker = Get_quate_task_Worker()
-            self.Get_quate_task_Worker.valueChanged.connect(self.get_my_quate_back)
-            self.Get_quate_task_Worker.start()
-            self.my_info=False
+
         now_path = self.root_label.text()
         for a in self.all_folder_tree_list:
             if now_path == f"{a['path']}/{a['name']}":

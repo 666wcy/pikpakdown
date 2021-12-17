@@ -92,8 +92,8 @@ def thread_Thunder(file_id):
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             print(f"INFO ({new_time}):推送迅雷,文件夹:{down_name}，即将获取目录信息")
-            name_list, url_list, size_list, path_list = get_folder_all_file(folder_id=file_id,path=f"{down_name}/")
-            for name,url,size,path in zip(name_list, url_list, size_list, path_list):
+            for name,url,size,path in get_folder_all_file(folder_id=file_id,path=f"{down_name}/"):
+
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
                 print(f"INFO ({new_time}):推送迅雷:{name}")
@@ -154,8 +154,8 @@ def thread_IDM(file_id,IDM):
             print(f"INFO ({new_time}):推送IDM:识别为文件夹:{down_name}，开始获取目录信息")
 
 
-            name_list, url_list, size_list, path_list = get_folder_all_file(folder_id=file_id, path=f"{data['Download_path']}/{down_name}/")
-            for name, url, size, path in zip(name_list, url_list, size_list, path_list):
+            for name, url, size, path in get_folder_all_file(folder_id=file_id, path=f"{data['Download_path']}/{down_name}/"):
+
 
                 down_name = f"{name}"
                 the_filesize = size
@@ -258,8 +258,8 @@ def thread_aria2(file_id):
 
             print(f"INFO ({new_time}):推送Aria2,识别为文件夹:{down_name}")
 
-            name_list, url_list, size_list, path_list = get_folder_all_file(folder_id=file_id,path=f"/{down_name}/")
-            for name,url,size,path in zip(name_list, url_list, size_list, path_list):
+            for name,url,size,path in get_folder_all_file(folder_id=file_id,path=f"/{down_name}/"):
+
 
                 down_name = f"{name}"
                 the_filesize = size
