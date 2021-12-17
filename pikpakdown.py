@@ -143,19 +143,19 @@ import cgitb
 
 normal_button_style = '''
 QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+        border:1px solid rgb(234,144,146);
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
-	padding:5px 10px 5px 10px;
+    padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+    border:1px solid rgb(234,144,146);
+    background-color:#faefef;
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -163,19 +163,19 @@ border-radius:8px;
 
 running_button_style = '''
 QPushButton:!hover{
-		border:1px solid rgb(234,144,146);
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+        border:1px solid rgb(234,144,146);
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
-	padding:5px 10px 5px 10px;
+    padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-	border:1px solid rgb(234,144,146);
-	background-color:#faefef;
-	color: rgb(234,144,146);
-	font: 75 14pt "微软雅黑";
+    border:1px solid rgb(234,144,146);
+    background-color:#faefef;
+    color: rgb(234,144,146);
+    font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -2412,8 +2412,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.setupUi(self)
 
-        '''sys.stdout = EmittingStr(textWritten=self.outputWritten)
-        sys.stderr = EmittingStr(textWritten=self.outputWritten)'''
+        sys.stdout = EmittingStr(textWritten=self.outputWritten)
+        sys.stderr = EmittingStr(textWritten=self.outputWritten)
 
         # dialog相关
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
