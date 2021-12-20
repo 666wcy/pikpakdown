@@ -20,10 +20,12 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
         Form.setSizePolicy(sizePolicy)
         Form.setMinimumSize(QtCore.QSize(0, 0))
+        Form.setAcceptDrops(True)
         Form.setStyleSheet("")
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.main_widget = QtWidgets.QWidget(Form)
+        self.main_widget.setAcceptDrops(True)
         self.main_widget.setStyleSheet("QWidget#main_widget{\n"
 "    background-color: rgb(252,252,255);\n"
 "border-radius:15px;\n"
@@ -165,10 +167,12 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.exitapppushButton)
         self.verticalLayout_8.addWidget(self.titlewidget)
         self.widget_2 = QtWidgets.QWidget(self.main_widget)
+        self.widget_2.setAcceptDrops(True)
         self.widget_2.setObjectName("widget_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget_2)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.tabWidget = QtWidgets.QTabWidget(self.widget_2)
+        self.tabWidget.setAcceptDrops(True)
         self.tabWidget.setStyleSheet("QTabBar::tab{\n"
 "padding:5px 15px 5px 5px;\n"
 "width:80;\n"
@@ -189,6 +193,7 @@ class Ui_Form(object):
 "")
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
+        self.tab.setAcceptDrops(True)
         self.tab.setStyleSheet("")
         self.tab.setObjectName("tab")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.tab)
@@ -200,6 +205,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.widget_4.sizePolicy().hasHeightForWidth())
         self.widget_4.setSizePolicy(sizePolicy)
         self.widget_4.setMaximumSize(QtCore.QSize(450, 16777215))
+        self.widget_4.setAcceptDrops(True)
         self.widget_4.setObjectName("widget_4")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.widget_4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -381,6 +387,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setMinimumSize(QtCore.QSize(800, 0))
+        self.widget.setAcceptDrops(True)
         self.widget.setObjectName("widget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -471,6 +478,7 @@ class Ui_Form(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.tableWidget.sizePolicy().hasHeightForWidth())
         self.tableWidget.setSizePolicy(sizePolicy)
+        self.tableWidget.setAcceptDrops(True)
         self.tableWidget.setStyleSheet("")
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
@@ -700,7 +708,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.configscrollAreaWidgetContents = QtWidgets.QWidget()
-        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1013, 1068))
+        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1245, 1068))
         self.configscrollAreaWidgetContents.setObjectName("configscrollAreaWidgetContents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.configscrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")

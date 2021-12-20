@@ -3,6 +3,7 @@
 import json
 import os
 
+
 app_config = {}
 icon_content = {}
 
@@ -139,23 +140,23 @@ import subprocess
 
 import cgitb
 
-
+upload_task=[]
 
 normal_button_style = '''
 QPushButton:!hover{
-        border:1px solid rgb(234,144,146);
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
-    padding:5px 10px 5px 10px;
+	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-    border:1px solid rgb(234,144,146);
-    background-color:#faefef;
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -163,19 +164,19 @@ border-radius:8px;
 
 running_button_style = '''
 QPushButton:!hover{
-        border:1px solid rgb(234,144,146);
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
-    padding:5px 10px 5px 10px;
+	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
 
-    border:1px solid rgb(234,144,146);
-    background-color:#faefef;
-    color: rgb(234,144,146);
-    font: 75 14pt "微软雅黑";
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 14pt "微软雅黑";
 border-radius:8px;
 
 }
@@ -704,7 +705,6 @@ class downloadThread(QThread):
             return None
 
 
-
 # 上传调用
 class uploadThread(QThread):
     upload_proess_signal = pyqtSignal(list)  # 创建信号
@@ -737,6 +737,7 @@ class uploadThread(QThread):
 
     def pause(self):
         self._isPause = True
+        upload_task.append(str(QThread.currentThread()))
 
     def resume(self):
         self._isPause = False
@@ -756,9 +757,18 @@ class uploadThread(QThread):
         if self._isPause:
             self.upload_proess_signal.emit([0, self.row, '0M/S', "上传暂停"])  # 发送信号
             self.cond.wait(self.mutex)
+            for a in upload_task:
+                if a == str(QThread.currentThread()):
+                    upload_task.remove(a)
+                    break
+
         if self._isRemove:
             self.upload_proess_signal.emit([0, self.row, '0M/S', "上传删除"])  # 发送信号
             # self.exit(0)  # 关闭线程
+            for a in upload_task:
+                if a == str(QThread.currentThread()):
+                    upload_task.remove(a)
+                    break
             QThread.exit(0)
 
         if total_bytes:
@@ -766,9 +776,9 @@ class uploadThread(QThread):
                 self.old_time = time.time()
                 self.old_part = float(consumed_bytes)
             else:
-                if time.time() - self.old_time > 1:
+                if time.time() - self.old_time > 2:
                     if float(consumed_bytes) != self.old_part:
-                        speed = (float(consumed_bytes) - self.old_part) / 1024 / 1024
+                        speed = (float(consumed_bytes) - self.old_part) / 1024 / 1024 / 2
                     else:
                         speed = 0
 
@@ -784,7 +794,16 @@ class uploadThread(QThread):
 
     def run(self):
         try:
+            global upload_task
+            while True:
+                if len(upload_task) <= 5:
+                    break
+                else:
+                    self.upload_proess_signal.emit([0, self.row, '0M/S', "排队中"])  # 发送信号
+                    time.sleep(1)
 
+            upload_task.append(str(QThread.currentThread()))
+            self.upload_proess_signal.emit([0, self.row, '0M/S', "开始计算hash"])  # 发送信号
             file_hash, file_size, filename = gcid_hash_file(self.file_path)
 
             if app_config['Nginx_url'] == "":
@@ -833,18 +852,23 @@ class uploadThread(QThread):
                 oss2.resumable_upload(bucket, key, self.file_path,
                                       multipart_threshold=265 * 1024,
                                       part_size=265 * 1024,
-                                      num_threads=2,
+                                      num_threads=5,
                                       progress_callback=self.percentage)
-                # self.upload_proess_signal.emit([100, self.row, '0M/S', "上传完成"])  # 发送信号
+                self.upload_proess_signal.emit([100, self.row, '0M/S', "上传完成"])  # 发送信号
+
 
             else:
-
 
 
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
                 print(f"Info ({new_time}):已存在，直接秒传:{filename}")
                 self.upload_proess_signal.emit([100, self.row, '%.2fM/S' % 0, "秒传完成"])  # 发送信号
+
+            for a in upload_task:
+                if a == str(QThread.currentThread()):
+                    upload_task.remove(a)
+                    break
 
 
 
@@ -1861,6 +1885,77 @@ class Get_quate_task_Worker(QThread):
 
             (type, value, traceback) = sys.exc_info()
             sys.excepthook(type, value, traceback)
+
+# 上传文件夹
+class Upload_folder_Worker(QThread):
+    valueChanged = pyqtSignal(dict)  # 值变化信号
+
+    def __init__(self,folder_path,folder_id):
+        super(Upload_folder_Worker, self).__init__()
+        self.folder_path = folder_path
+        self.folder_id = folder_id
+
+    #获取文件夹下文件列表
+    def get_all_path(self, dirname):
+        result = []
+
+        for files in os.listdir(dirname):  # 不仅仅是文件，当前目录下的文件夹也会被认为遍历到
+            result.append(os.path.join(dirname, files))
+        return result
+
+    def again(self,folder_path,folder_id):
+        folder_name = os.path.basename(folder_path)
+
+        creat_result = creat_folder(parent_id=folder_id, name=folder_name)
+        try:
+            new_id = creat_result["file"]["id"]
+            file_list = self.get_all_path(dirname=folder_path)
+            for file_path in file_list:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                if os.path.isfile(file_path):
+                    result = {}
+                    print(f"INFO ({new_time}):添加上传任务:{file_path}")
+                    result['file_path'] = file_path
+                    result['new_id'] = new_id
+                    self.valueChanged.emit(result)  # 发送信号
+
+
+                else:
+                    print(f"INFO ({new_time}):检测为子文件夹:{file_path}")
+                    self.again(folder_path=file_path, folder_id=new_id)
+
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):{e}")
+            return
+
+    def run(self):
+        folder_path = self.folder_path
+        folder_id = self.folder_id
+        folder_name = os.path.basename(folder_path)
+
+        creat_result = creat_folder(parent_id=folder_id, name=folder_name)
+        try:
+            new_id = creat_result["file"]["id"]
+            file_list = self.get_all_path(dirname=folder_path)
+            for file_path in file_list:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                if os.path.isfile(file_path):
+                    result = {}
+                    print(f"INFO ({new_time}):添加上传任务:{file_path}")
+                    result['file_path'] = file_path
+                    result['new_id'] = new_id
+                    self.valueChanged.emit(result)  # 发送信号
+
+
+                else:
+                    print(f"INFO ({new_time}):检测为子文件夹:{file_path}")
+                    self.again(folder_path=file_path,folder_id=new_id)
+
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):{e}")
+            return
 
 #圆形进度条
 class PercentProgressBar(QWidget):
@@ -3117,6 +3212,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
     def download_page(self):
         self.downloadtableWidget.clear()
 
+        self.downloadtableWidget.setStyleSheet(QScrollBar_style)
+
         conLayout = QHBoxLayout()
         self.downloadtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
         self.downloadtableWidget.customContextMenuRequested.connect(self.download_Menu)  ####右键菜单
@@ -3137,7 +3234,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
         self.downloadtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(2, 90)  # 设置某列的宽度
+        self.downloadtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
         self.downloadtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
         self.downloadtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
@@ -3239,7 +3336,10 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
             if value == 100:
                 name = self.downloadtableWidget.item(int(row), 0).text()
-                NotificationWindow.success('提示', f'{name} 任务完成')
+
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+                print(f"INFO ({new_time}):f'{name} 任务完成")
 
     # 主页右键菜单项
     def generateMenu(self, pos):
@@ -3609,6 +3709,49 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.rename_pushButton.clicked.connect(self.start_rename_call)
         self.refresh_vip_pushButton.clicked.connect(self.refresh_my_vip)
 
+
+        self.tableWidget.dropEvent=self.file_dropEvent
+        self.tableWidget.dragEnterEvent = self.file_dragEnterEvent
+        self.tableWidget.dragMoveEvent = self.file_dragMoveEvent
+        self.tableWidget.dragLeaveEvent = self.file_dragLeaveEvent
+
+        #开启文件拖拽
+        #self.setAcceptDrops(True)
+
+    def file_dragEnterEvent(self, QDragEnterEvent):                      # 3
+
+        if QDragEnterEvent.mimeData().hasText():
+            QDragEnterEvent.acceptProposedAction()
+
+    def file_dragMoveEvent(self, QDragMoveEvent):                        # 4
+        return
+
+    def file_dragLeaveEvent(self, QDragLeaveEvent):                      # 5
+        return
+
+    def file_dropEvent(self,QDropEvent):
+        new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+        print(f"INFO ({new_time}):获取到上传文件路径")
+        # MacOS
+        txt_path = QDropEvent.mimeData().text().replace('file:///', '')
+
+        if "\n" in txt_path:
+            path_list = str(txt_path).split("\n")
+        else:
+            path_list = [txt_path]
+
+        # Linux
+        # txt_path = QDropEvent.mimeData().text().replace('file:///', '/').strip()
+
+        # Windows
+        # txt_path = QDropEvent.mimeData().text().replace('file:///', '')
+
+        self.start_upload_file(openfile_name=path_list)
+
+
+
+    #刷新会员信息
     def refresh_my_vip(self):
         self.quate_progressBar.setValue(0)
         self.quota_label.clear()
@@ -4034,7 +4177,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
         NotificationWindow.success('PikPakDown', f'{num}个文件 复制秒链成功')
 
     # 上传文件
-    def start_upload_file(self):
+    def start_upload_file(self,openfile_name=None):
+
         now_path = self.root_label.text()
         for a in self.all_folder_tree_list:
             if now_path == f"{a['path']}/{a['name']}":
@@ -4043,16 +4187,82 @@ class MyPyQT_Form(QDialog, Ui_Form):
         else:
             folder_id = ""
 
-        openfile_name, file_type = QFileDialog.getOpenFileNames()
-        if openfile_name == []:
+        if openfile_name==False:
+            openfile_name, file_type = QFileDialog.getOpenFileNames()
+            if openfile_name == []:
 
-            return
-        file_path = openfile_name[0]
+                return
+
+
+        for file_path in openfile_name:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            if file_path == "":
+                continue
+            elif os.path.isfile(file_path):
+                print(f"INFO ({new_time}):添加上传任务:{file_path}")
+
+                file_name = os.path.basename(file_path)
+
+                file_size = os.path.getsize(file_path)
+
+                row_cnt = self.downloadtableWidget.rowCount()
+                self.downloadtableWidget.insertRow(row_cnt)
+                # 添加下载名称
+                it_name = QtWidgets.QTableWidgetItem(file_name)
+                it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                self.downloadtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                self.downloadtableWidget.setRowHeight(row_cnt, 50)
+
+                # 添加下载文件大小
+                it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+                it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.downloadtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                # 添加上传状态
+                it_stasus = QtWidgets.QTableWidgetItem("即将上传")
+                it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.downloadtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+                # 添加速度
+                it_speed = QtWidgets.QTableWidgetItem("0kb")
+                it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.downloadtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+                # 添加上传进度条
+                progressBar = QtWidgets.QProgressBar(self.downloadtableWidget)
+                progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                progressBar.setProperty("value", 0)
+                # self.progressBar.setObjectName("progressBar")
+                self.downloadtableWidget.setCellWidget(row_cnt, 4, progressBar)
+
+                parent_path = os.path.dirname(file_path)
+
+                it_path = QtWidgets.QTableWidgetItem(parent_path)
+                it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.downloadtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
+                #### 创建上传线程
+                self.uploadThread = uploadThread(file_path, folder_id, row_cnt)
+
+                self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
+                self.uploadThread.start()
+                self.download_list.append(self.uploadThread)
+
+            else:
+                print(f"INFO ({new_time}):检测为文件夹:{file_path}")
+
+                self.Upload_folder_Worker = Upload_folder_Worker(file_path,folder_id)
+
+                self.Upload_folder_Worker.valueChanged.connect(self.upload_folder_get)
+                self.Upload_folder_Worker.start()
+                self.thread_task_list.append(self.Upload_folder_Worker)
+
+    #文件夹上传回调
+    def upload_folder_get(self,result):
+        file_path = result['file_path']
+        new_id = result['new_id']
         file_name = os.path.basename(file_path)
 
-
         file_size = os.path.getsize(file_path)
-
 
         row_cnt = self.downloadtableWidget.rowCount()
         self.downloadtableWidget.insertRow(row_cnt)
@@ -4061,12 +4271,14 @@ class MyPyQT_Form(QDialog, Ui_Form):
         it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
         self.downloadtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
 
+        self.downloadtableWidget.setRowHeight(row_cnt, 50)
+
         # 添加下载文件大小
         it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
         it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
         self.downloadtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
 
-        # 添加下载状态
+        # 添加上传状态
         it_stasus = QtWidgets.QTableWidgetItem("即将上传")
         it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
         self.downloadtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
@@ -4074,19 +4286,26 @@ class MyPyQT_Form(QDialog, Ui_Form):
         it_speed = QtWidgets.QTableWidgetItem("0kb")
         it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
         self.downloadtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
-        # 添加下载进度条
+        # 添加上传进度条
         progressBar = QtWidgets.QProgressBar(self.downloadtableWidget)
         progressBar.setStyleSheet(QProgressBar_StyleSheet)
         progressBar.setProperty("value", 0)
         # self.progressBar.setObjectName("progressBar")
         self.downloadtableWidget.setCellWidget(row_cnt, 4, progressBar)
 
+        parent_path = os.path.dirname(file_path)
+
+        it_path = QtWidgets.QTableWidgetItem(parent_path)
+        it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.downloadtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
         #### 创建上传线程
-        self.uploadThread = uploadThread(file_path, folder_id, row_cnt)
+        self.uploadThread = uploadThread(file_path, new_id, row_cnt)
 
         self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
         self.uploadThread.start()
         self.download_list.append(self.uploadThread)
+
 
 
     # 刷新主页当前目录,信号

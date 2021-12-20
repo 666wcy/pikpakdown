@@ -22,6 +22,9 @@
     <height>0</height>
    </size>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>PikPakDown</string>
   </property>
@@ -31,6 +34,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QWidget" name="main_widget" native="true">
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
      <property name="styleSheet">
       <string notr="true">QWidget#main_widget{
 	background-color: rgb(252,252,255);
@@ -76,7 +82,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.3</string>
+            <string>PikPakDown v2.2.4</string>
            </property>
           </widget>
          </item>
@@ -249,9 +255,15 @@ border-radius:8px;
       </item>
       <item>
        <widget class="QWidget" name="widget_2" native="true">
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QTabWidget" name="tabWidget">
+           <property name="acceptDrops">
+            <bool>true</bool>
+           </property>
            <property name="styleSheet">
             <string notr="true">QTabBar::tab{
 padding:5px 15px 5px 5px;
@@ -276,6 +288,9 @@ border-bottom:3px solid rgb(223,86,89);
             <number>0</number>
            </property>
            <widget class="QWidget" name="tab">
+            <property name="acceptDrops">
+             <bool>true</bool>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -296,6 +311,9 @@ border-bottom:3px solid rgb(223,86,89);
                  <width>450</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="acceptDrops">
+                <bool>true</bool>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
@@ -556,6 +574,9 @@ border-radius:10px;
                  <height>0</height>
                 </size>
                </property>
+               <property name="acceptDrops">
+                <bool>true</bool>
+               </property>
                <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <widget class="QLabel" name="root_label">
@@ -722,6 +743,9 @@ border-radius:8px;
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="acceptDrops">
+                   <bool>true</bool>
                   </property>
                   <property name="styleSheet">
                    <string notr="true"/>
@@ -1003,7 +1027,7 @@ QScrollBar::add-line:horizontal {
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>1013</width>
+                  <width>1245</width>
                   <height>1068</height>
                  </rect>
                 </property>
@@ -2283,9 +2307,8 @@ QScrollBar::add-line:horizontal {
                    <string notr="true">QPushButton:!hover{
 		border:1px solid rgb(234,144,146);
 	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
+	font: 75 12pt &quot;微软雅黑&quot;;
 border-radius:8px;
-	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
@@ -2293,7 +2316,7 @@ QPushButton:hover{
 	border:1px solid rgb(234,144,146);
 	background-color:#faefef;
 	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
+	font: 75 13pt &quot;微软雅黑&quot;;
 border-radius:8px;
 
 }</string>
@@ -2309,9 +2332,8 @@ border-radius:8px;
                    <string notr="true">QPushButton:!hover{
 		border:1px solid rgb(234,144,146);
 	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
+	font: 75 12pt &quot;微软雅黑&quot;;
 border-radius:8px;
-	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
@@ -2319,7 +2341,7 @@ QPushButton:hover{
 	border:1px solid rgb(234,144,146);
 	background-color:#faefef;
 	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
+	font: 75 13pt &quot;微软雅黑&quot;;
 border-radius:8px;
 
 }</string>
@@ -2335,9 +2357,8 @@ border-radius:8px;
                    <string notr="true">QPushButton:!hover{
 		border:1px solid rgb(234,144,146);
 	color: rgb(234,144,146);
-	font: 75 14pt &quot;微软雅黑&quot;;
+	font: 75 12pt &quot;微软雅黑&quot;;
 border-radius:8px;
-	padding:5px 10px 5px 10px;
 }
 
 QPushButton:hover{
@@ -2345,7 +2366,7 @@ QPushButton:hover{
 	border:1px solid rgb(234,144,146);
 	background-color:#faefef;
 	color: rgb(234,144,146);
-	font: 75 12pt &quot;微软雅黑&quot;;
+	font: 75 13pt &quot;微软雅黑&quot;;
 border-radius:8px;
 
 }</string>
