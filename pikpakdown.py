@@ -2542,8 +2542,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.setupUi(self)
 
-        '''sys.stdout = EmittingStr(textWritten=self.outputWritten)
-        sys.stderr = EmittingStr(textWritten=self.outputWritten)'''
+        sys.stdout = EmittingStr(textWritten=self.outputWritten)
+        sys.stderr = EmittingStr(textWritten=self.outputWritten)
 
         # dialog相关
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
@@ -5915,10 +5915,10 @@ if __name__ == '__main__':
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     #崩溃错误捕获
-    '''log_dir = os.path.join(os.getcwd(), 'log')
+    log_dir = os.path.join(os.getcwd(), 'log')
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
-    cgitb.enable(format='text', logdir=log_dir)'''
+    cgitb.enable(format='text', logdir=log_dir)
 
 
     app = QtWidgets.QApplication(sys.argv)
