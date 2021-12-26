@@ -289,26 +289,29 @@ def get_list(foder_id):
 
 
 def get_download_url(file_id):
-    login_headers = get_headers()
-    download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}?magic=2021&thumbnail_size=SIZE_LARGE"
-    download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
+    try:
+        login_headers = get_headers()
+        download_url = f"{pikpak_api_url}/drive/v1/files/{file_id}?magic=2021&thumbnail_size=SIZE_LARGE"
+        download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
 
-    if "error" in download_info.json():
-        if download_info.json()['error_code'] == 16:
-            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        if "error" in download_info.json():
+            if download_info.json()['error_code'] == 16:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-            print(f"INFO ({new_time}):登录过期，正在重新登录")
-            login()
-            login_headers = get_headers()
-            download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
-        else:
-            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(f"Error ({new_time}):f{download_info.json()['error_description']}")
-            return
+                print(f"INFO ({new_time}):登录过期，正在重新登录")
+                login()
+                login_headers = get_headers()
+                download_info = requests.get(url=download_url, headers=login_headers,  timeout=5)
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):f{download_info.json()['error_description']}")
+                return
 
 
 
-    return download_info.json()['name'], download_info.json()['web_content_link'], download_info.json()['size']
+        return download_info.json()['name'], download_info.json()['web_content_link'], download_info.json()['size']
+    except:
+        return "","",""
 
 
 # print(get_list(foder_id=""))
@@ -529,7 +532,8 @@ def get_folder_all_file(folder_id,path):
     for a in foler_list:
         if a["kind"] == "drive#file":
             down_name, down_url, file_size = get_download_url(file_id=a["id"])
-
+            if down_name=="":
+                continue
             yield down_name,down_url, file_size,path
         else:
             new_path = path + a['name'] + "/"
@@ -559,9 +563,9 @@ def creat_folder(parent_id,name):
 
         else:
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            print(f"Error ({new_time}):f{creat_folder_result.json()['error_description']}")
+            print(f"Error ({new_time}):{creat_folder_result.json()['error_description']}")
             return
-    
+
     return creat_folder_result.json()
 
 

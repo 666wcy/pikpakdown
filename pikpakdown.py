@@ -99,13 +99,13 @@ from need.creat_new_folderui import Ui_New_folder_Dialog
 from  need.phone import Ui_Phone_Form
 import time
 import re
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox,QDialogButtonBox
 from need.pikabout import check_login, get_list, get_download_url,back_tash,Register_account_send,Register_account_get, \
     get_offline_list, magnet_upload, gcid_hash_file,get_quate_info,push_vip_code,Phone_login_get,Phone_login_send,\
     delete_task,get_trash_list,delete_tash,get_my_vip, \
     get_headers, login, pikpak_add_hash, get_folder_all_file,creat_folder,copy_files,move_files,delete_files,rename_file
 
-from need.plugins import thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker
+from need.plugins import thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker,Copy_magnet_Worker
 
 import sys
 from PyQt5.QtWidgets import QMenu, QTableWidget, QTableWidgetItem, QHeaderView, QTreeWidgetItem
@@ -115,7 +115,7 @@ from PyQt5.QtWidgets import QFileDialog,QDesktopWidget
 from PyQt5.QtGui import QMouseEvent, QIcon, QDesktopServices, QMovie,QIntValidator
 from PyQt5.QtWidgets import QDialog,  QLabel,  \
     QGridLayout, QSpacerItem, QSizePolicy, QGraphicsDropShadowEffect, \
-    QListWidget, QListWidgetItem
+    QListWidget, QListWidgetItem,QPushButton
 import need.res_rc
 from PyQt5.QtCore import  QEvent, QObject
 from oss2 import StsAuth, Bucket
@@ -126,8 +126,8 @@ from PyQt5.QtGui import QPixmap, QImage,  QPainterPath,QTextCursor
 from functools import reduce  # 导入排序模块
 from PyQt5.QtCore import pyqtProperty, QSize, Qt, QRectF, QTimer
 from PyQt5.QtGui import QColor, QPainter, QFont
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QSlider
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout
+
 
 import threading
 from ping3 import ping
@@ -354,10 +354,25 @@ border:none;   /*无边框*/
 }
 '''
 
-
+aria2_button_style = '''QPushButton:!hover{
+        border:1px  #369;
+        border-radius:8px;    
+        }
+        
+        QPushButton:hover{
+        
+        border:1px  #369;
+        background-color:#B9B9FF;
+        
+        border-radius:8px;
+        
+        }'''
 
 def hum_convert(value):
-    value = float(value)
+    try:
+        value = float(value)
+    except ValueError as e:
+        return value
     if value == 0:
         return "0"
     units = ["B", "KB", "MB", "GB", "TB", "PB"]
@@ -794,15 +809,7 @@ class uploadThread(QThread):
 
     def run(self):
         try:
-            global upload_task
-            while True:
-                if len(upload_task) <= 5:
-                    break
-                else:
-                    self.upload_proess_signal.emit([0, self.row, '0M/S', "排队中"])  # 发送信号
-                    time.sleep(1)
 
-            upload_task.append(str(QThread.currentThread()))
             self.upload_proess_signal.emit([0, self.row, '0M/S', "开始计算hash"])  # 发送信号
             file_hash, file_size, filename = gcid_hash_file(self.file_path)
 
@@ -852,7 +859,7 @@ class uploadThread(QThread):
                 oss2.resumable_upload(bucket, key, self.file_path,
                                       multipart_threshold=265 * 1024,
                                       part_size=265 * 1024,
-                                      num_threads=5,
+                                      num_threads=2,
                                       progress_callback=self.percentage)
                 self.upload_proess_signal.emit([100, self.row, '0M/S', "上传完成"])  # 发送信号
 
@@ -866,9 +873,10 @@ class uploadThread(QThread):
                 self.upload_proess_signal.emit([100, self.row, '%.2fM/S' % 0, "秒传完成"])  # 发送信号
 
             for a in upload_task:
-                if a == str(QThread.currentThread()):
+                if a == str(self.row):
                     upload_task.remove(a)
                     break
+            self.exit()
 
 
 
@@ -879,6 +887,7 @@ class uploadThread(QThread):
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             print(f"Error ({new_time}):上传失败:{e}")
+            self.upload_proess_signal.emit([0, self.row, '0M/S', "上传失败"])  # 发送信号
 
 
 # 添加磁力子弹窗
@@ -1948,6 +1957,7 @@ class Upload_folder_Worker(QThread):
                     self.valueChanged.emit(result)  # 发送信号
 
 
+
                 else:
                     print(f"INFO ({new_time}):检测为子文件夹:{file_path}")
                     self.again(folder_path=file_path,folder_id=new_id)
@@ -2500,6 +2510,31 @@ class Phone_file_Form(QDialog, Ui_Phone_Form):
     ###
 
 
+class Refresh_upload_task_Worker(QThread):
+    valueChanged = pyqtSignal(int)  # 值变化信号
+
+    def __init__(self):
+        super(Refresh_upload_task_Worker, self).__init__()
+
+
+    def run(self):
+        while True:
+            time.sleep(1)
+            self.valueChanged.emit(-1)
+
+
+class Refresh_download_task_Worker(QThread):
+    valueChanged = pyqtSignal(int)  # 值变化信号
+
+    def __init__(self):
+        super(Refresh_download_task_Worker, self).__init__()
+
+
+    def run(self):
+        while True:
+            time.sleep(1)
+            self.valueChanged.emit(-1)
+
 # 主窗口
 class MyPyQT_Form(QDialog, Ui_Form):
     def __init__(self):
@@ -2507,8 +2542,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         self.setupUi(self)
 
-        sys.stdout = EmittingStr(textWritten=self.outputWritten)
-        sys.stderr = EmittingStr(textWritten=self.outputWritten)
+        '''sys.stdout = EmittingStr(textWritten=self.outputWritten)
+        sys.stderr = EmittingStr(textWritten=self.outputWritten)'''
 
         # dialog相关
         self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
@@ -2534,13 +2569,40 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.page_config()
 
         self.main_page()
+        self.upload_page()
         self.download_page()
         self.offline_page()
         self.about_page()
         self.check_networl_call()
         self.the_trash_page()
 
+        pid = os.getpid()
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags = subprocess.CREATE_NEW_CONSOLE | subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        subprocess.Popen(
+            ["Aria2/aria2c.exe", '--enable-rpc=true', f'--stop-with-process={pid}', '--conf-path=Aria2/aria2.conf',
+             "--rpc-listen-port=29385", '--rpc-secret=pikpakdown'], startupinfo=startupinfo)
 
+        self.aria2 = aria2p.API(
+            aria2p.Client(
+                host="http://127.0.0.1",
+                port=29385,
+                secret="pikpakdown"
+            )
+        )
+
+
+        self.upload_now_num=0
+        self.upload_wait_num=0
+        self.upload_finish_num=0
+
+        self.download_now_num = 0
+        self.download_wait_num = 0
+        self.download_finish_num = 0
+
+        self.task_num_id = 0
+        self.max_task_num = 5
 
         #粘贴列表
         self.paste_type = True
@@ -2573,9 +2635,23 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.pushMaxButton.clicked.connect(self.start_max_min)
         # 窗口淡化动画
 
+        #刷新上传列表线程
+        self.Refresh_upload_task_Worker = Refresh_upload_task_Worker()
+
+        self.Refresh_upload_task_Worker.valueChanged.connect(self.refresh_upload_task)
+        self.Refresh_upload_task_Worker.start()
+
+        #刷新下载列表线程
+        self.Refresh_download_task_Worker = Refresh_download_task_Worker()
+
+        self.Refresh_download_task_Worker.valueChanged.connect(self.refresh_download_task)
+        self.Refresh_download_task_Worker.start()
+
+
+        self.upload_task_list = []
 
         self.my_print()
-        self.show_download_html()
+        #self.show_download_html()
         self.center()
 
 
@@ -2591,9 +2667,9 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     #输出到输出台
     def outputWritten(self, text):
-        with open('log.txt', 'a+') as f:  # 设置文件对象
+        '''with open('log.txt', 'a+',encoding='utf-8') as f:  # 设置文件对象
             f.write(text)  # 将字符串写入文件中
-            f.close()
+            f.close()'''
         cursor = self.outprint_textBrowser.textCursor()
         cursor.movePosition(QTextCursor.End)
 
@@ -2701,14 +2777,14 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.animation.start()
 
 
-    def show_download_html(self):
+    '''def show_download_html(self):
 
 
         self.browser = QWebEngineView()
         # 加载外部的web界面
         self.browser.page().profile().setHttpAcceptLanguage("zh-CN,zh;q=0.9,en;q=0.8")
         self.browser.load(QUrl('file:///index.html#!/settings/rpc/set/http/127.0.0.1/29385/jsonrpc/cGlrcGFrZG93bg=='))
-        self.verticalLayout_13.addWidget(self.browser)
+        self.verticalLayout_13.addWidget(self.browser)'''
 
 
 
@@ -3086,7 +3162,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
             it_status = QtWidgets.QTableWidgetItem(a["message"])
             it_status.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
 
-            it_progress = PercentProgressBar(self.downloadtableWidget, styleSheet="""
+            it_progress = PercentProgressBar(self.upload_now_dtableWidget, styleSheet="""
             qproperty-textColor: rgb(223,86,89);
             qproperty-borderColor: #FF9797;
             qproperty-backgroundColor: white;
@@ -3208,37 +3284,211 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.newDialog.show()
         self.newDialog._signal.connect(self.add_magnet_back)
 
-    # 下载管理界面
+    #下载页面
     def download_page(self):
-        self.downloadtableWidget.clear()
+        self.download_now_dtableWidget.clear()
+        self.download_now_dtableWidget.setColumnCount(0)  # 设置列数
+        self.download_now_dtableWidget.setRowCount(0)  # 设置列数
+        self.download_wait_dtableWidget.clear()
+        self.download_wait_dtableWidget.setColumnCount(0)  # 设置列数
+        self.download_wait_dtableWidget.setRowCount(0)  # 设置列数
+        self.download_finish_dtableWidget.clear()
+        self.download_finish_dtableWidget.setColumnCount(0)  # 设置列数
+        self.download_finish_dtableWidget.setRowCount(0)  # 设置列数
 
-        self.downloadtableWidget.setStyleSheet(QScrollBar_style)
+        self.download_now_dtableWidget.setStyleSheet(QScrollBar_style)
 
-        conLayout = QHBoxLayout()
-        self.downloadtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
-        self.downloadtableWidget.customContextMenuRequested.connect(self.download_Menu)  ####右键菜单
-        self.downloadtableWidget.setLayout(conLayout)
+        titles = ['文件名', '大小', "进度","状态", "剩余时间", '下载速度', "操作",'gid']
 
-        titles = ['任务名称', '大小', "状态", "速度", '进度',"文件地址"]
-        # self.table = QTableWidget(4,3,self)  #创建4行3列的表格
-        # self.tableWidget.setRowCount(9)  # 设置行数--不包括标题列
-        self.downloadtableWidget.setColumnCount(6)  # 设置列数
-        self.downloadtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
-        self.downloadtableWidget.hideColumn(5)  # 隐藏指定列
+        self.download_now_dtableWidget.setColumnCount(8)  # 设置列数
+        self.download_now_dtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
+
+        self.download_now_dtableWidget.hideColumn(7)  # 隐藏指定列
         #
-        self.downloadtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+        self.download_now_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
 
         # QTableWidget.resizeColumnsToContents(self.tableWidget)
-        self.downloadtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.downloadtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
-        self.downloadtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
-        self.downloadtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
-        self.downloadtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
-        self.downloadtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
-        self.downloadtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+        self.download_now_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.download_now_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.download_now_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_now_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.download_now_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_now_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.download_now_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_now_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.download_now_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_now_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+        conLayout = QHBoxLayout()
+        self.download_now_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.download_now_dtableWidget.customContextMenuRequested.connect(self.download_now_Menu)  ####右键菜单
+        self.download_now_dtableWidget.setLayout(conLayout)
+
+        self.download_wait_dtableWidget.setStyleSheet(QScrollBar_style)
+
+
+        self.download_wait_dtableWidget.setColumnCount(8)  # 设置列数
+        self.download_wait_dtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
+
+        self.download_wait_dtableWidget.hideColumn(7)  # 隐藏指定列
+
+
+        #
+        self.download_wait_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+
+        # QTableWidget.resizeColumnsToContents(self.tableWidget)
+        self.download_wait_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.download_wait_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.download_wait_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_wait_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.download_wait_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_wait_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.download_wait_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_wait_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.download_wait_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_wait_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+        conLayout = QHBoxLayout()
+        self.download_wait_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.download_wait_dtableWidget.customContextMenuRequested.connect(self.download_wait_Menu)  ####右键菜单
+        self.download_wait_dtableWidget.setLayout(conLayout)
+
+        self.download_finish_dtableWidget.setStyleSheet(QScrollBar_style)
+
+        self.download_finish_dtableWidget.setColumnCount(8)  # 设置列数
+        self.download_finish_dtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
+
+        self.download_finish_dtableWidget.hideColumn(7)  # 隐藏指定列
+        #
+        self.download_finish_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+
+        # QTableWidget.resizeColumnsToContents(self.tableWidget)
+        self.download_finish_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.download_finish_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.download_finish_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_finish_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.download_finish_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_finish_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.download_finish_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_finish_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.download_finish_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.download_finish_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+        conLayout = QHBoxLayout()
+        self.download_finish_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.download_finish_dtableWidget.customContextMenuRequested.connect(self.download_finish_Menu)  ####右键菜单
+        self.download_finish_dtableWidget.setLayout(conLayout)
+
+        self.open_aria2ng_pushButton.clicked.connect(self.visit_aria2ng)
+        self.start_alldown_pushButton.clicked.connect(lambda : self.aria2.resume_all())
+        self.stop_alldown_pushButton.clicked.connect(lambda : self.aria2.pause_all())
+
+    #访问aria2NG
+    def visit_aria2ng(self):
+
+        the_dir = str(os.getcwd()).replace("\\","/")
+
+        QDesktopServices.openUrl( QUrl(f'file:///{the_dir}/index.html#!/settings/rpc/set/http/127.0.0.1/29385/jsonrpc/cGlrcGFrZG93bg=='))
+
+
+    # 上传管理界面
+    def upload_page(self):
+        self.upload_now_dtableWidget.clear()
+        self.upload_now_dtableWidget.setColumnCount(0)  # 设置列数
+        self.upload_now_dtableWidget.setRowCount(0)  # 设置列数
+        self.upload_wait_dtableWidget.clear()
+        self.upload_wait_dtableWidget.setColumnCount(0)  # 设置列数
+        self.upload_wait_dtableWidget.setRowCount(0)  # 设置列数
+        self.upload_finish_dtableWidget.clear()
+        self.upload_finish_dtableWidget.setColumnCount(0)  # 设置列数
+        self.upload_finish_dtableWidget.setRowCount(0)  # 设置列数
+
+        self.upload_now_dtableWidget.setStyleSheet(QScrollBar_style)
+
+        conLayout = QHBoxLayout()
+        self.upload_now_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.upload_now_dtableWidget.customContextMenuRequested.connect(self.upload_now_Menu)  ####右键菜单
+        self.upload_now_dtableWidget.setLayout(conLayout)
+
+        titles = ['任务名称', '大小', "状态", "速度", '进度',"文件地址","ID"]
+
+        self.upload_now_dtableWidget.setColumnCount(7)  # 设置列数
+        self.upload_now_dtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
+        self.upload_now_dtableWidget.hideColumn(5)  # 隐藏指定列
+        self.upload_now_dtableWidget.hideColumn(6)  # 隐藏指定列
+        #
+        self.upload_now_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+
+        # QTableWidget.resizeColumnsToContents(self.tableWidget)
+        self.upload_now_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.upload_now_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.upload_now_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_now_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.upload_now_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_now_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.upload_now_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_now_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.upload_now_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_now_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+        self.upload_wait_dtableWidget.setStyleSheet(QScrollBar_style)
+
+        conLayout = QHBoxLayout()
+        self.upload_wait_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.upload_wait_dtableWidget.customContextMenuRequested.connect(self.upload_wait_Menu)  ####右键菜单
+        self.upload_wait_dtableWidget.setLayout(conLayout)
+
+        wait_titles = ['任务名称', '大小', "状态", "速度", '进度', "文件地址", "文件路径","上传文件夹ID"]
+        self.upload_wait_dtableWidget.setColumnCount(8)  # 设置列数
+        self.upload_wait_dtableWidget.setHorizontalHeaderLabels(wait_titles)  # 标题列---水平标题
+        self.upload_wait_dtableWidget.hideColumn(5)  # 隐藏指定列
+        self.upload_wait_dtableWidget.hideColumn(6)  # 隐藏指定列
+        self.upload_wait_dtableWidget.hideColumn(7)  # 隐藏指定列
+
+        #
+        self.upload_wait_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+
+        # QTableWidget.resizeColumnsToContents(self.tableWidget)
+        self.upload_wait_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.upload_wait_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.upload_wait_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_wait_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.upload_wait_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_wait_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.upload_wait_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_wait_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.upload_wait_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_wait_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+        self.upload_finish_dtableWidget.setStyleSheet(QScrollBar_style)
+
+
+        conLayout = QHBoxLayout()
+        self.upload_finish_dtableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  ######允许右键产生子菜单
+        self.upload_finish_dtableWidget.customContextMenuRequested.connect(self.upload_finish_Menu)  ####右键菜单
+        self.upload_finish_dtableWidget.setLayout(conLayout)
+
+
+        self.upload_finish_dtableWidget.setColumnCount(7)  # 设置列数
+        self.upload_finish_dtableWidget.setHorizontalHeaderLabels(titles)  # 标题列---水平标题
+        self.upload_finish_dtableWidget.hideColumn(5)  # 隐藏指定列
+        self.upload_finish_dtableWidget.hideColumn(6)  # 隐藏指定列
+        #
+        self.upload_finish_dtableWidget.setSelectionBehavior(QTableWidget.SelectRows)  # 设置选中行
+
+        # QTableWidget.resizeColumnsToContents(self.tableWidget)
+        self.upload_finish_dtableWidget.setEditTriggers(QTableWidget.NoEditTriggers)
+        self.upload_finish_dtableWidget.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)  # 设置列宽的适应方式
+        self.upload_finish_dtableWidget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_finish_dtableWidget.setColumnWidth(1, 200)  # 设置某列的宽度
+        self.upload_finish_dtableWidget.horizontalHeader().setSectionResizeMode(2, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_finish_dtableWidget.setColumnWidth(2, 160)  # 设置某列的宽度
+        self.upload_finish_dtableWidget.horizontalHeader().setSectionResizeMode(3, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_finish_dtableWidget.setColumnWidth(3, 130)  # 设置某列的宽度
+        self.upload_finish_dtableWidget.horizontalHeader().setSectionResizeMode(4, QHeaderView.Fixed)  # 设置列宽的适应方式
+        self.upload_finish_dtableWidget.setColumnWidth(4, 100)  # 设置某列的宽度
+
+
 
     # 获取信号向进度条添加下载任务
     def add_download_to_pro(self, info_list):
@@ -3251,54 +3501,245 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.downloadThread.start()
         self.download_list.append(self.downloadThread)
 
+    # 上传列表右键
+    def upload_finish_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.upload_wait_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
+
+            row_list = list(dict.fromkeys(row_list))
+
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+
+
+            item4 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
+            action = down_menu.exec_(self.upload_wait_dtableWidget.mapToGlobal(pos))
+
+
+
+            if action == item4:
+
+                row_num = int(row_list[0])
+
+                download_path = self.upload_wait_dtableWidget.item(row_num, 5).text()
+                if download_path != "":
+                    os.startfile(download_path)
+        except:
+            None
+
+    # 上传列表右键
+    def upload_wait_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.upload_wait_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
+
+            row_list = list(dict.fromkeys(row_list))
+
+
+
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+
+            item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
+            item4 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
+            action = down_menu.exec_(self.upload_wait_dtableWidget.mapToGlobal(pos))
+
+
+
+            if action == item3:
+                for a in row_list:
+
+                    self.upload_wait_dtableWidget.removeRow(a)
+
+            elif action == item4:
+
+                row_num = int(row_list[0])
+
+                download_path = self.upload_wait_dtableWidget.item(row_num, 5).text()
+                if download_path != "":
+
+                    os.startfile(download_path)
+        except:
+            None
+
+    # 上传列表右键
+    def upload_now_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.upload_now_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
+
+            row_list = list(dict.fromkeys(row_list))
+
+
+
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+
+            item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
+            item4 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
+            action = down_menu.exec_(self.upload_now_dtableWidget.mapToGlobal(pos))
+
+
+
+            if action == item3:
+                for a in row_list:
+
+                    num = 0
+                    task_id = str(self.upload_now_dtableWidget.item(a, 6).text())
+                    for b in range(len(self.upload_task_list)):
+                        task_ID = str(self.upload_task_list[num]['row_cnt'])
+                        if task_id == task_ID:
+                            self.upload_task_list[num]["uploadThread"].remove()
+                            break
+                        num = num + 1
+
+            elif action == item4:
+
+                row_num = int(row_list[0])
+
+                download_path = self.upload_now_dtableWidget.item(row_num, 5).text()
+                if download_path != "":
+
+                    os.startfile(download_path)
+        except:
+            None
 
     # 下载列表右键
-    def download_Menu(self, pos):
-        # rint( pos)
-        row_num = -1
-        row_list = []
-        for i in self.downloadtableWidget.selectionModel().selection().indexes():
-            row_list.append(i.row())
+    def download_now_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.download_now_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
 
-        row_list = list(dict.fromkeys(row_list))
+            row_list = list(dict.fromkeys(row_list))
+
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+            item2 = down_menu.addAction(QIcon(":/pic/src/暂停.png"), u"暂停")
+            item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
+
+            action = down_menu.exec_(self.download_now_dtableWidget.mapToGlobal(pos))
+
+            if action == item3:
+                for a in row_list:
+
+                    gid = str(self.download_now_dtableWidget.item(a, 7).text())
+                    self.the_dwonload_remove(gid=gid)
 
 
 
-        down_menu = QMenu()
-        # 背景透明
-        down_menu.setAttribute(Qt.WA_TranslucentBackground)
-        # 无边框、去掉自带阴影
-        down_menu.setWindowFlags(
-            down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
-        item1 = down_menu.addAction(QIcon(":/pic/src/开始.png"), u"开始")
-        item2 = down_menu.addAction(QIcon(":/pic/src/暂停.png"), u"暂停")
-        item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
-        item4 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
-        action = down_menu.exec_(self.downloadtableWidget.mapToGlobal(pos))
+            elif action == item2:
 
-        if action == item1:
-            for a in row_list:
+                for a in row_list:
+                    gid = str(self.download_now_dtableWidget.item(a, 7).text())
+                    self.the_dwonload_stop(gid=gid)
+        except:
+            None
 
-                self.download_list[int(a)].resume()
+    # 下载列表右键
+    def download_wait_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.download_wait_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
 
-        elif action == item2:
-            for a in row_list:
+            row_list = list(dict.fromkeys(row_list))
 
-                self.download_list[int(a)].pause()
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+            item2 = down_menu.addAction(QIcon(":/pic/src/开始.png"), u"开始")
+            item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
 
-        elif action == item3:
-            for a in row_list:
+            action = down_menu.exec_(self.download_wait_dtableWidget.mapToGlobal(pos))
 
-                self.download_list[int(a)].remove()
+            if action == item3:
+                for a in row_list:
+                    gid = str(self.download_wait_dtableWidget.item(a, 7).text())
+                    self.the_dwonload_remove(gid=gid)
 
-        elif action == item4:
 
-            row_num = int(row_list[0])
 
-            download_path = self.downloadtableWidget.item(row_num, 5).text()
-            if download_path != "":
+            elif action == item2:
 
-                os.startfile(download_path)
+                for a in row_list:
+                    gid = str(self.download_wait_dtableWidget.item(a, 7).text())
+                    self.the_dwonload_start(gid=gid)
+        except:
+            None
+
+    # 下载列表右键
+    def download_finish_Menu(self, pos):
+        try:
+            # rint( pos)
+            row_num = -1
+            row_list = []
+            for i in self.download_finish_dtableWidget.selectionModel().selection().indexes():
+                row_list.append(i.row())
+
+            row_list = list(dict.fromkeys(row_list))
+
+            down_menu = QMenu()
+            # 背景透明
+            down_menu.setAttribute(Qt.WA_TranslucentBackground)
+            # 无边框、去掉自带阴影
+            down_menu.setWindowFlags(
+                down_menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+            item2 = down_menu.addAction(QIcon(":/pic/src/文件夹.png"), u"打开文件夹")
+            item3 = down_menu.addAction(QIcon(":/pic/src/删除.png"), u"删除")
+
+            action = down_menu.exec_(self.download_finish_dtableWidget.mapToGlobal(pos))
+
+            if action == item3:
+                for a in row_list:
+                    gid = str(self.download_finish_dtableWidget.item(a, 7).text())
+                    self.the_dwonload_remove(gid=gid)
+
+
+
+            elif action == item2:
+
+                a = row_list[0]
+                gid = str(self.download_finish_dtableWidget.item(a, 7).text())
+
+                download= self.aria2.get_download(gid=gid)
+                os.startfile(str(os.path.dirname(download.control_file_path)))
+
+        except:
+            None
 
     # 更新下载进度
     def set_progressbar_value(self, result):
@@ -3308,38 +3749,543 @@ class MyPyQT_Form(QDialog, Ui_Form):
         row = result[1]
         speed = result[2]
         status = result[3]
-        if len(result)==5:
-            download_part = result[4]
-            if value == -1:
 
-                self.downloadtableWidget.item(int(row), 1).setText("任务已删除")
+
+        for a in range(len(self.upload_task_list)):
+            if self.upload_task_list[a]['row_cnt'] == row:
+                '''if status == "任务已删除":
+
+                    row_cnt = self.upload_now_dtableWidget.rowCount()
+
+                    for b in range(row_cnt):
+                        task_id = str(self.upload_now_dtableWidget.item(b, 6).text())
+                        if task_id == row:
+                            self.upload_now_dtableWidget.removeRow(b)
+
+                            break
+                    del self.upload_task_list[a]
+                    return'''
+                self.upload_task_list[a]['progressBar'] = value
+                self.upload_task_list[a]['it_stasus'] = status
+                self.upload_task_list[a]['it_speed'] = speed
+
+                return
+
+
+    #刷新下载列表
+    def refresh_download_task(self,num):
+        try:
+            downloads = self.aria2.get_downloads()
+
+        except:
+
+            return
+        for download in downloads:
+
+            if download.total_length==0:
+                continue
+            if download.status == "active":
+                row_cnt = self.download_now_dtableWidget.rowCount()
+                task_ID = str(download.gid)
+                for b in range(row_cnt):
+                    task_id = str(self.download_now_dtableWidget.item(b, 7).text())
+                    if task_id == task_ID:
+                        self.download_now_dtableWidget.cellWidget(int(b),2).setValue(int(download.completed_length / download.total_length * 100))
+                        self.download_now_dtableWidget.item(int(b), 3).setText(str(download.status))
+                        self.download_now_dtableWidget.item(int(b), 4).setText(str(download.eta))
+                        self.download_now_dtableWidget.item(int(b), 5).setText(f"{hum_convert(download.download_speed)}/s")
+
+                        break
+                else:
+                    self.download_now_dtableWidget.insertRow(row_cnt)
+                    # 添加下载名称
+                    it_name = QtWidgets.QTableWidgetItem(download.name)
+                    it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                    self.download_now_dtableWidget.setRowHeight(row_cnt, 50)
+
+                    # 添加下载文件大小
+                    it_size = QtWidgets.QTableWidgetItem(hum_convert(hum_convert(download.total_length)))
+                    it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                    # 添加上传进度条
+                    progressBar = QtWidgets.QProgressBar(self.download_now_dtableWidget)
+                    progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                    progressBar.setProperty("value", int(download.completed_length / download.total_length * 100))
+                    # self.progressBar.setObjectName("progressBar")
+                    self.download_now_dtableWidget.setCellWidget(row_cnt, 2, progressBar)
+
+                    # 添加上传状态
+                    it_stasus = QtWidgets.QTableWidgetItem(download.status)
+                    it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 3, it_stasus)  # 给指定单元格设置数据
+
+                    it_eta = QtWidgets.QTableWidgetItem("0")
+                    it_eta.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 4, it_eta)  # 给指定单元格设置数据
+
+                    # 添加速度
+                    it_speed = QtWidgets.QTableWidgetItem(f"{hum_convert(download.download_speed)}/s")
+                    it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 5, it_speed)  # 给指定单元格设置数据
+
+                    bbVert_now = QDialogButtonBox(Qt.Horizontal, self)
+                    bbVert_now.setStyleSheet(aria2_button_style)
+                    bbVert_now.setCenterButtons(True)
+
+                    btnstop = QPushButton(self)
+                    btnstop.setIcon(QIcon(":/pic/src/暂停.png"))
+                    btnstop.clicked.connect(lambda: self.the_dwonload_stop(download.gid))
+                    btnremove = QPushButton(self)
+                    btnremove.setIcon(QIcon(":/pic/src/删除.png"))
+                    btnremove.clicked.connect(lambda: self.the_dwonload_remove(download.gid))
+
+                    bbVert_now.addButton(btnstop, QDialogButtonBox.AcceptRole)
+                    bbVert_now.addButton(btnremove, QDialogButtonBox.AcceptRole)
+                    self.download_now_dtableWidget.setCellWidget(row_cnt, 6, bbVert_now)
+
+                    it_ID = QtWidgets.QTableWidgetItem(download.gid)
+                    it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_now_dtableWidget.setItem(row_cnt, 7, it_ID)  # 给指定单元格设置数据
+
+                    row_cnt = self.download_wait_dtableWidget.rowCount()
+
+                    for b in range(row_cnt):
+                        task_id = str(self.download_wait_dtableWidget.item(b, 7).text())
+                        if task_id == task_ID:
+                            self.download_wait_dtableWidget.removeRow(b)
+                            break
+
+            elif download.status == "paused":
+                row_cnt = self.download_wait_dtableWidget.rowCount()
+                task_ID = str(download.gid)
+                for b in range(row_cnt):
+                    task_id = str(self.download_wait_dtableWidget.item(b, 7).text())
+                    if task_id == task_ID:
+                        break
+                else:
+                    self.download_wait_dtableWidget.insertRow(row_cnt)
+                    # 添加下载名称
+                    it_name = QtWidgets.QTableWidgetItem(download.name)
+                    it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                    self.download_wait_dtableWidget.setRowHeight(row_cnt, 50)
+
+                    # 添加下载文件大小
+                    it_size = QtWidgets.QTableWidgetItem(hum_convert(hum_convert(download.total_length)))
+                    it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                    # 添加上传进度条
+                    progressBar = QtWidgets.QProgressBar(self.download_wait_dtableWidget)
+                    progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                    progressBar.setProperty("value", int(download.completed_length / download.total_length * 100))
+                    # self.progressBar.setObjectName("progressBar")
+                    self.download_wait_dtableWidget.setCellWidget(row_cnt, 2, progressBar)
+
+                    # 添加上传状态
+                    it_stasus = QtWidgets.QTableWidgetItem(download.status)
+                    it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 3, it_stasus)  # 给指定单元格设置数据
+
+                    it_eta = QtWidgets.QTableWidgetItem("0")
+                    it_eta.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 4, it_eta)  # 给指定单元格设置数据
+
+                    # 添加速度
+                    it_speed = QtWidgets.QTableWidgetItem(f"{hum_convert(download.download_speed)}/s")
+                    it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 5, it_speed)  # 给指定单元格设置数据
+
+                    bbVert_wait = QDialogButtonBox(Qt.Horizontal, self)
+                    bbVert_wait.setStyleSheet(aria2_button_style)
+                    bbVert_wait.setCenterButtons(True)
+
+                    btnstart = QPushButton(self)
+                    btnstart.setIcon(QIcon(":/pic/src/开始.png"))
+
+                    btnstart.clicked.connect(lambda: self.the_dwonload_start(download.gid))
+                    btnstop = QPushButton(self)
+                    btnstop.setIcon(QIcon(":/pic/src/暂停.png"))
+                    btnstop.clicked.connect(lambda: self.the_dwonload_stop(download.gid))
+                    btnremove = QPushButton(self)
+                    btnremove.setIcon(QIcon(":/pic/src/删除.png"))
+                    btnremove.clicked.connect(lambda: self.the_dwonload_remove(download.gid))
+                    bbVert_wait.addButton(btnstart, QDialogButtonBox.AcceptRole)
+                    bbVert_wait.addButton(btnstop, QDialogButtonBox.AcceptRole)
+                    bbVert_wait.addButton(btnremove, QDialogButtonBox.AcceptRole)
+                    self.download_wait_dtableWidget.setCellWidget(row_cnt, 6, bbVert_wait)
+
+
+                    it_ID = QtWidgets.QTableWidgetItem(download.gid)
+                    it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_wait_dtableWidget.setItem(row_cnt, 7, it_ID)  # 给指定单元格设置数据
+
+                    row_cnt = self.download_now_dtableWidget.rowCount()
+
+                    for b in range(row_cnt):
+                        task_id = str(self.download_now_dtableWidget.item(b, 7).text())
+                        if task_id == task_ID:
+                            self.download_now_dtableWidget.removeRow(b)
+                            break
+
             else:
+                row_cnt = self.download_finish_dtableWidget.rowCount()
+                task_ID = str(download.gid)
+                for b in range(row_cnt):
+                    task_id = str(self.download_finish_dtableWidget.item(b, 7).text())
+                    if task_id == task_ID:
 
-                self.downloadtableWidget.cellWidget(int(row), 4).setValue(int(value))
+                        break
+                else:
+                    self.download_finish_dtableWidget.insertRow(row_cnt)
+                    # 添加下载名称
+                    it_name = QtWidgets.QTableWidgetItem(download.name)
+                    it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
 
-                self.downloadtableWidget.item(int(row), 3).setText(str(speed))
-                self.downloadtableWidget.item(int(row), 2).setText(status)
-                self.downloadtableWidget.item(int(row), 1).setText(download_part)
-            if value == 100:
-                name = self.downloadtableWidget.item(int(row), 0).text()
-                NotificationWindow.success('提示', f'{name} 任务完成')
-        else:
-            if value == -1:
+                    self.download_finish_dtableWidget.setRowHeight(row_cnt, 50)
 
-                self.downloadtableWidget.item(int(row), 1).setText("任务已删除")
-            else:
+                    # 添加下载文件大小
+                    it_size = QtWidgets.QTableWidgetItem(hum_convert(hum_convert(download.total_length)))
+                    it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
 
-                self.downloadtableWidget.cellWidget(int(row), 4).setValue(int(value))
+                    # 添加上传进度条
+                    progressBar = QtWidgets.QProgressBar(self.download_finish_dtableWidget)
+                    progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                    progressBar.setProperty("value", int(download.completed_length / download.total_length * 100))
+                    # self.progressBar.setObjectName("progressBar")
+                    self.download_finish_dtableWidget.setCellWidget(row_cnt, 2, progressBar)
 
-                self.downloadtableWidget.item(int(row), 3).setText(str(speed))
-                self.downloadtableWidget.item(int(row), 2).setText(status)
+                    # 添加上传状态
+                    it_stasus = QtWidgets.QTableWidgetItem(download.status)
+                    it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 3, it_stasus)  # 给指定单元格设置数据
 
-            if value == 100:
-                name = self.downloadtableWidget.item(int(row), 0).text()
+                    it_eta = QtWidgets.QTableWidgetItem("0")
+                    it_eta.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 4, it_eta)  # 给指定单元格设置数据
 
+                    # 添加速度
+                    it_speed = QtWidgets.QTableWidgetItem(hum_convert(download.download_speed))
+                    it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 5, it_speed)  # 给指定单元格设置数据
+
+                    bbVert_finish = QDialogButtonBox(Qt.Horizontal, self)
+                    bbVert_finish.setStyleSheet(aria2_button_style)
+                    bbVert_finish.setCenterButtons(True)
+
+                    btnremove = QPushButton(self)
+                    btnremove.setIcon(QIcon(":/pic/src/删除.png"))
+                    btnremove.clicked.connect(lambda: self.the_dwonload_remove(download.gid))
+
+                    btnfolder = QPushButton(self)
+                    btnfolder.setIcon(QIcon(":/pic/src/文件夹.png"))
+                    btnfolder.clicked.connect(lambda: os.startfile(str(os.path.dirname(download.control_file_path))))
+                    bbVert_finish.addButton(btnfolder, QDialogButtonBox.AcceptRole)
+                    bbVert_finish.addButton(btnremove, QDialogButtonBox.AcceptRole)
+                    self.download_finish_dtableWidget.setCellWidget(row_cnt, 6, bbVert_finish)
+
+                    it_ID = QtWidgets.QTableWidgetItem(download.gid)
+                    it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.download_finish_dtableWidget.setItem(row_cnt, 7, it_ID)  # 给指定单元格设置数据
+
+                    row_cnt = self.download_now_dtableWidget.rowCount()
+
+                    for b in range(row_cnt):
+                        task_id = str(self.download_now_dtableWidget.item(b, 7).text())
+                        if task_id == task_ID:
+                            self.download_now_dtableWidget.removeRow(b)
+                            break
+
+        row_cnt = self.download_now_dtableWidget.rowCount()
+        if row_cnt != self.download_now_num:
+            self.download_tabWidget.setTabText(0, f"正在下载（{row_cnt}）")
+            self.download_now_num = row_cnt
+        row_cnt = self.download_wait_dtableWidget.rowCount()
+        if row_cnt != self.download_wait_num:
+            self.download_tabWidget.setTabText(1, f"等待中（{row_cnt}）")
+            self.download_wait_num = row_cnt
+
+        row_cnt = self.download_finish_dtableWidget.rowCount()
+        if row_cnt != self.download_finish_num:
+            self.download_tabWidget.setTabText(2, f"下载完成（{row_cnt}）")
+            self.download_finish_num = row_cnt
+
+    #开始任务
+    def the_dwonload_start(self,gid):
+
+        try:
+            the_resume = self.aria2.get_download(gid=str(gid))
+            torrent_name = the_resume.name
+            resume_result = the_resume.resume()
+            if resume_result == True:
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"INFO ({new_time}):开始成功 {torrent_name}")
 
-                print(f"INFO ({new_time}):f'{name} 任务完成")
+
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):开始失败 {torrent_name}")
+
+
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):内部下载操作失败 {e}")
+
+    #停止任务
+    def the_dwonload_stop(self, gid):
+        try:
+            the_pause = self.aria2.get_download(gid=str(gid))
+            torrent_name = the_pause.name
+            resume_result = the_pause.pause()
+            if resume_result == True:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"INFO ({new_time}):暂停成功 {torrent_name}")
+
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):暂停失败 {torrent_name}")
+            row_cnt = self.download_now_dtableWidget.rowCount()
+            task_ID = str(gid)
+            for b in range(row_cnt):
+                task_id = str(self.download_now_dtableWidget.item(b, 7).text())
+                if task_id == task_ID:
+                    self.download_now_dtableWidget.removeRow(b)
+                    break
+
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):内部下载操作失败 {e}")
+
+    #删除任务
+    def the_dwonload_remove(self, gid):
+        try:
+            dele = self.aria2.get_download(gid=str(gid))
+            torrent_name = dele.name
+            del_result = dele.remove(force=True, files=True)
+            if del_result == True:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"INFO ({new_time}):删除成功 {torrent_name}")
+
+
+            else:
+                new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                print(f"Error ({new_time}):删除失败 {torrent_name}")
+
+            row_cnt = self.download_now_dtableWidget.rowCount()
+            task_ID = str(gid)
+            for b in range(row_cnt):
+                task_id = str(self.download_now_dtableWidget.item(b, 7).text())
+                if task_id == task_ID:
+                    self.download_now_dtableWidget.removeRow(b)
+                    break
+            row_cnt = self.download_wait_dtableWidget.rowCount()
+            for b in range(row_cnt):
+                task_id = str(self.download_wait_dtableWidget.item(b, 7).text())
+                if task_id == task_ID:
+                    self.download_wait_dtableWidget.removeRow(b)
+                    break
+            row_cnt = self.download_finish_dtableWidget.rowCount()
+            for b in range(row_cnt):
+                task_id = str(self.download_finish_dtableWidget.item(b, 7).text())
+                if task_id == task_ID:
+                    self.download_finish_dtableWidget.removeRow(b)
+                    break
+        except Exception as e:
+            new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            print(f"Error ({new_time}):内部下载操作失败 {e}")
+
+
+    #刷新上传列表
+    def refresh_upload_task(self,num):
+
+        global upload_task
+        num = 0
+        for a in self.upload_task_list:
+            file_name = a['file_name']
+            file_size = a['it_size']
+            stasus = a['it_stasus']
+            speed = a['it_speed']
+            progress = a['progressBar']
+            parent_path = a['it_path']
+            task_ID = str(a['row_cnt'])
+
+            if a['it_stasus']=="上传中" or a['it_stasus']=="开始计算hash" :
+
+
+                row_cnt = self.upload_now_dtableWidget.rowCount()
+
+                for b in range(row_cnt):
+                    task_id = str(self.upload_now_dtableWidget.item(b, 6).text())
+                    if task_id == task_ID :
+                        self.upload_now_dtableWidget.cellWidget(int(b), 4).setValue(int(progress))
+                        self.upload_now_dtableWidget.item(int(b), 2).setText(str(stasus))
+                        self.upload_now_dtableWidget.item(int(b), 3).setText(str(speed))
+                        break
+                else:
+                    self.upload_now_dtableWidget.insertRow(row_cnt)
+                    # 添加下载名称
+                    it_name = QtWidgets.QTableWidgetItem(file_name)
+                    it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                    self.upload_now_dtableWidget.setRowHeight(row_cnt, 50)
+
+                    # 添加下载文件大小
+                    it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+                    it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                    # 添加上传状态
+                    it_stasus = QtWidgets.QTableWidgetItem(stasus)
+                    it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+                    # 添加速度
+                    it_speed = QtWidgets.QTableWidgetItem(speed)
+                    it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+                    # 添加上传进度条
+                    progressBar = QtWidgets.QProgressBar(self.upload_now_dtableWidget)
+                    progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                    progressBar.setProperty("value", progress)
+                    # self.progressBar.setObjectName("progressBar")
+                    self.upload_now_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
+
+                    it_path = QtWidgets.QTableWidgetItem(parent_path)
+                    it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
+                    it_ID = QtWidgets.QTableWidgetItem(task_ID)
+                    it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_now_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+
+                row_cnt = self.upload_wait_dtableWidget.rowCount()
+
+                for b in range(row_cnt):
+                    task_id = str(self.upload_wait_dtableWidget.item(b, 6).text())
+                    if task_id == task_ID:
+                        self.upload_wait_dtableWidget.removeRow(b)
+                        break
+
+
+            else:
+                del self.upload_task_list[num]
+                row_cnt = self.upload_now_dtableWidget.rowCount()
+                for b in range(row_cnt):
+                    task_id = str(self.upload_now_dtableWidget.item(b, 6).text())
+                    if task_id == task_ID:
+                        self.upload_now_dtableWidget.removeRow(b)
+
+                        break
+
+                row_cnt = self.upload_finish_dtableWidget.rowCount()
+                self.upload_finish_dtableWidget.insertRow(row_cnt)
+                # 添加下载名称
+                it_name = QtWidgets.QTableWidgetItem(file_name)
+                it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                self.upload_finish_dtableWidget.setRowHeight(row_cnt, 50)
+
+                # 添加下载文件大小
+                it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+                it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                # 添加上传状态
+                it_stasus = QtWidgets.QTableWidgetItem(stasus)
+                it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+                # 添加速度
+                it_speed = QtWidgets.QTableWidgetItem(speed)
+                it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+                # 添加上传进度条
+                progressBar = QtWidgets.QProgressBar(self.upload_finish_dtableWidget)
+                progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                progressBar.setProperty("value", progress)
+                # self.progressBar.setObjectName("progressBar")
+                self.upload_finish_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
+
+                it_path = QtWidgets.QTableWidgetItem(parent_path)
+                it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
+                it_ID = QtWidgets.QTableWidgetItem(task_ID)
+                it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                self.upload_finish_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+
+
+
+
+
+
+            num = num + 1
+
+        del_file_list = []
+
+        for c in range(self.upload_wait_dtableWidget.rowCount()):
+
+            if len(upload_task) <= self.max_task_num :
+
+                file_path = str(self.upload_wait_dtableWidget.item(c, 6).text())
+
+                folder_id = str(self.upload_wait_dtableWidget.item(c,7).text())
+                file_name = str(self.upload_wait_dtableWidget.item(c, 0).text())
+                file_size = str(self.upload_wait_dtableWidget.item(c, 1).text())
+                parent_path = str(self.upload_wait_dtableWidget.item(c, 5).text())
+                row_cnt = self.task_num_id
+                #### 创建上传线程
+                self.uploadThread = uploadThread(file_path, folder_id, str(row_cnt))
+
+                self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
+                self.uploadThread.start()
+                self.task_num_id = self.task_num_id + 1
+
+                upload_dict = {
+                    "file_name": file_name,
+                    "it_size":file_size,
+                    "it_stasus":"上传中",
+                    "it_speed":"0kb",
+                    "progressBar":0,
+                    "it_path":parent_path,
+                    "row_cnt":str(row_cnt),
+                    "uploadThread":self.uploadThread,
+                    "download_part":"",
+                    "file_path":file_path,
+                    "folder_id":folder_id
+                }
+                self.upload_task_list.append(upload_dict)
+                del_file_list.append(c)
+                upload_task.append(str(row_cnt))
+
+        del_file_list.sort(key=int, reverse=True)  # 用sort方法将list进行降序排列
+        for i in del_file_list:  # 按照list删除对应行
+            self.upload_wait_dtableWidget.removeRow(i)
+
+
+
+
+        row_cnt = self.upload_now_dtableWidget.rowCount()
+        if row_cnt != self.upload_now_num:
+            self.upload_tabWidget.setTabText(0,f"正在上传（{row_cnt}）")
+            self.upload_now_num = row_cnt
+        row_cnt = self.upload_wait_dtableWidget.rowCount()
+        if row_cnt != self.upload_wait_num:
+            self.upload_tabWidget.setTabText(1,f"等待中（{row_cnt}）")
+            self.upload_wait_num = row_cnt
+
+        row_cnt = self.upload_finish_dtableWidget.rowCount()
+        if row_cnt != self.upload_finish_num:
+            self.upload_tabWidget.setTabText(2,f"上传完成（{row_cnt}）")
+            self.upload_finish_num = row_cnt
+
+
 
     # 主页右键菜单项
     def generateMenu(self, pos):
@@ -3392,6 +4338,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         #:/pic/src/复制.png
         item6 = main_menu.addAction(QIcon(":/pic/src/复制.png"), u"复制秒传链接")
         item7 = main_menu.addAction(QIcon(":/pic/src/复制.png"), u"复制下载链接")
+        item8 = main_menu.addAction(QIcon(":/pic/src/链接.png"), u"复制磁力链接")
         action = main_menu.exec_(self.tableWidget.mapToGlobal(pos))
 
         if action == item1:
@@ -3610,6 +4557,22 @@ class MyPyQT_Form(QDialog, Ui_Form):
                 self.Copy_downloadurl_Worker.valueChanged.connect(self.start_show_info)
                 self.Copy_downloadurl_Worker.start()
 
+        elif action == item8:
+
+
+            file_id_list = []
+            for a in row_list:
+
+                file_id = self.tableWidget.item(a, 3).text()
+                file_id_list.append(file_id)
+
+
+            self.Copy_magnet_Worker = Copy_magnet_Worker(file_id_list)
+            self.Copy_magnet_Worker.valueChanged.connect(self.start_show_info)
+            self.Copy_magnet_Worker.start()
+
+
+
         elif action == move_item:
 
             self.start_move_file()
@@ -3650,6 +4613,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
             clipboard.setText(copy_text)
             NotificationWindow.success('PikPakDown', text)
+        elif info_type == "error":
+            NotificationWindow.error('PikPakDown', text)
 
     # 主页相关
     def main_page(self):
@@ -4178,7 +5143,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     # 上传文件
     def start_upload_file(self,openfile_name=None):
-
+        global upload_task
         now_path = self.root_label.text()
         for a in self.all_folder_tree_list:
             if now_path == f"{a['path']}/{a['name']}":
@@ -4201,51 +5166,83 @@ class MyPyQT_Form(QDialog, Ui_Form):
             elif os.path.isfile(file_path):
                 print(f"INFO ({new_time}):添加上传任务:{file_path}")
 
+
+
                 file_name = os.path.basename(file_path)
 
                 file_size = os.path.getsize(file_path)
 
-                row_cnt = self.downloadtableWidget.rowCount()
-                self.downloadtableWidget.insertRow(row_cnt)
-                # 添加下载名称
-                it_name = QtWidgets.QTableWidgetItem(file_name)
-                it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
-                self.downloadtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
 
-                self.downloadtableWidget.setRowHeight(row_cnt, 50)
-
-                # 添加下载文件大小
-                it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
-                it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-                self.downloadtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
-
-                # 添加上传状态
-                it_stasus = QtWidgets.QTableWidgetItem("即将上传")
-                it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-                self.downloadtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
-                # 添加速度
-                it_speed = QtWidgets.QTableWidgetItem("0kb")
-                it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-                self.downloadtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
-                # 添加上传进度条
-                progressBar = QtWidgets.QProgressBar(self.downloadtableWidget)
-                progressBar.setStyleSheet(QProgressBar_StyleSheet)
-                progressBar.setProperty("value", 0)
-                # self.progressBar.setObjectName("progressBar")
-                self.downloadtableWidget.setCellWidget(row_cnt, 4, progressBar)
 
                 parent_path = os.path.dirname(file_path)
 
-                it_path = QtWidgets.QTableWidgetItem(parent_path)
-                it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-                self.downloadtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
 
-                #### 创建上传线程
-                self.uploadThread = uploadThread(file_path, folder_id, row_cnt)
 
-                self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
-                self.uploadThread.start()
-                self.download_list.append(self.uploadThread)
+                if len(upload_task) <= self.max_task_num :
+                    row_cnt = self.task_num_id
+                    #### 创建上传线程
+                    self.uploadThread = uploadThread(file_path, folder_id, row_cnt)
+
+                    self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
+                    self.uploadThread.start()
+                    upload_task.append(str(row_cnt))
+                    self.task_num_id = self.task_num_id + 1
+
+                    upload_dict = {
+                        "file_name": file_name,
+                        "it_size":file_size,
+                        "it_stasus":"上传中",
+                        "it_speed":"0kb",
+                        "progressBar":0,
+                        "it_path":parent_path,
+                        "row_cnt":row_cnt,
+                        "uploadThread":self.uploadThread,
+                        "download_part":"",
+                        "file_path":file_path,
+                        "folder_id":folder_id
+                    }
+                    self.upload_task_list.append(upload_dict)
+                else:
+                    row_cnt = self.upload_wait_dtableWidget.rowCount()
+                    self.upload_wait_dtableWidget.insertRow(row_cnt)
+                    # 添加下载名称
+                    it_name = QtWidgets.QTableWidgetItem(file_name)
+                    it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+                    self.upload_wait_dtableWidget.setRowHeight(row_cnt, 50)
+
+                    # 添加下载文件大小
+                    it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+                    it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+                    # 添加上传状态
+                    it_stasus = QtWidgets.QTableWidgetItem("等待中")
+                    it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+                    # 添加速度
+                    it_speed = QtWidgets.QTableWidgetItem("0kb")
+                    it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+                    # 添加上传进度条
+                    progressBar = QtWidgets.QProgressBar(self.upload_wait_dtableWidget)
+                    progressBar.setStyleSheet(QProgressBar_StyleSheet)
+                    progressBar.setProperty("value", 0)
+                    # self.progressBar.setObjectName("progressBar")
+                    self.upload_wait_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
+
+                    it_path = QtWidgets.QTableWidgetItem(parent_path)
+                    it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
+                    it_ID = QtWidgets.QTableWidgetItem(file_path)
+                    it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+
+                    it_folder_id = QtWidgets.QTableWidgetItem(folder_id)
+                    it_folder_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+                    self.upload_wait_dtableWidget.setItem(row_cnt, 7, it_folder_id)  # 给指定单元格设置数据
 
             else:
                 print(f"INFO ({new_time}):检测为文件夹:{file_path}")
@@ -4258,53 +5255,82 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     #文件夹上传回调
     def upload_folder_get(self,result):
+        global upload_task
         file_path = result['file_path']
         new_id = result['new_id']
         file_name = os.path.basename(file_path)
 
         file_size = os.path.getsize(file_path)
 
-        row_cnt = self.downloadtableWidget.rowCount()
-        self.downloadtableWidget.insertRow(row_cnt)
-        # 添加下载名称
-        it_name = QtWidgets.QTableWidgetItem(file_name)
-        it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
 
-        self.downloadtableWidget.setRowHeight(row_cnt, 50)
-
-        # 添加下载文件大小
-        it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
-        it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
-
-        # 添加上传状态
-        it_stasus = QtWidgets.QTableWidgetItem("即将上传")
-        it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
-        # 添加速度
-        it_speed = QtWidgets.QTableWidgetItem("0kb")
-        it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
-        # 添加上传进度条
-        progressBar = QtWidgets.QProgressBar(self.downloadtableWidget)
-        progressBar.setStyleSheet(QProgressBar_StyleSheet)
-        progressBar.setProperty("value", 0)
-        # self.progressBar.setObjectName("progressBar")
-        self.downloadtableWidget.setCellWidget(row_cnt, 4, progressBar)
 
         parent_path = os.path.dirname(file_path)
 
-        it_path = QtWidgets.QTableWidgetItem(parent_path)
-        it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-        self.downloadtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+        if len(upload_task) <= self.max_task_num :
+            row_cnt = self.task_num_id
+            #### 创建上传线程
+            self.uploadThread = uploadThread(file_path, new_id, row_cnt)
 
-        #### 创建上传线程
-        self.uploadThread = uploadThread(file_path, new_id, row_cnt)
+            self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
+            self.uploadThread.start()
+            upload_task.append(str(row_cnt))
+            self.task_num_id = self.task_num_id + 1
 
-        self.uploadThread.upload_proess_signal.connect(self.set_progressbar_value)
-        self.uploadThread.start()
-        self.download_list.append(self.uploadThread)
+            upload_dict = {
+                "file_name": file_name,
+                "it_size": file_size,
+                "it_stasus": "上传中",
+                "it_speed": "0kb",
+                "progressBar": 0,
+                "it_path": parent_path,
+                "row_cnt": row_cnt,
+                "uploadThread": self.uploadThread,
+                "download_part": "",
+                "file_path": file_path,
+                "folder_id": new_id
+            }
+            self.upload_task_list.append(upload_dict)
+        else:
+            row_cnt = self.upload_wait_dtableWidget.rowCount()
+            self.upload_wait_dtableWidget.insertRow(row_cnt)
+            # 添加下载名称
+            it_name = QtWidgets.QTableWidgetItem(file_name)
+            it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+
+            self.upload_wait_dtableWidget.setRowHeight(row_cnt, 50)
+
+            # 添加下载文件大小
+            it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+            it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+
+            # 添加上传状态
+            it_stasus = QtWidgets.QTableWidgetItem("等待中")
+            it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+            # 添加速度
+            it_speed = QtWidgets.QTableWidgetItem("0kb")
+            it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+            # 添加上传进度条
+            progressBar = QtWidgets.QProgressBar(self.upload_wait_dtableWidget)
+            progressBar.setStyleSheet(QProgressBar_StyleSheet)
+            progressBar.setProperty("value", 0)
+            # self.progressBar.setObjectName("progressBar")
+            self.upload_wait_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
+
+            it_path = QtWidgets.QTableWidgetItem(parent_path)
+            it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+
+            it_ID = QtWidgets.QTableWidgetItem(file_path)
+            it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+
+            it_folder_id = QtWidgets.QTableWidgetItem(new_id)
+            it_folder_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+            self.upload_wait_dtableWidget.setItem(row_cnt, 7, it_folder_id)  # 给指定单元格设置数据
 
 
 
@@ -4889,10 +5915,10 @@ if __name__ == '__main__':
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     #崩溃错误捕获
-    log_dir = os.path.join(os.getcwd(), 'log')
+    '''log_dir = os.path.join(os.getcwd(), 'log')
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
-    cgitb.enable(format='text', logdir=log_dir)
+    cgitb.enable(format='text', logdir=log_dir)'''
 
 
     app = QtWidgets.QApplication(sys.argv)

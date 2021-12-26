@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="pic">
+    <file>src/链接.png</file>
     <file>src/还原.png</file>
     <file>src/loading.gif</file>
     <file>src/重命名.png</file>

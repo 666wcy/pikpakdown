@@ -1,5 +1,5 @@
 from win32com import client
-from need.pikabout import get_download_url,get_list,get_folder_all_file
+from need.pikabout import get_download_url,get_list,get_folder_all_file,get_download_info
 from subprocess import Popen
 import json
 from PyQt5.QtCore import QThread,pyqtSignal
@@ -326,5 +326,58 @@ class Copy_downloadurl_Worker(QThread):
 
                 self.valueChanged.emit(["success", info_text,text])
 
+#复制磁力url线程
+class Copy_magnet_Worker(QThread):
+    valueChanged = pyqtSignal(list)  # 值变化信号
 
+    def __init__(self, fileid):
+        super(Copy_magnet_Worker, self).__init__()
+
+        self.fileid = fileid
+
+
+    def run(self):
+
+        text = ""
+        if type(self.fileid) == list:
+            num = 0
+            for a in self.fileid:
+                result = get_download_info(a)
+                try:
+                    magnet_url = result['params']['url']
+                except KeyError :
+                    continue
+                if magnet_url !="":
+                    text = text + magnet_url + "\n"
+                    num = num + 1
+
+
+
+            if text!="":
+                info_text = f"{num}个文件 复制磁力链接成功"
+                self.valueChanged.emit(["success", info_text,text])
+            else:
+                info_text = f"{len(num)}个文件 复制磁力链接失败"
+                self.valueChanged.emit(["error", info_text, text])
+
+
+        else:
+            result = get_download_info(self.fileid)
+            down_name = result["name"]
+            try:
+                magnet_url = result['params']['url']
+            except KeyError:
+                info_text = f"{down_name} 复制磁力链接失败"
+                self.valueChanged.emit(["error", info_text, ""])
+                return
+
+
+
+
+            if magnet_url != "":
+                info_text = f"{down_name} 复制磁力链接成功"
+                self.valueChanged.emit(["success", info_text,magnet_url])
+            else:
+                info_text = f"{down_name} 复制磁力链接失败"
+                self.valueChanged.emit(["error", info_text, ""])
 

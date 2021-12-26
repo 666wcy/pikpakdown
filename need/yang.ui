@@ -82,7 +82,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.4</string>
+            <string>PikPakDown v2.2.5</string>
            </property>
           </widget>
          </item>
@@ -899,7 +899,60 @@ border-radius:8px;
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QTableWidget" name="downloadtableWidget"/>
+              <widget class="QTabWidget" name="upload_tabWidget">
+               <property name="styleSheet">
+                <string notr="true">QTabBar::tab{
+
+width:200;
+height:40;
+border-top-color:#369;
+font: 75 10pt &quot;微软雅黑&quot;;
+
+}
+QTabBar::tab::selected{
+
+width:200;
+height:40;
+font: 75 10pt &quot;微软雅黑&quot;;
+border-bottom:3px solid rgb(223,86,89);
+}
+
+        	</string>
+               </property>
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="tab_upload_now">
+                <attribute name="title">
+                 <string>正在上传（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_14">
+                 <item>
+                  <widget class="QTableWidget" name="upload_now_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_upload_wait">
+                <attribute name="title">
+                 <string>等待中（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_15">
+                 <item>
+                  <widget class="QTableWidget" name="upload_wait_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_upload_finish">
+                <attribute name="title">
+                 <string>上传完成（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_16">
+                 <item>
+                  <widget class="QTableWidget" name="upload_finish_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -909,8 +962,111 @@ border-radius:8px;
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_12">
              <item>
-              <widget class="QWidget" name="down_widget" native="true">
-               <layout class="QVBoxLayout" name="verticalLayout_13"/>
+              <widget class="QTabWidget" name="download_tabWidget">
+               <property name="styleSheet">
+                <string notr="true">QTabBar::tab{
+
+width:200;
+height:40;
+border-top-color:#369;
+font: 75 10pt &quot;微软雅黑&quot;;
+
+}
+QTabBar::tab::selected{
+
+width:200;
+height:40;
+font: 75 10pt &quot;微软雅黑&quot;;
+border-bottom:3px solid rgb(223,86,89);
+}
+
+</string>
+               </property>
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="tab_download_now">
+                <attribute name="title">
+                 <string>正在下载（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <item>
+                  <widget class="QTableWidget" name="download_now_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_download_wait">
+                <attribute name="title">
+                 <string>等待中（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_17">
+                 <item>
+                  <widget class="QTableWidget" name="download_wait_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="tab_download_finish">
+                <attribute name="title">
+                 <string>已完成（0）</string>
+                </attribute>
+                <layout class="QVBoxLayout" name="verticalLayout_18">
+                 <item>
+                  <widget class="QTableWidget" name="download_finish_dtableWidget"/>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_13" native="true">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:!hover{
+		border:1px solid rgb(234,144,146);
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+	
+}
+
+QPushButton:hover{
+
+	border:1px solid rgb(234,144,146);
+	background-color:#faefef;
+	color: rgb(234,144,146);
+	font: 75 12pt &quot;微软雅黑&quot;;
+border-radius:8px;
+
+}</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QPushButton" name="start_alldown_pushButton">
+                  <property name="text">
+                   <string>全部开始</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="stop_alldown_pushButton">
+                  <property name="text">
+                   <string>暂停全部</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="open_aria2ng_pushButton">
+                  <property name="text">
+                   <string>打开Aria2NG</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
@@ -2440,7 +2596,6 @@ border-radius:8px;
   <tabstop>addmagnetButton</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>Proxy_type_comboBox</tabstop>
-  <tabstop>downloadtableWidget</tabstop>
   <tabstop>visitmeButton</tabstop>
   <tabstop>visitpikpakButton</tabstop>
  </tabstops>

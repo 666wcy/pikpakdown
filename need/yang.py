@@ -589,21 +589,143 @@ class Ui_Form(object):
         self.tab_3.setObjectName("tab_3")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.tab_3)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.downloadtableWidget = QtWidgets.QTableWidget(self.tab_3)
-        self.downloadtableWidget.setObjectName("downloadtableWidget")
-        self.downloadtableWidget.setColumnCount(0)
-        self.downloadtableWidget.setRowCount(0)
-        self.verticalLayout_5.addWidget(self.downloadtableWidget)
+        self.upload_tabWidget = QtWidgets.QTabWidget(self.tab_3)
+        self.upload_tabWidget.setStyleSheet("QTabBar::tab{\n"
+"\n"
+"width:200;\n"
+"height:40;\n"
+"border-top-color:#369;\n"
+"font: 75 10pt \"微软雅黑\";\n"
+"\n"
+"}\n"
+"QTabBar::tab::selected{\n"
+"\n"
+"width:200;\n"
+"height:40;\n"
+"font: 75 10pt \"微软雅黑\";\n"
+"border-bottom:3px solid rgb(223,86,89);\n"
+"}\n"
+"\n"
+"            ")
+        self.upload_tabWidget.setObjectName("upload_tabWidget")
+        self.tab_upload_now = QtWidgets.QWidget()
+        self.tab_upload_now.setObjectName("tab_upload_now")
+        self.verticalLayout_14 = QtWidgets.QVBoxLayout(self.tab_upload_now)
+        self.verticalLayout_14.setObjectName("verticalLayout_14")
+        self.upload_now_dtableWidget = QtWidgets.QTableWidget(self.tab_upload_now)
+        self.upload_now_dtableWidget.setObjectName("upload_now_dtableWidget")
+        self.upload_now_dtableWidget.setColumnCount(0)
+        self.upload_now_dtableWidget.setRowCount(0)
+        self.verticalLayout_14.addWidget(self.upload_now_dtableWidget)
+        self.upload_tabWidget.addTab(self.tab_upload_now, "")
+        self.tab_upload_wait = QtWidgets.QWidget()
+        self.tab_upload_wait.setObjectName("tab_upload_wait")
+        self.verticalLayout_15 = QtWidgets.QVBoxLayout(self.tab_upload_wait)
+        self.verticalLayout_15.setObjectName("verticalLayout_15")
+        self.upload_wait_dtableWidget = QtWidgets.QTableWidget(self.tab_upload_wait)
+        self.upload_wait_dtableWidget.setObjectName("upload_wait_dtableWidget")
+        self.upload_wait_dtableWidget.setColumnCount(0)
+        self.upload_wait_dtableWidget.setRowCount(0)
+        self.verticalLayout_15.addWidget(self.upload_wait_dtableWidget)
+        self.upload_tabWidget.addTab(self.tab_upload_wait, "")
+        self.tab_upload_finish = QtWidgets.QWidget()
+        self.tab_upload_finish.setObjectName("tab_upload_finish")
+        self.verticalLayout_16 = QtWidgets.QVBoxLayout(self.tab_upload_finish)
+        self.verticalLayout_16.setObjectName("verticalLayout_16")
+        self.upload_finish_dtableWidget = QtWidgets.QTableWidget(self.tab_upload_finish)
+        self.upload_finish_dtableWidget.setObjectName("upload_finish_dtableWidget")
+        self.upload_finish_dtableWidget.setColumnCount(0)
+        self.upload_finish_dtableWidget.setRowCount(0)
+        self.verticalLayout_16.addWidget(self.upload_finish_dtableWidget)
+        self.upload_tabWidget.addTab(self.tab_upload_finish, "")
+        self.verticalLayout_5.addWidget(self.upload_tabWidget)
         self.tabWidget.addTab(self.tab_3, "")
         self.tab_8 = QtWidgets.QWidget()
         self.tab_8.setObjectName("tab_8")
         self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.tab_8)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.down_widget = QtWidgets.QWidget(self.tab_8)
-        self.down_widget.setObjectName("down_widget")
-        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.down_widget)
+        self.download_tabWidget = QtWidgets.QTabWidget(self.tab_8)
+        self.download_tabWidget.setStyleSheet("QTabBar::tab{\n"
+"\n"
+"width:200;\n"
+"height:40;\n"
+"border-top-color:#369;\n"
+"font: 75 10pt \"微软雅黑\";\n"
+"\n"
+"}\n"
+"QTabBar::tab::selected{\n"
+"\n"
+"width:200;\n"
+"height:40;\n"
+"font: 75 10pt \"微软雅黑\";\n"
+"border-bottom:3px solid rgb(223,86,89);\n"
+"}\n"
+"\n"
+"")
+        self.download_tabWidget.setObjectName("download_tabWidget")
+        self.tab_download_now = QtWidgets.QWidget()
+        self.tab_download_now.setObjectName("tab_download_now")
+        self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.tab_download_now)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
-        self.verticalLayout_12.addWidget(self.down_widget)
+        self.download_now_dtableWidget = QtWidgets.QTableWidget(self.tab_download_now)
+        self.download_now_dtableWidget.setObjectName("download_now_dtableWidget")
+        self.download_now_dtableWidget.setColumnCount(0)
+        self.download_now_dtableWidget.setRowCount(0)
+        self.verticalLayout_13.addWidget(self.download_now_dtableWidget)
+        self.download_tabWidget.addTab(self.tab_download_now, "")
+        self.tab_download_wait = QtWidgets.QWidget()
+        self.tab_download_wait.setObjectName("tab_download_wait")
+        self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.tab_download_wait)
+        self.verticalLayout_17.setObjectName("verticalLayout_17")
+        self.download_wait_dtableWidget = QtWidgets.QTableWidget(self.tab_download_wait)
+        self.download_wait_dtableWidget.setObjectName("download_wait_dtableWidget")
+        self.download_wait_dtableWidget.setColumnCount(0)
+        self.download_wait_dtableWidget.setRowCount(0)
+        self.verticalLayout_17.addWidget(self.download_wait_dtableWidget)
+        self.download_tabWidget.addTab(self.tab_download_wait, "")
+        self.tab_download_finish = QtWidgets.QWidget()
+        self.tab_download_finish.setObjectName("tab_download_finish")
+        self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.tab_download_finish)
+        self.verticalLayout_18.setObjectName("verticalLayout_18")
+        self.download_finish_dtableWidget = QtWidgets.QTableWidget(self.tab_download_finish)
+        self.download_finish_dtableWidget.setObjectName("download_finish_dtableWidget")
+        self.download_finish_dtableWidget.setColumnCount(0)
+        self.download_finish_dtableWidget.setRowCount(0)
+        self.verticalLayout_18.addWidget(self.download_finish_dtableWidget)
+        self.download_tabWidget.addTab(self.tab_download_finish, "")
+        self.verticalLayout_12.addWidget(self.download_tabWidget)
+        self.widget_13 = QtWidgets.QWidget(self.tab_8)
+        self.widget_13.setMinimumSize(QtCore.QSize(0, 0))
+        self.widget_13.setStyleSheet("QPushButton:!hover{\n"
+"        border:1px solid rgb(234,144,146);\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"    \n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"\n"
+"    border:1px solid rgb(234,144,146);\n"
+"    background-color:#faefef;\n"
+"    color: rgb(234,144,146);\n"
+"    font: 75 12pt \"微软雅黑\";\n"
+"border-radius:8px;\n"
+"\n"
+"}")
+        self.widget_13.setObjectName("widget_13")
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout(self.widget_13)
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.start_alldown_pushButton = QtWidgets.QPushButton(self.widget_13)
+        self.start_alldown_pushButton.setObjectName("start_alldown_pushButton")
+        self.horizontalLayout_7.addWidget(self.start_alldown_pushButton)
+        self.stop_alldown_pushButton = QtWidgets.QPushButton(self.widget_13)
+        self.stop_alldown_pushButton.setObjectName("stop_alldown_pushButton")
+        self.horizontalLayout_7.addWidget(self.stop_alldown_pushButton)
+        self.open_aria2ng_pushButton = QtWidgets.QPushButton(self.widget_13)
+        self.open_aria2ng_pushButton.setObjectName("open_aria2ng_pushButton")
+        self.horizontalLayout_7.addWidget(self.open_aria2ng_pushButton)
+        self.verticalLayout_12.addWidget(self.widget_13)
         self.tabWidget.addTab(self.tab_8, "")
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
@@ -1453,9 +1575,8 @@ class Ui_Form(object):
         self.showhelp_Button.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
+"    font: 75 12pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
 "}\n"
 "\n"
 "QPushButton:hover{\n"
@@ -1463,7 +1584,7 @@ class Ui_Form(object):
 "    border:1px solid rgb(234,144,146);\n"
 "    background-color:#faefef;\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
+"    font: 75 13pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
 "\n"
 "}")
@@ -1473,9 +1594,8 @@ class Ui_Form(object):
         self.visitmeButton.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
+"    font: 75 12pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
 "}\n"
 "\n"
 "QPushButton:hover{\n"
@@ -1483,7 +1603,7 @@ class Ui_Form(object):
 "    border:1px solid rgb(234,144,146);\n"
 "    background-color:#faefef;\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
+"    font: 75 13pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
 "\n"
 "}")
@@ -1493,9 +1613,8 @@ class Ui_Form(object):
         self.visitpikpakButton.setStyleSheet("QPushButton:!hover{\n"
 "        border:1px solid rgb(234,144,146);\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 14pt \"微软雅黑\";\n"
+"    font: 75 12pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
-"    padding:5px 10px 5px 10px;\n"
 "}\n"
 "\n"
 "QPushButton:hover{\n"
@@ -1503,7 +1622,7 @@ class Ui_Form(object):
 "    border:1px solid rgb(234,144,146);\n"
 "    background-color:#faefef;\n"
 "    color: rgb(234,144,146);\n"
-"    font: 75 12pt \"微软雅黑\";\n"
+"    font: 75 13pt \"微软雅黑\";\n"
 "border-radius:8px;\n"
 "\n"
 "}")
@@ -1517,6 +1636,8 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         self.tabWidget.setCurrentIndex(0)
+        self.upload_tabWidget.setCurrentIndex(0)
+        self.download_tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
         Form.setTabOrder(self.user_lineEdit, self.password_lineEdit)
         Form.setTabOrder(self.password_lineEdit, self.localdownloadlineEdit)
@@ -1557,14 +1678,13 @@ class Ui_Form(object):
         Form.setTabOrder(self.check_sock_pushButton, self.addmagnetButton)
         Form.setTabOrder(self.addmagnetButton, self.scrollArea)
         Form.setTabOrder(self.scrollArea, self.Proxy_type_comboBox)
-        Form.setTabOrder(self.Proxy_type_comboBox, self.downloadtableWidget)
-        Form.setTabOrder(self.downloadtableWidget, self.visitmeButton)
+        Form.setTabOrder(self.Proxy_type_comboBox, self.visitmeButton)
         Form.setTabOrder(self.visitmeButton, self.visitpikpakButton)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "PikPakDown"))
-        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.3"))
+        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.5"))
         self.pingtitlelabel.setText(_translate("Form", "连接情况:"))
         self.pinginfo_label.setText(_translate("Form", "检测中"))
         self.tohidepushButton.setText(_translate("Form", "-"))
@@ -1592,7 +1712,16 @@ class Ui_Form(object):
         self.back_trash_pushButton.setText(_translate("Form", "还原选中"))
         self.delete_trahs_pushButton.setText(_translate("Form", "删除选中"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_7), _translate("Form", "回收站"))
+        self.upload_tabWidget.setTabText(self.upload_tabWidget.indexOf(self.tab_upload_now), _translate("Form", "正在上传（0）"))
+        self.upload_tabWidget.setTabText(self.upload_tabWidget.indexOf(self.tab_upload_wait), _translate("Form", "等待中（0）"))
+        self.upload_tabWidget.setTabText(self.upload_tabWidget.indexOf(self.tab_upload_finish), _translate("Form", "上传完成（0）"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Form", "上传列表"))
+        self.download_tabWidget.setTabText(self.download_tabWidget.indexOf(self.tab_download_now), _translate("Form", "正在下载（0）"))
+        self.download_tabWidget.setTabText(self.download_tabWidget.indexOf(self.tab_download_wait), _translate("Form", "等待中（0）"))
+        self.download_tabWidget.setTabText(self.download_tabWidget.indexOf(self.tab_download_finish), _translate("Form", "已完成（0）"))
+        self.start_alldown_pushButton.setText(_translate("Form", "全部开始"))
+        self.stop_alldown_pushButton.setText(_translate("Form", "暂停全部"))
+        self.open_aria2ng_pushButton.setText(_translate("Form", "打开Aria2NG"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_8), _translate("Form", "下载列表"))
         self.label.setText(_translate("Form", " 账号 "))
         self.clear_headers_pushButton.setText(_translate("Form", "清除登录缓存"))
