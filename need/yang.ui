@@ -82,7 +82,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.6</string>
+            <string>PikPakDown v2.2.7</string>
            </property>
           </widget>
          </item>
@@ -1182,9 +1182,9 @@ QScrollBar::add-line:horizontal {
                 <property name="geometry">
                  <rect>
                   <x>0</x>
-                  <y>0</y>
-                  <width>1013</width>
-                  <height>1068</height>
+                  <y>-667</y>
+                  <width>1245</width>
+                  <height>1186</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -2057,6 +2057,54 @@ width: 20px;
                     </item>
                     <item row="2" column="4">
                      <widget class="QLineEdit" name="Proxy_port_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_14" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_19">
+                    <item>
+                     <widget class="QLabel" name="label_28">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>下载中转</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="download_url_checkBox">
+                      <property name="font">
+                       <font>
+                        <pointsize>11</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>开启下载链接替换为自定义中转</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="download_url_lineEdit">
                       <property name="font">
                        <font>
                         <pointsize>14</pointsize>

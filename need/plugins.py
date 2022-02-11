@@ -6,6 +6,7 @@ from PyQt5.QtCore import QThread,pyqtSignal
 import time
 import aria2p
 import pythoncom
+import re
 #推送aria2单任务
 def add_down(url, path, file_name):
 
@@ -68,6 +69,10 @@ def check_aria2(Aria2_host,Aria2_port,Aria2_secret):
 def thread_Thunder(file_id):
     pythoncom.CoInitialize()
     thunder = client.Dispatch('ThunderAgent.Agent64.1')
+    with open('config.json', 'r') as f:
+        # 读取数据并分割。 最后一个为空，所以去除
+        app_config = json.loads(f.read())
+    f.close()
 
     if type(file_id)==list:
         down_name_list=[]
@@ -75,6 +80,11 @@ def thread_Thunder(file_id):
         for a in file_id:
             down_name, down_url, temp = get_download_url(a)
             down_name_list.append(down_name)
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             down_url_list.append(down_url)
 
         for down_url, down_name in zip(down_url_list,down_name_list):
@@ -101,6 +111,11 @@ def thread_Thunder(file_id):
                 the_filesize = size
                 file_size = size
                 down_url = url
+
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                 down_path = path
                 thunder.AddTask(down_url, down_name)
             thunder.CommitTasks()
@@ -109,6 +124,10 @@ def thread_Thunder(file_id):
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             print(f"INFO ({new_time}):推送迅雷:{down_name}")
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             thunder.AddTask(down_url, down_name)
             thunder.CommitTasks()
 
@@ -118,6 +137,8 @@ def thread_IDM(file_id,IDM):
         data = json.load(jsonFile)
         jsonFile.close()
 
+    app_config = data
+
     Popen([IDM])
 
     if type(file_id) == list:
@@ -126,6 +147,11 @@ def thread_IDM(file_id,IDM):
         for a in file_id:
             down_name, down_url, temp = get_download_url(a)
             down_name_list.append(down_name)
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             down_url_list.append(down_url)
 
         for down_url, down_name in zip(down_url_list, down_name_list):
@@ -161,6 +187,10 @@ def thread_IDM(file_id,IDM):
                 the_filesize = size
                 file_size = size
                 down_url = url
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                 down_path = path
                 new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
@@ -177,11 +207,19 @@ def thread_IDM(file_id,IDM):
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             print(f"INFO ({new_time}):推送IDM:{down_name}")
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             Popen([IDM, '/d', down_url,"/p",data['Download_path'], '/f', down_name, '/n', '/s'])
 
 
 def thread_pot(file_id,Pot):
-
+    with open('config.json', 'r') as f:
+        # 读取数据并分割。 最后一个为空，所以去除
+        app_config = json.loads(f.read())
+    f.close()
 
     if type(file_id) == list:
         Popen([Pot, '/current'])
@@ -190,6 +228,11 @@ def thread_pot(file_id,Pot):
         for a in file_id:
             down_name, down_url, temp = get_download_url(a)
             down_name_list.append(down_name)
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             down_url_list.append(down_url)
 
         for down_url, down_name in zip(down_url_list, down_name_list):
@@ -224,6 +267,10 @@ def thread_pot(file_id,Pot):
 
                     print(f"INFO ({new_time}):推送Potplayer:{down_name}")
 
+                    if app_config['download_url_key'] == "True":
+                        down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                        down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                     Popen([Pot, down_url, '/insert', '/current'])
 
             new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -235,15 +282,27 @@ def thread_pot(file_id,Pot):
 
             print(f"INFO ({new_time}):推送Potplayer:{down_name}")
 
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             Popen([Pot, down_url, '/new'])
 
 
 def thread_aria2(file_id):
-
+    with open('config.json', 'r') as f:
+        # 读取数据并分割。 最后一个为空，所以去除
+        app_config = json.loads(f.read())
+    f.close()
     if type(file_id) == list:
 
         for a in file_id:
             down_name, down_url, temp = get_download_url(a)
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             add_down(url=down_url ,path="/" ,file_name=down_name)
 
 
@@ -266,12 +325,19 @@ def thread_aria2(file_id):
                 file_size = size
                 down_url = url
                 down_path = path
-
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = down_url.replace(down_key, str(app_config['download_url_word']))
 
                 add_down(url=down_url, path=path, file_name=down_name)
 
 
         else:
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             add_down(url=down_url ,path="/" ,file_name=down_name)
 
 
@@ -286,12 +352,20 @@ class Copy_downloadurl_Worker(QThread):
 
 
     def run(self):
-
+        with open('config.json', 'r') as f:
+            # 读取数据并分割。 最后一个为空，所以去除
+            app_config = json.loads(f.read())
+        f.close()
         text = ""
         if type(self.fileid) == list:
 
             for a in self.fileid:
                 down_name, down_url, temp = get_download_url(a)
+
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                 text = text + down_url + "\n"
 
 
@@ -313,6 +387,11 @@ class Copy_downloadurl_Worker(QThread):
 
                     if a['kind'] != 'drive#folder':
                         down_name, down_url, file_size = get_download_url(a['id'])
+
+                        if app_config['download_url_key'] == "True":
+                            down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                            down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                         text = text + down_url + "\n"
                         num = num+1
 
@@ -322,6 +401,10 @@ class Copy_downloadurl_Worker(QThread):
             else:
 
                 info_text= f"{down_name} 复制下载链接成功"
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
                 text = down_url
 
                 self.valueChanged.emit(["success", info_text,text])

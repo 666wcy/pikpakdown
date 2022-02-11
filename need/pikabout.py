@@ -1,6 +1,7 @@
 import requests
 import os
 import json
+import re
 from urllib.parse import urlparse
 import time
 from PyQt5.QtCore import QThread,pyqtSignal
@@ -131,7 +132,7 @@ def login():
             jsonFile.close()
 
     else:
-        refresh_url = "https://user.mypikpak.com/v1/auth/token?client_id=YNxT9w7GMdWvEOKa"
+        refresh_url = f"{pikpak_user_url}/v1/auth/token?client_id=YNxT9w7GMdWvEOKa"
         refresh_json = {
             "client_id": "YNxT9w7GMdWvEOKa",
             "client_secret": "dbw2OtmVEeuUvIptb1Coyg",

@@ -30,6 +30,8 @@ def read_config():
             "Aria2_host": "",
             "Aria2_port": "",
             "Aria2_secret": "",
+            "download_url_key": "False",
+            "download_url_word": "",
             "Aria2_path": "",
             "Potplayer_path": "",
             "IDMplayer_path": "",
@@ -139,6 +141,7 @@ from subprocess import Popen
 import subprocess
 
 import cgitb
+
 
 upload_task=[]
 
@@ -1158,7 +1161,7 @@ class Rename_file_Form(QDialog, Ui_Rename_file_Dialog):
     # 定义信号
     _signal = QtCore.pyqtSignal(dict)
 
-    def __init__(self, parent=None,file_id=None):
+    def __init__(self, parent=None,file_id=None,file_name = None):
 
         super(Rename_file_Form, self).__init__(parent)
         self.setupUi(self)
@@ -1184,7 +1187,7 @@ class Rename_file_Form(QDialog, Ui_Rename_file_Dialog):
         self.animation = QPropertyAnimation(self, b'windowOpacity')
         self.animation.setDuration(500)  # 持续时间1秒
         self.doShow()
-
+        self.foder_name_lineEdit.setText(file_name)
         self.creat_folderButton.clicked.connect(self.get_folder_name)
 
     def get_folder_name(self):
@@ -1303,6 +1306,13 @@ class Add_download_Worker(QThread):
             else:
                 the_url = down_url
                 the_filesize = requests.get(the_url, stream=True,  timeout=5).headers['Content-Length']
+
+
+
+                if app_config['download_url_key'] == "True":
+                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_url = the_url.replace(down_key, str(app_config['download_url_word']))
+
                 self.valueChanged.emit([down_name, down_url, file_size, the_filesize, ""])
         except:
 
@@ -1528,6 +1538,11 @@ class Mpv_video_Worker(QThread):
     def run(self):
         try:
             down_name, down_url, file_size = get_download_url(self.file_id)
+
+            if app_config['download_url_key'] == "True":
+                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                the_url = down_url.replace(down_key, str(app_config['download_url_word']))
+
             Popen(["MPV/mpv",  down_url,f"--title={down_name}"])
         except:
 
@@ -1955,6 +1970,7 @@ class Upload_folder_Worker(QThread):
                     result['file_path'] = file_path
                     result['new_id'] = new_id
                     self.valueChanged.emit(result)  # 发送信号
+                    time.sleep(0.2)
 
 
 
@@ -2519,7 +2535,7 @@ class Refresh_upload_task_Worker(QThread):
 
     def run(self):
         while True:
-            time.sleep(1)
+            time.sleep(2)
             self.valueChanged.emit(-1)
 
 
@@ -2620,7 +2636,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
         # 排序依据
         self.orderType = Qt.DescendingOrder
 
-
+        self.upload_task_key = True
+        self.download_task_key = True
 
         # 窗口最大化
         self.is_min = True
@@ -3774,6 +3791,9 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     #刷新下载列表
     def refresh_download_task(self,num):
+        if not self.download_task_key:
+            return
+        self.download_task_key = False
         try:
             downloads = self.aria2.get_downloads()
 
@@ -4015,6 +4035,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         if row_cnt != self.download_finish_num:
             self.download_tabWidget.setTabText(2, f"下载完成（{row_cnt}）")
             self.download_finish_num = row_cnt
+        self.download_task_key = True
 
     #开始任务
     def the_dwonload_start(self,gid):
@@ -4103,7 +4124,9 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     #刷新上传列表
     def refresh_upload_task(self,num):
-
+        if not self.upload_task_key:
+            return
+        self.upload_task_key = False
         global upload_task
         num = 0
         for a in self.upload_task_list:
@@ -4229,6 +4252,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         del_file_list = []
 
+
         for c in range(self.upload_wait_dtableWidget.rowCount()):
 
             if len(upload_task) <= self.max_task_num :
@@ -4284,6 +4308,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
         if row_cnt != self.upload_finish_num:
             self.upload_tabWidget.setTabText(2,f"上传完成（{row_cnt}）")
             self.upload_finish_num = row_cnt
+
+        self.upload_task_key = True
 
 
 
@@ -4764,8 +4790,9 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
             print(f"INFO ({new_time}):重命名未选中文件")
             file_id = self.tableWidget.item(row_list[0], 3).text()
+            file_name = self.tableWidget.item(row_list[0], 0).text()
 
-            self.rename_file_Dialog = Rename_file_Form(file_id=file_id)
+            self.rename_file_Dialog = Rename_file_Form(file_id=file_id,file_name=file_name)
             self.rename_file_Dialog.show()
             self.rename_file_Dialog._signal.connect(self.start_rename_back_call)
         else:
@@ -5243,6 +5270,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
                     it_folder_id = QtWidgets.QTableWidgetItem(folder_id)
                     it_folder_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
                     self.upload_wait_dtableWidget.setItem(row_cnt, 7, it_folder_id)  # 给指定单元格设置数据
+                    time.sleep(0.2)
 
             else:
                 print(f"INFO ({new_time}):检测为文件夹:{file_path}")
@@ -5266,7 +5294,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
         parent_path = os.path.dirname(file_path)
 
-        if len(upload_task) <= self.max_task_num :
+        '''if len(upload_task) <= self.max_task_num :
             row_cnt = self.task_num_id
             #### 创建上传线程
             self.uploadThread = uploadThread(file_path, new_id, row_cnt)
@@ -5289,48 +5317,48 @@ class MyPyQT_Form(QDialog, Ui_Form):
                 "file_path": file_path,
                 "folder_id": new_id
             }
-            self.upload_task_list.append(upload_dict)
-        else:
-            row_cnt = self.upload_wait_dtableWidget.rowCount()
-            self.upload_wait_dtableWidget.insertRow(row_cnt)
-            # 添加下载名称
-            it_name = QtWidgets.QTableWidgetItem(file_name)
-            it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
+            self.upload_task_list.append(upload_dict)'''
 
-            self.upload_wait_dtableWidget.setRowHeight(row_cnt, 50)
+        row_cnt = self.upload_wait_dtableWidget.rowCount()
+        self.upload_wait_dtableWidget.insertRow(row_cnt)
+        # 添加下载名称
+        it_name = QtWidgets.QTableWidgetItem(file_name)
+        it_name.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 0, it_name)  # 给指定单元格设置数据
 
-            # 添加下载文件大小
-            it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
-            it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
+        self.upload_wait_dtableWidget.setRowHeight(row_cnt, 50)
 
-            # 添加上传状态
-            it_stasus = QtWidgets.QTableWidgetItem("等待中")
-            it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
-            # 添加速度
-            it_speed = QtWidgets.QTableWidgetItem("0kb")
-            it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
-            # 添加上传进度条
-            progressBar = QtWidgets.QProgressBar(self.upload_wait_dtableWidget)
-            progressBar.setStyleSheet(QProgressBar_StyleSheet)
-            progressBar.setProperty("value", 0)
-            # self.progressBar.setObjectName("progressBar")
-            self.upload_wait_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
+        # 添加下载文件大小
+        it_size = QtWidgets.QTableWidgetItem(hum_convert(file_size))
+        it_size.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 1, it_size)  # 给指定单元格设置数据
 
-            it_path = QtWidgets.QTableWidgetItem(parent_path)
-            it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
+        # 添加上传状态
+        it_stasus = QtWidgets.QTableWidgetItem("等待中")
+        it_stasus.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 2, it_stasus)  # 给指定单元格设置数据
+        # 添加速度
+        it_speed = QtWidgets.QTableWidgetItem("0kb")
+        it_speed.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 3, it_speed)  # 给指定单元格设置数据
+        # 添加上传进度条
+        progressBar = QtWidgets.QProgressBar(self.upload_wait_dtableWidget)
+        progressBar.setStyleSheet(QProgressBar_StyleSheet)
+        progressBar.setProperty("value", 0)
+        # self.progressBar.setObjectName("progressBar")
+        self.upload_wait_dtableWidget.setCellWidget(row_cnt, 4, progressBar)
 
-            it_ID = QtWidgets.QTableWidgetItem(file_path)
-            it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+        it_path = QtWidgets.QTableWidgetItem(parent_path)
+        it_path.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 5, it_path)  # 给指定单元格设置数据
 
-            it_folder_id = QtWidgets.QTableWidgetItem(new_id)
-            it_folder_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
-            self.upload_wait_dtableWidget.setItem(row_cnt, 7, it_folder_id)  # 给指定单元格设置数据
+        it_ID = QtWidgets.QTableWidgetItem(file_path)
+        it_ID.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 6, it_ID)  # 给指定单元格设置数据
+
+        it_folder_id = QtWidgets.QTableWidgetItem(new_id)
+        it_folder_id.setTextAlignment(Qt.AlignCenter | Qt.AlignTop)  # 给指定单元格设置对齐方式
+        self.upload_wait_dtableWidget.setItem(row_cnt, 7, it_folder_id)  # 给指定单元格设置数据
 
 
 
@@ -5645,6 +5673,11 @@ class MyPyQT_Form(QDialog, Ui_Form):
             self.Proxy_type_comboBox.setCurrentIndex(comboBox)
         except:
             self.Proxy_type_comboBox.setCurrentIndex(0)
+        if str(app_config['download_url_key']) == "False":
+            self.download_url_checkBox.setChecked(False)
+        else:
+            self.download_url_checkBox.setChecked(True)
+        self.download_url_lineEdit.setText(str(app_config['download_url_word']))
         self.Proxy_ip_lineEdit.setText(str(app_config['Proxy_ip']))
         self.Proxy_port_lineEdit.setText(str(app_config['Proxy_port']))
         self.Proxy__admin_lineEdit.setText(str(app_config['Proxy_admin']))
@@ -5801,6 +5834,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
         app_config['Webdav_port'] = self.webdav_portlineEdit.text()
         app_config['Proxy_type'] = self.Proxy_type_comboBox.currentText()
 
+
+
         app_config['Proxy_ip'] =self.Proxy_ip_lineEdit.text()
         app_config['Proxy_port'] = self.Proxy_port_lineEdit.text()
         app_config['Proxy_admin'] = self.Proxy__admin_lineEdit.text()
@@ -5827,6 +5862,14 @@ class MyPyQT_Form(QDialog, Ui_Form):
         app_config['Webdav_password'] = self.webdav_passlineEdit.text()
         app_config['Webdav_port'] = self.webdav_portlineEdit.text()
         app_config['Proxy_type'] = self.Proxy_type_comboBox.currentText()
+
+        if self.download_url_checkBox.isChecked():
+            app_config['download_url_key'] = "True"
+        else:
+            app_config['download_url_key'] = "False"
+
+        app_config['download_url_word'] = self.download_url_lineEdit.text()
+
 
         app_config['Proxy_ip'] =self.Proxy_ip_lineEdit.text()
         app_config['Proxy_port'] = self.Proxy_port_lineEdit.text()
