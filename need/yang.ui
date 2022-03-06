@@ -82,7 +82,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.7</string>
+            <string>PikPakDown v2.2.8</string>
            </property>
           </widget>
          </item>
@@ -1182,9 +1182,9 @@ QScrollBar::add-line:horizontal {
                 <property name="geometry">
                  <rect>
                   <x>0</x>
-                  <y>-667</y>
+                  <y>-713</y>
                   <width>1245</width>
-                  <height>1186</height>
+                  <height>1252</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -1711,18 +1711,12 @@ border-radius:15px;
 </string>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_4">
-                    <item row="0" column="0" colspan="3">
-                     <widget class="QLabel" name="label_12">
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="Potplayer_pathlineEdit">
                       <property name="font">
                        <font>
-                        <pointsize>15</pointsize>
+                        <pointsize>14</pointsize>
                        </font>
-                      </property>
-                      <property name="text">
-                       <string>外部扩展设置</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -1749,15 +1743,6 @@ border-radius:8px;
                       </property>
                       <property name="text">
                        <string>选择路径</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="1">
-                     <widget class="QLineEdit" name="IDMlineEdit">
-                      <property name="font">
-                       <font>
-                        <pointsize>14</pointsize>
-                       </font>
                       </property>
                      </widget>
                     </item>
@@ -1826,12 +1811,54 @@ border-radius:8px;
                       </property>
                      </widget>
                     </item>
-                    <item row="1" column="1">
-                     <widget class="QLineEdit" name="Potplayer_pathlineEdit">
+                    <item row="0" column="0" colspan="3">
+                     <widget class="QLabel" name="label_12">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>外部扩展设置</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="IDMlineEdit">
                       <property name="font">
                        <font>
                         <pointsize>14</pointsize>
                        </font>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QLineEdit" name="bit_lineEdit">
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                       </font>
+                      </property>
+                      <property name="placeholderText">
+                       <string>http://admin:password@192.168.1.9:1235</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="label_29">
+                      <property name="font">
+                       <font>
+                        <pointsize>15</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Bitcomet</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
                       </property>
                      </widget>
                     </item>
@@ -1972,6 +1999,12 @@ border-radius:8px;
                     </item>
                     <item row="1" column="1">
                      <widget class="QComboBox" name="Proxy_type_comboBox">
+                      <property name="maximumSize">
+                       <size>
+                        <width>150</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
                       <property name="font">
                        <font>
                         <pointsize>14</pointsize>
@@ -2088,6 +2121,18 @@ width: 20px;
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QCheckBox" name="domain_toip_checkBox">
+                      <property name="font">
+                       <font>
+                        <pointsize>11</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>开启下载链接域名替换为IP（解决移动墙）</string>
                       </property>
                      </widget>
                     </item>

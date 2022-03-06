@@ -33,10 +33,12 @@ def read_config():
             "download_url_key": "False",
             "download_url_word": "",
             "Aria2_path": "",
+            "domain_ip_key": "False",
             "Potplayer_path": "",
             "IDMplayer_path": "",
             "Download_path": "",
             "Webdav_admin": "",
+            "bitcomet_url": "",
             "Webdav_password": "",
             "Webdav_port": 9090,
             "Proxy_type": "None",
@@ -107,7 +109,7 @@ from need.pikabout import check_login, get_list, get_download_url,back_tash,Regi
     delete_task,get_trash_list,delete_tash,get_my_vip, \
     get_headers, login, pikpak_add_hash, get_folder_all_file,creat_folder,copy_files,move_files,delete_files,rename_file
 
-from need.plugins import thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker,Copy_magnet_Worker
+from need.plugins import thread_Bitcomet,thread_Thunder, thread_IDM, thread_pot, check_aria2, thread_aria2, Copy_downloadurl_Worker,Copy_magnet_Worker
 
 import sys
 from PyQt5.QtWidgets import QMenu, QTableWidget, QTableWidgetItem, QHeaderView, QTreeWidgetItem
@@ -1307,10 +1309,16 @@ class Add_download_Worker(QThread):
                 the_url = down_url
                 the_filesize = requests.get(the_url, stream=True,  timeout=5).headers['Content-Length']
 
+                if app_config['domain_ip_key'] == "True":
+                    down_domain = re.findall("https://(.*?)/download.*", down_url, re.S)[0]
+                    get_ip_url = f"https://223.5.5.5/resolve?ct=application/dns-json&name={down_domain}.&type=A&edns_client_subnet=0.0.0.0"
+                    down_key = requests.get(url=get_ip_url).json()["Answer"][0]["data"]
+
+                    down_url = down_url.replace(down_domain, down_key)
 
 
                 if app_config['download_url_key'] == "True":
-                    down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
+                    down_key = re.findall("(.*?)/download.*", down_url, re.S)[0]
                     down_url = the_url.replace(down_key, str(app_config['download_url_word']))
 
                 self.valueChanged.emit([down_name, down_url, file_size, the_filesize, ""])
@@ -1539,9 +1547,16 @@ class Mpv_video_Worker(QThread):
         try:
             down_name, down_url, file_size = get_download_url(self.file_id)
 
+            if app_config['domain_ip_key'] == "True":
+                down_domain = re.findall("https://(.*?)/download.*", down_url, re.S)[0]
+                get_ip_url = f"https://223.5.5.5/resolve?ct=application/dns-json&name={down_domain}.&type=A&edns_client_subnet=0.0.0.0"
+                down_key = requests.get(url=get_ip_url).json()["Answer"][0]["data"]
+
+                down_url = down_url.replace(down_domain, down_key)
+
             if app_config['download_url_key'] == "True":
-                down_key = re.findall("(.*?mypikpak.com).*", down_url, re.S)[0]
-                the_url = down_url.replace(down_key, str(app_config['download_url_word']))
+                down_key = re.findall("(.*?)/download.*", down_url, re.S)[0]
+                down_url = down_url.replace(down_key, str(app_config['download_url_word']))
 
             Popen(["MPV/mpv",  down_url,f"--title={down_name}"])
         except:
@@ -4361,10 +4376,12 @@ class MyPyQT_Form(QDialog, Ui_Form):
         item3 = main_menu.addAction(QIcon(":/pic/src/potplayer.png"), u"推送Potplayer")
         item4 = main_menu.addAction(QIcon(":/pic/src/IDM.jpg"), u"推送IDM")
         item5 = main_menu.addAction(QIcon(":/pic/src/aria2.png"), u"推送Aria2")
+        item9 = main_menu.addAction(QIcon(":/pic/src/bitcomet.png"), u"推送Bitcomet")
         #:/pic/src/复制.png
         item6 = main_menu.addAction(QIcon(":/pic/src/复制.png"), u"复制秒传链接")
         item7 = main_menu.addAction(QIcon(":/pic/src/复制.png"), u"复制下载链接")
         item8 = main_menu.addAction(QIcon(":/pic/src/链接.png"), u"复制磁力链接")
+
         action = main_menu.exec_(self.tableWidget.mapToGlobal(pos))
 
         if action == item1:
@@ -4596,6 +4613,32 @@ class MyPyQT_Form(QDialog, Ui_Form):
             self.Copy_magnet_Worker = Copy_magnet_Worker(file_id_list)
             self.Copy_magnet_Worker.valueChanged.connect(self.start_show_info)
             self.Copy_magnet_Worker.start()
+
+        elif action == item9:
+            if app_config['bitcomet_url'] == "":
+                NotificationWindow.error('PikPakDown', "未设置路径")
+                return
+            if Multiple_choice:
+
+                file_id_list = []
+                for a in row_list:
+
+                    file_id = self.tableWidget.item(a, 3).text()
+                    file_type = self.tableWidget.item(a, 4).text()
+                    if file_type == "文件夹":
+                        QMessageBox.information(self, "提示", "多选不支持文件夹")
+                        return
+                    file_id_list.append(file_id)
+                bitcomet_url = app_config['bitcomet_url']
+                t1 = threading.Thread(target=thread_Bitcomet, args=(file_id_list, bitcomet_url))
+                t1.start()
+            else:
+
+                file_id = self.tableWidget.item(row_num, 3).text()
+                bitcomet_url = app_config['bitcomet_url']
+
+                t1 = threading.Thread(target=thread_Bitcomet, args=(file_id, bitcomet_url,))
+                t1.start()
 
 
 
@@ -5666,6 +5709,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         self.webdav_adminlineEdit.setText(str(app_config['Webdav_admin']))
         self.webdav_passlineEdit.setText(str(app_config['Webdav_password']))
         self.webdav_portlineEdit.setText(str(app_config['Webdav_port']))
+        self.bit_lineEdit.setText(str(app_config['bitcomet_url']))
         try:
             for i in range(self.Proxy_type_comboBox.count()):
                 if str(app_config['Proxy_type']) ==self.Proxy_type_comboBox.itemText(i):
@@ -5677,6 +5721,12 @@ class MyPyQT_Form(QDialog, Ui_Form):
             self.download_url_checkBox.setChecked(False)
         else:
             self.download_url_checkBox.setChecked(True)
+
+        if str(app_config['domain_ip_key']) == "False":
+            self.domain_toip_checkBox.setChecked(False)
+        else:
+            self.domain_toip_checkBox.setChecked(True)
+
         self.download_url_lineEdit.setText(str(app_config['download_url_word']))
         self.Proxy_ip_lineEdit.setText(str(app_config['Proxy_ip']))
         self.Proxy_port_lineEdit.setText(str(app_config['Proxy_port']))
@@ -5833,7 +5883,7 @@ class MyPyQT_Form(QDialog, Ui_Form):
         app_config['Webdav_password'] = self.webdav_passlineEdit.text()
         app_config['Webdav_port'] = self.webdav_portlineEdit.text()
         app_config['Proxy_type'] = self.Proxy_type_comboBox.currentText()
-
+        app_config['bitcomet_url'] = self.bit_lineEdit.text()
 
 
         app_config['Proxy_ip'] =self.Proxy_ip_lineEdit.text()
@@ -5862,11 +5912,18 @@ class MyPyQT_Form(QDialog, Ui_Form):
         app_config['Webdav_password'] = self.webdav_passlineEdit.text()
         app_config['Webdav_port'] = self.webdav_portlineEdit.text()
         app_config['Proxy_type'] = self.Proxy_type_comboBox.currentText()
+        app_config['bitcomet_url'] = self.bit_lineEdit.text()
 
         if self.download_url_checkBox.isChecked():
             app_config['download_url_key'] = "True"
         else:
             app_config['download_url_key'] = "False"
+
+        if self.domain_toip_checkBox.isChecked():
+            app_config['domain_ip_key'] = "True"
+        else:
+            app_config['domain_ip_key'] = "False"
+
 
         app_config['download_url_word'] = self.download_url_lineEdit.text()
 
