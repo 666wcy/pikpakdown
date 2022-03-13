@@ -831,7 +831,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.configscrollAreaWidgetContents = QtWidgets.QWidget()
-        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, -713, 1245, 1252))
+        self.configscrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1013, 1252))
         self.configscrollAreaWidgetContents.setObjectName("configscrollAreaWidgetContents")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.configscrollAreaWidgetContents)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -1730,7 +1730,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "PikPakDown"))
-        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.8"))
+        self.titlelabel.setText(_translate("Form", "PikPakDown v2.2.9"))
         self.pingtitlelabel.setText(_translate("Form", "连接情况:"))
         self.pinginfo_label.setText(_translate("Form", "检测中"))
         self.tohidepushButton.setText(_translate("Form", "-"))

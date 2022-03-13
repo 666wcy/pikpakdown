@@ -142,7 +142,7 @@ from io import BytesIO
 from subprocess import Popen
 import subprocess
 
-import cgitb
+
 
 
 upload_task=[]
@@ -3067,7 +3067,8 @@ class MyPyQT_Form(QDialog, Ui_Form):
 
     # 退出APP
     def start_exit_app(self):
-        exit()
+        sys.exit()
+
 
     # 离线下载界面
     def offline_page(self):
@@ -6015,10 +6016,10 @@ if __name__ == '__main__':
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     #崩溃错误捕获
-    log_dir = os.path.join(os.getcwd(), 'log')
+    '''log_dir = os.path.join(os.getcwd(), 'log')
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
-    cgitb.enable(format='text', logdir=log_dir)
+    cgitb.enable(format='text', logdir=log_dir)'''
 
 
     app = QtWidgets.QApplication(sys.argv)

@@ -82,7 +82,7 @@ border-bottom:6px ridge #E0E0E0;
             </font>
            </property>
            <property name="text">
-            <string>PikPakDown v2.2.8</string>
+            <string>PikPakDown v2.2.9</string>
            </property>
           </widget>
          </item>
@@ -1182,8 +1182,8 @@ QScrollBar::add-line:horizontal {
                 <property name="geometry">
                  <rect>
                   <x>0</x>
-                  <y>-713</y>
-                  <width>1245</width>
+                  <y>0</y>
+                  <width>1013</width>
                   <height>1252</height>
                  </rect>
                 </property>

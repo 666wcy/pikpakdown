@@ -8,6 +8,7 @@ import aria2p
 import pythoncom
 import re
 import requests
+import os
 
 from urllib.parse import urlparse
 #推送aria2单任务
@@ -76,6 +77,8 @@ def thread_Thunder(file_id):
         # 读取数据并分割。 最后一个为空，所以去除
         app_config = json.loads(f.read())
     f.close()
+
+
 
     if type(file_id)==list:
         down_name_list=[]
@@ -163,6 +166,17 @@ def thread_IDM(file_id,IDM):
         jsonFile.close()
 
     app_config = data
+    if app_config['Download_path'] != "":
+        the_down_path = f"{app_config['Download_path']}"
+
+        if not os.path.exists(the_down_path):
+            os.makedirs(the_down_path)
+    else:
+        parent_path = os.getcwd()
+        the_down_path = f"{parent_path}/下载"
+
+        if not os.path.exists(the_down_path):
+            os.makedirs(the_down_path)
 
     Popen([IDM])
 
@@ -192,7 +206,7 @@ def thread_IDM(file_id,IDM):
 
             print(f"INFO ({new_time}):推送IDM:{down_name}")
 
-            Popen([IDM, '/d', down_url, "/p", data['Download_path'], '/f', down_name, '/n', '/a'])
+            Popen([IDM, '/d', down_url, "/p", the_down_path, '/f', down_name, '/n', '/a'])
 
 
         new_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -212,7 +226,7 @@ def thread_IDM(file_id,IDM):
             print(f"INFO ({new_time}):推送IDM:识别为文件夹:{down_name}，开始获取目录信息")
 
 
-            for name, url, size, path in get_folder_all_file(folder_id=file_id, path=f"{data['Download_path']}/{down_name}/"):
+            for name, url, size, path in get_folder_all_file(folder_id=file_id, path=f"{the_down_path}/{down_name}/"):
 
 
                 down_name = f"{name}"
@@ -259,7 +273,7 @@ def thread_IDM(file_id,IDM):
                 down_key = re.findall("(.*?)/download.*", down_url, re.S)[0]
                 down_url = down_url.replace(down_key, str(app_config['download_url_word']))
 
-            Popen([IDM, '/d', down_url,"/p",data['Download_path'], '/f', down_name, '/n', '/s'])
+            Popen([IDM, '/d', down_url,"/p",the_down_path, '/f', down_name, '/n', '/s'])
 
 
 def thread_pot(file_id,Pot):
@@ -362,6 +376,9 @@ def thread_aria2(file_id):
         # 读取数据并分割。 最后一个为空，所以去除
         app_config = json.loads(f.read())
     f.close()
+
+
+
     if type(file_id) == list:
 
         for a in file_id:
@@ -437,7 +454,17 @@ def thread_Bitcomet(file_id,thread_url):
 
     app_config = data
 
+    if app_config['Download_path'] != "":
+        the_down_path = f"{app_config['Download_path']}"
 
+        if not os.path.exists(the_down_path):
+            os.makedirs(the_down_path)
+    else:
+        parent_path = os.getcwd()
+        the_down_path = f"{parent_path}/下载"
+
+        if not os.path.exists(the_down_path):
+            os.makedirs(the_down_path)
 
     if type(file_id) == list:
         down_name_list = []
@@ -467,9 +494,9 @@ def thread_Bitcomet(file_id,thread_url):
 
             down_key = re.findall("(.*?)/download.*", down_url, re.S)[0]
             domain_key_list = ["https://vod0051-aliyun18-vip-lixian.mypikpak.com",
-                               "https://vod0037-aliyun18-vip-lixian.mypikpak.com",
-                               "https://vod0039-aliyun18-vip-lixian.mypikpak.com",
-                               "https://vod0038-aliyun18-vip-lixian.mypikpak.com",
+                               "https://vod0037-aliyun17-vip-lixian.mypikpak.com",
+                               "https://vod0039-aliyun17-vip-lixian.mypikpak.com",
+                               "https://vod0038-aliyun17-vip-lixian.mypikpak.com",
                                "https://vod0049-aliyun18-vip-lixian.mypikpak.com",
                                "https://vod0050-aliyun18-vip-lixian.mypikpak.com",
                                "https://vod0041-hwyun02-vip-lixian.mypikpak.com",
@@ -497,7 +524,7 @@ def thread_Bitcomet(file_id,thread_url):
                     mirror_url = mirror_url + down_url.replace(down_key, a) + "&\n"
             postdata = {
                 "url": f"{down_url}",
-                "save_path": data['Download_path'],
+                "save_path": the_down_path,
                 "connection": "200",
                 "file_name": down_name,
                 "referrer": "",
@@ -505,7 +532,7 @@ def thread_Bitcomet(file_id,thread_url):
                 "cookie": "",
                 "mirror_url_list": mirror_url
             }
-            html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result", data=postdata)
+            html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result",data=postdata,proxies=None)
 
             if html.status_code == 502:
                 print(f"Error ({new_time}):推送Bitcomet失败:url链接不正确")
@@ -529,7 +556,7 @@ def thread_Bitcomet(file_id,thread_url):
             print(f"INFO ({new_time}):推送Bitcomet:识别为文件夹:{down_name}，开始获取目录信息")
 
             for name, url, size, path in get_folder_all_file(folder_id=file_id,
-                                                             path=f"{data['Download_path']}/{down_name}/"):
+                                                             path=f"{the_down_path}/{down_name}/"):
 
                 down_name = f"{name}"
                 the_filesize = size
@@ -586,7 +613,7 @@ def thread_Bitcomet(file_id,thread_url):
                         mirror_url = mirror_url + down_url.replace(down_key, a) + "&\n"
                 postdata = {
                     "url": f"{down_url}",
-                    "save_path": data['Download_path'],
+                    "save_path": down_path,
                     "connection": "200",
                     "file_name": down_name,
                     "referrer": "",
@@ -594,7 +621,7 @@ def thread_Bitcomet(file_id,thread_url):
                     "cookie": "",
                     "mirror_url_list": mirror_url
                 }
-                html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result", data=postdata)
+                html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result",data=postdata,proxies=None)
 
                 if html.status_code == 502:
                     print(f"Error ({new_time}):推送Bitcomet失败:url链接不正确")
@@ -657,7 +684,7 @@ def thread_Bitcomet(file_id,thread_url):
                         mirror_url = mirror_url + down_url.replace(down_key, a) + "&\n"
                 postdata = {
                     "url": f"{down_url}",
-                    "save_path": data['Download_path'],
+                    "save_path": the_down_path,
                     "connection": "200",
                     "file_name": down_name,
                     "referrer": "",
@@ -665,7 +692,7 @@ def thread_Bitcomet(file_id,thread_url):
                     "cookie": "",
                     "mirror_url_list": mirror_url
                 }
-                html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result",data=postdata)
+                html = requests.post(url=f"{thread_url}/panel/task_add_httpftp_result",data=postdata,proxies=None)
 
                 if html.status_code == 502:
                     print(f"Error ({new_time}):推送Bitcomet失败:url链接不正确")
@@ -824,12 +851,12 @@ class Copy_magnet_Worker(QThread):
 
 
 '''{
-    "url": "https://vod0050-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C",
-    "save_path": "C:\\Users\\weicy\\Downloads\\Telegram+Desktop",
-    "connection": "200",
-    "file_name": "1.mp4",
-    "referrer": "",
-    "user_agent": "",
-    "cookie": "",
-    "mirror_url_list": "https://vod0051-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C\r\nhttps://vod0049-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C"
+	"url": "https://vod0050-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C",
+	"save_path": "C:\\Users\\weicy\\Downloads\\Telegram+Desktop",
+	"connection": "200",
+	"file_name": "1.mp4",
+	"referrer": "",
+	"user_agent": "",
+	"cookie": "",
+	"mirror_url_list": "https://vod0051-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C\r\nhttps://vod0049-aliyun18-vip-lixian.mypikpak.com/download/?fid=8EjS5VME9cYbtDuEjGR1jTR*tQ63D*k2AAAAAA4OkA0TjTLRQTm**q7CT4pd6men&mid=666&threshold=251&tid=EA093CE26197A2C675AF5F3187FBC387&srcid=0&verno=2&pk=xdrive&e=1646573332&g=0E0E900D138D32D14139BEFAAEC24F8A5DEA67A7&i=F048D2E55304F5C61BB43B848C64758D347EB50E&ui=YRdkHHI8ZU8Ap0ER&t=0&hy=1&ms=6300000&th=0&pt=1&f=921243575&spr=flow&fileid=VMnBPVQjMRShWd-IisrphFm0o1&fext=rar&userid=YRdkHHI8ZU8Ap0ER&clientid=YNxT9w7GMdWvEOKa&projectid=2wks56c31dc80sxm5p9&vip=PVIP&clientver=&at=D9235013033155DEC13D1848EC498E8C"
 }'''
